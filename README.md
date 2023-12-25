@@ -1,5 +1,6 @@
 # InnerTune     
 
+#### Se solucionaron problemas de cierres inesperados
 
 Un cliente de *YouTube Music* con Material Design 3, para Android
 

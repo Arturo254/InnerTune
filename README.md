@@ -34,7 +34,12 @@
 
 ## 📦 Cómo reconstruir la aplicación
 
-Para construir la aplicación, necesitas Gradle. Descomprime el archivo ZIP, ve a la carpeta y ejecuta:
+*Para Compilar la aplicacion necesitas:*
+- Gradle
+- Kotlin
+- Android Studio
+
+_Mediante CLI:_
 
 ```bash
 ./gradlew assembleDebug

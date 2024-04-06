@@ -5,11 +5,11 @@
   <img src="https://raw.githubusercontent.com/z-huang/InnerTune/dev/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.webp" alt="InnerTune Logo" width="120" height="120">
   <br>
   <p>Un cliente de YouTube Music con Material Design 3 para Android</p>
-  <a href="https://github.com/z-huang/InnerTune/releases/latest">
-    <img src="https://img.shields.io/github/v/release/z-huang/InnerTune?style=flat-square" alt="Latest Release">
+  <a href="https://github.com/Arturo254/InnerTune/releases">
+    <img src="https://img.shields.io/github/v/release/Arturo254/InnerTune?style=flat-square" alt="Latest Release">
   </a>
   <a href="https://github.com/z-huang/InnerTune/blob/main/LICENSE">
-    <img src="https://img.shields.io/github/license/z-huang/InnerTune?style=flat-square" alt="License">
+    <img src="https://img.shields.io/github/license/Arturo254/InnerTune?style=flat-square" alt="License">
   </a>
 </div>
 

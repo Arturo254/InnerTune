@@ -13,6 +13,10 @@
   </a>
 </div>
 
+  >[!NOTE]
+>
+> la aplicación original tiene 2 años sin actualización , se reescribio el codigo usando al 100% kotlin y actualizando a material Design 3
+
 ## ✨ Características
 
 - 🎵 Reproduce canciones de YouTube y YouTube Music sin anuncios

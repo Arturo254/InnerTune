@@ -69,4 +69,6 @@ Siga las [instrucciones](https://developer.android.com/guide/topics/resources/lo
 
 Si te gusta InnerTune, puedes enviar una donación. Las donaciones apoyarán el desarrollo, incluyendo correcciones de errores y nuevas funciones.
 
-© 2023 Open Source Projects, Dev: [Arturo Cervantes](https://github.com/Arturo254)
+© 2023 Open Source Projects, Dev: [Arturo Cervantes](https://www.paypal.com/paypalme/ArturoCervantes254)
+
+### TAMBIEN PUEDEES CONVERTIRTE EN SPONSOR ❤️😊

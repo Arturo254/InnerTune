@@ -22,7 +22,6 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -64,14 +63,17 @@ import coil.request.ImageRequest
 import com.valentinilk.shimmer.LocalShimmerTheme
 import com.zionhuang.innertube.YouTube
 import com.zionhuang.innertube.models.SongItem
+import com.zionhuang.innertube.models.WatchEndpoint
 import com.zionhuang.music.constants.*
 import com.zionhuang.music.db.MusicDatabase
 import com.zionhuang.music.db.entities.SearchHistory
 import com.zionhuang.music.extensions.*
+import com.zionhuang.music.models.toMediaMetadata
 import com.zionhuang.music.playback.DownloadUtil
 import com.zionhuang.music.playback.MusicService
 import com.zionhuang.music.playback.MusicService.MusicBinder
 import com.zionhuang.music.playback.PlayerConnection
+import com.zionhuang.music.playback.queues.YouTubeQueue
 import com.zionhuang.music.ui.component.*
 import com.zionhuang.music.ui.component.shimmer.ShimmerTheme
 import com.zionhuang.music.ui.menu.YouTubeSongMenu
@@ -80,18 +82,18 @@ import com.zionhuang.music.ui.screens.*
 import com.zionhuang.music.ui.screens.artist.ArtistItemsScreen
 import com.zionhuang.music.ui.screens.artist.ArtistScreen
 import com.zionhuang.music.ui.screens.artist.ArtistSongsScreen
-import com.zionhuang.music.ui.screens.library.LibraryAlbumsScreen
-import com.zionhuang.music.ui.screens.library.LibraryArtistsScreen
-import com.zionhuang.music.ui.screens.library.LibraryPlaylistsScreen
-import com.zionhuang.music.ui.screens.library.LibrarySongsScreen
+import com.zionhuang.music.ui.screens.library.LibraryScreen
+import com.zionhuang.music.ui.screens.playlist.AutoPlaylistScreen
 import com.zionhuang.music.ui.screens.playlist.LocalPlaylistScreen
 import com.zionhuang.music.ui.screens.playlist.OnlinePlaylistScreen
+import com.zionhuang.music.ui.screens.playlist.TopPlaylistScreen
 import com.zionhuang.music.ui.screens.search.LocalSearchScreen
 import com.zionhuang.music.ui.screens.search.OnlineSearchResult
 import com.zionhuang.music.ui.screens.search.OnlineSearchScreen
 import com.zionhuang.music.ui.screens.settings.*
 import com.zionhuang.music.ui.theme.*
 import com.zionhuang.music.ui.utils.appBarScrollBehavior
+import com.zionhuang.music.ui.utils.backToMain
 import com.zionhuang.music.ui.utils.canNavigateUp
 import com.zionhuang.music.ui.utils.resetHeightOffset
 import com.zionhuang.music.utils.dataStore
@@ -205,17 +207,13 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     val navBackStackEntry by navController.currentBackStackEntryAsState()
 
-                    val navigationItems = remember {
-                        listOf(Screens.Home, Screens.Songs, Screens.Artists, Screens.Albums, Screens.Playlists)
-                    }
+                    val navigationItems = remember { Screens.MainScreens }
                     val defaultOpenTab = remember {
                         dataStore[DefaultOpenTabKey].toEnum(defaultValue = NavigationTab.HOME)
                     }
                     val tabOpenedFromShortcut = remember {
                         when (intent?.action) {
-                            ACTION_SONGS -> NavigationTab.SONG
-                            ACTION_ALBUMS -> NavigationTab.ALBUM
-                            ACTION_PLAYLISTS -> NavigationTab.PLAYLIST
+                            ACTION_LIBRARY -> NavigationTab.LIBRARY
                             else -> null
                         }
                     }
@@ -373,7 +371,7 @@ class MainActivity : ComponentActivity() {
                                         withContext(Dispatchers.IO) {
                                             YouTube.queue(listOf(videoId))
                                         }.onSuccess {
-                                            sharedSong = it.firstOrNull()
+                                            playerConnection?.playQueue(YouTubeQueue(WatchEndpoint(videoId = it.firstOrNull()?.id), it.firstOrNull()?.toMediaMetadata()))
                                         }.onFailure {
                                             reportException(it)
                                         }
@@ -398,27 +396,19 @@ class MainActivity : ComponentActivity() {
                             navController = navController,
                             startDestination = when (tabOpenedFromShortcut ?: defaultOpenTab) {
                                 NavigationTab.HOME -> Screens.Home
-                                NavigationTab.SONG -> Screens.Songs
-                                NavigationTab.ARTIST -> Screens.Artists
-                                NavigationTab.ALBUM -> Screens.Albums
-                                NavigationTab.PLAYLIST -> Screens.Playlists
+                                NavigationTab.EXPLORE -> Screens.Explore
+                                NavigationTab.LIBRARY-> Screens.Library
                             }.route,
                             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
                         ) {
                             composable(Screens.Home.route) {
                                 HomeScreen(navController)
                             }
-                            composable(Screens.Songs.route) {
-                                LibrarySongsScreen(navController)
+                            composable(Screens.Library.route) {
+                                LibraryScreen(navController)
                             }
-                            composable(Screens.Artists.route) {
-                                LibraryArtistsScreen(navController)
-                            }
-                            composable(Screens.Albums.route) {
-                                LibraryAlbumsScreen(navController)
-                            }
-                            composable(Screens.Playlists.route) {
-                                LibraryPlaylistsScreen(navController)
+                            composable(Screens.Explore.route) {
+                                ExploreScreen(navController)
                             }
                             composable("history") {
                                 HistoryScreen(navController)
@@ -519,6 +509,26 @@ class MainActivity : ComponentActivity() {
                                 LocalPlaylistScreen(navController, scrollBehavior)
                             }
                             composable(
+                                route = "auto_playlist/{playlist}",
+                                arguments = listOf(
+                                    navArgument("playlist") {
+                                        type = NavType.StringType
+                                    }
+                                )
+                            ) {
+                                AutoPlaylistScreen(navController, scrollBehavior)
+                            }
+                            composable(
+                                route = "top_playlist/{top}",
+                                arguments = listOf(
+                                    navArgument("top") {
+                                        type = NavType.StringType
+                                    }
+                                )
+                            ) {
+                                TopPlaylistScreen(navController, scrollBehavior)
+                            }
+                            composable(
                                 route = "youtube_browse/{browseId}?params={params}",
                                 arguments = listOf(
                                     navArgument("browseId") {
@@ -586,16 +596,28 @@ class MainActivity : ComponentActivity() {
                                     )
                                 },
                                 leadingIcon = {
-                                    IconButton(onClick = {
-                                        when {
-                                            active -> onActiveChange(false)
-                                            navController.canNavigateUp && !navigationItems.fastAny { it.route == navBackStackEntry?.destination?.route } -> {
-                                                navController.navigateUp()
-                                            }
+                                    IconButton(
+                                        onClick = {
+                                            when {
+                                                active -> onActiveChange(false)
+                                                navController.canNavigateUp && !navigationItems.fastAny { it.route == navBackStackEntry?.destination?.route } -> {
+                                                    navController.navigateUp()
+                                                }
 
-                                            else -> onActiveChange(true)
+                                                else -> onActiveChange(true)
+                                            }
+                                        },
+                                        onLongClick = {
+                                            when {
+                                                active -> {}
+                                                navController.canNavigateUp && !navigationItems.fastAny { it.route == navBackStackEntry?.destination?.route } -> {
+                                                    navController.backToMain()
+                                                }
+
+                                                else -> {}
+                                            }
                                         }
-                                    }) {
+                                    ) {
                                         Icon(
                                             painterResource(
                                                 if (active || (navController.canNavigateUp && !navigationItems.fastAny { it.route == navBackStackEntry?.destination?.route })) {
@@ -607,6 +629,16 @@ class MainActivity : ComponentActivity() {
                                             contentDescription = null
                                         )
                                     }
+                                    Icon(
+                                        painter = painterResource(R.drawable.casa),
+                                        contentDescription = "home",
+                                        modifier = Modifier
+                                            .size(15.dp)
+                                            .clickable {
+                                                navController.navigate("home") //
+                                            }
+                                    )
+                                    Spacer(modifier = Modifier.width(20.dp)) // Espacio horizontal entre los iconos
                                 },
                                 trailingIcon = {
                                     if (active) {
@@ -637,10 +669,8 @@ class MainActivity : ComponentActivity() {
                                         }
                                     } else if (navBackStackEntry?.destination?.route in listOf(
                                             Screens.Home.route,
-                                            Screens.Songs.route,
-                                            Screens.Artists.route,
-                                            Screens.Albums.route,
-                                            Screens.Playlists.route
+                                            Screens.Explore.route,
+                                            Screens.Library.route,
                                         )
                                     ) {
                                         Box(
@@ -715,10 +745,18 @@ class MainActivity : ComponentActivity() {
                                 .align(Alignment.BottomCenter)
                                 .offset {
                                     if (navigationBarHeight == 0.dp) {
-                                        IntOffset(x = 0, y = (bottomInset + NavigationBarHeight).roundToPx())
+                                        IntOffset(
+                                            x = 0,
+                                            y = (bottomInset + NavigationBarHeight).roundToPx()
+                                        )
                                     } else {
-                                        val slideOffset = (bottomInset + NavigationBarHeight) * playerBottomSheetState.progress.coerceIn(0f, 1f)
-                                        val hideOffset = (bottomInset + NavigationBarHeight) * (1 - navigationBarHeight / NavigationBarHeight)
+                                        val slideOffset =
+                                            (bottomInset + NavigationBarHeight) * playerBottomSheetState.progress.coerceIn(
+                                                0f,
+                                                1f
+                                            )
+                                        val hideOffset =
+                                            (bottomInset + NavigationBarHeight) * (1 - navigationBarHeight / NavigationBarHeight)
                                         IntOffset(
                                             x = 0,
                                             y = (slideOffset + hideOffset).roundToPx()
@@ -815,9 +853,7 @@ class MainActivity : ComponentActivity() {
 
     companion object {
         const val ACTION_SEARCH = "com.zionhuang.music.action.SEARCH"
-        const val ACTION_SONGS = "com.zionhuang.music.action.SONGS"
-        const val ACTION_ALBUMS = "com.zionhuang.music.action.ALBUMS"
-        const val ACTION_PLAYLISTS = "com.zionhuang.music.action.PLAYLISTS"
+        const val ACTION_LIBRARY = "com.zionhuang.music.action.LIBRARY"
     }
 }
 

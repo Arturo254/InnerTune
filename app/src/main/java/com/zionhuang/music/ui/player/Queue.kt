@@ -1,11 +1,12 @@
 package com.zionhuang.music.ui.player
 
+import android.annotation.SuppressLint
 import android.text.format.Formatter
 import android.widget.Toast
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,23 +22,22 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DismissValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarDefaults
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Slider
 import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -57,7 +57,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
@@ -68,35 +67,34 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
+import androidx.media3.common.Player
 import androidx.media3.common.Timeline
 import androidx.media3.exoplayer.source.ShuffleOrder.DefaultShuffleOrder
 import androidx.navigation.NavController
 import com.zionhuang.music.LocalPlayerConnection
 import com.zionhuang.music.R
 import com.zionhuang.music.constants.ListItemHeight
-import com.zionhuang.music.constants.ShowLyricsKey
 import com.zionhuang.music.extensions.metadata
 import com.zionhuang.music.extensions.move
 import com.zionhuang.music.extensions.togglePlayPause
+import com.zionhuang.music.extensions.toggleRepeatMode
+import com.zionhuang.music.models.MediaMetadata
 import com.zionhuang.music.ui.component.BottomSheet
 import com.zionhuang.music.ui.component.BottomSheetState
 import com.zionhuang.music.ui.component.LocalMenuState
 import com.zionhuang.music.ui.component.MediaMetadataListItem
+import com.zionhuang.music.ui.component.ResizableIconButton
 import com.zionhuang.music.ui.menu.PlayerMenu
+import com.zionhuang.music.ui.menu.SelectionMediaMetadataMenu
 import com.zionhuang.music.utils.makeTimeString
-import com.zionhuang.music.utils.rememberPreference
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import org.burnoutcrew.reorderable.ReorderableItem
 import org.burnoutcrew.reorderable.detectReorder
-import org.burnoutcrew.reorderable.detectReorderAfterLongPress
 import org.burnoutcrew.reorderable.rememberReorderableLazyListState
 import org.burnoutcrew.reorderable.reorderable
-import kotlin.math.roundToInt
 
-@OptIn(ExperimentalAnimationApi::class, ExperimentalMaterial3Api::class)
+@SuppressLint("UnrememberedMutableState")
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun Queue(
     state: BottomSheetState,
@@ -110,92 +108,15 @@ fun Queue(
 
     val playerConnection = LocalPlayerConnection.current ?: return
     val isPlaying by playerConnection.isPlaying.collectAsState()
+    val repeatMode by playerConnection.repeatMode.collectAsState()
 
     val currentWindowIndex by playerConnection.currentWindowIndex.collectAsState()
     val mediaMetadata by playerConnection.mediaMetadata.collectAsState()
 
-    val currentSong by playerConnection.currentSong.collectAsState(initial = null)
     val currentFormat by playerConnection.currentFormat.collectAsState(initial = null)
 
-    var showLyrics by rememberPreference(ShowLyricsKey, defaultValue = false)
-
-    val sleepTimerEnabled = remember(playerConnection.service.sleepTimer.triggerTime, playerConnection.service.sleepTimer.pauseWhenSongEnd) {
-        playerConnection.service.sleepTimer.isActive
-    }
-
-    var sleepTimerTimeLeft by remember {
-        mutableStateOf(0L)
-    }
-
-    LaunchedEffect(sleepTimerEnabled) {
-        if (sleepTimerEnabled) {
-            while (isActive) {
-                sleepTimerTimeLeft = if (playerConnection.service.sleepTimer.pauseWhenSongEnd) {
-                    playerConnection.player.duration - playerConnection.player.currentPosition
-                } else {
-                    playerConnection.service.sleepTimer.triggerTime - System.currentTimeMillis()
-                }
-                delay(1000L)
-            }
-        }
-    }
-
-    var showSleepTimerDialog by remember {
-        mutableStateOf(false)
-    }
-
-    var sleepTimerValue by remember {
-        mutableStateOf(30f)
-    }
-    if (showSleepTimerDialog) {
-        AlertDialog(
-            properties = DialogProperties(usePlatformDefaultWidth = false),
-            onDismissRequest = { showSleepTimerDialog = false },
-            icon = { Icon(painter = painterResource(R.drawable.bedtime), contentDescription = null) },
-            title = { Text(stringResource(R.string.sleep_timer)) },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        showSleepTimerDialog = false
-                        playerConnection.service.sleepTimer.start(sleepTimerValue.roundToInt())
-                    }
-                ) {
-                    Text(stringResource(android.R.string.ok))
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = { showSleepTimerDialog = false }
-                ) {
-                    Text(stringResource(android.R.string.cancel))
-                }
-            },
-            text = {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(
-                        text = pluralStringResource(R.plurals.minute, sleepTimerValue.roundToInt(), sleepTimerValue.roundToInt()),
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-
-                    Slider(
-                        value = sleepTimerValue,
-                        onValueChange = { sleepTimerValue = it },
-                        valueRange = 5f..120f,
-                        steps = (120 - 5) / 5 - 1,
-                    )
-
-                    OutlinedButton(
-                        onClick = {
-                            showSleepTimerDialog = false
-                            playerConnection.service.sleepTimer.start(-1)
-                        }
-                    ) {
-                        Text(stringResource(R.string.end_of_song))
-                    }
-                }
-            }
-        )
-    }
+    val selectedSongs: MutableList<MediaMetadata> = mutableStateListOf()
+    val selectedItems: MutableList<Timeline.Window> = mutableStateListOf()
 
     var showDetailsDialog by rememberSaveable {
         mutableStateOf(false)
@@ -276,62 +197,10 @@ fun Queue(
                             .only(WindowInsetsSides.Bottom + WindowInsetsSides.Horizontal)
                     )
             ) {
+
                 IconButton(onClick = { state.expandSoft() }) {
                     Icon(
-                        painter = painterResource(R.drawable.queue_music),
-                        contentDescription = null
-                    )
-                }
-                IconButton(onClick = { showLyrics = !showLyrics }) {
-                    Icon(
-                        painter = painterResource(R.drawable.lyrics),
-                        contentDescription = null,
-                        modifier = Modifier.alpha(if (showLyrics) 1f else 0.5f)
-                    )
-                }
-                AnimatedContent(
-                    label = "sleepTimer",
-                    targetState = sleepTimerEnabled
-                ) { sleepTimerEnabled ->
-                    if (sleepTimerEnabled) {
-                        Text(
-                            text = makeTimeString(sleepTimerTimeLeft),
-                            style = MaterialTheme.typography.labelLarge,
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(50))
-                                .clickable(onClick = playerConnection.service.sleepTimer::clear)
-                                .padding(8.dp)
-                        )
-                    } else {
-                        IconButton(onClick = { showSleepTimerDialog = true }) {
-                            Icon(
-                                painter = painterResource(R.drawable.bedtime),
-                                contentDescription = null
-                            )
-                        }
-                    }
-                }
-                IconButton(onClick = playerConnection::toggleLibrary) {
-                    Icon(
-                        painter = painterResource(if (currentSong?.song?.inLibrary != null) R.drawable.library_add_check else R.drawable.library_add),
-                        contentDescription = null
-                    )
-                }
-                IconButton(
-                    onClick = {
-                        menuState.show {
-                            PlayerMenu(
-                                mediaMetadata = mediaMetadata,
-                                navController = navController,
-                                playerBottomSheetState = playerBottomSheetState,
-                                onShowDetailsDialog = { showDetailsDialog = true },
-                                onDismiss = menuState::dismiss
-                            )
-                        }
-                    }
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.more_horiz),
+                        painter = painterResource(R.drawable.expand_less),
                         contentDescription = null
                     )
                 }
@@ -369,6 +238,10 @@ fun Queue(
                 clear()
                 addAll(queueWindows)
             }
+        }
+
+        LaunchedEffect(mutableQueueWindows) {
+            reorderableState.listState.scrollToItem(currentWindowIndex)
         }
 
         LazyColumn(
@@ -409,36 +282,85 @@ fun Queue(
                         state = dismissState,
                         background = {},
                         dismissContent = {
-                            MediaMetadataListItem(
-                                mediaMetadata = window.mediaItem.metadata!!,
-                                isActive = index == currentWindowIndex,
-                                isPlaying = isPlaying,
-                                trailingContent = {
-                                    IconButton(
-                                        onClick = { },
-                                        modifier = Modifier
-                                            .detectReorder(reorderableState)
-                                    ) {
-                                        Icon(
-                                            painter = painterResource(R.drawable.drag_handle),
-                                            contentDescription = null
-                                        )
-                                    }
-                                },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable {
-                                        coroutineScope.launch(Dispatchers.Main) {
-                                            if (index == currentWindowIndex) {
-                                                playerConnection.player.togglePlayPause()
-                                            } else {
-                                                playerConnection.player.seekToDefaultPosition(window.firstPeriodIndex)
-                                                playerConnection.player.playWhenReady = true
-                                            }
+                            Row(
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                IconButton(
+                                    modifier = Modifier
+                                        .align(Alignment.CenterVertically),
+                                    onClick = {
+                                        if (window.mediaItem.metadata!! in selectedSongs){
+                                            selectedSongs.remove(window.mediaItem.metadata!!)
+                                            selectedItems.remove(currentItem)
+                                        } else {
+                                            selectedSongs.add(window.mediaItem.metadata!!)
+                                            selectedItems.add(currentItem)
                                         }
                                     }
-                                    .detectReorderAfterLongPress(reorderableState)
-                            )
+                                ) {
+                                    Icon(
+                                        painter = painterResource(if (window.mediaItem.metadata!! in selectedSongs) R.drawable.check_box else R.drawable.uncheck_box),
+                                        contentDescription = null,
+                                        tint = LocalContentColor.current
+                                    )
+                                }
+                                MediaMetadataListItem(
+                                    mediaMetadata = window.mediaItem.metadata!!,
+                                    isActive = index == currentWindowIndex,
+                                    isPlaying = isPlaying,
+                                    trailingContent = {
+                                        IconButton(
+                                            onClick = { },
+                                            modifier = Modifier
+                                                .detectReorder(reorderableState)
+                                        ) {
+                                            Icon(
+                                                painter = painterResource(R.drawable.drag_handle),
+                                                contentDescription = null
+                                            )
+                                        }
+                                    },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .combinedClickable(
+                                            onClick = {
+                                                if (selectedSongs.isEmpty()) {
+                                                    if (index == currentWindowIndex) {
+                                                        playerConnection.player.togglePlayPause()
+                                                    } else {
+                                                        playerConnection.player.seekToDefaultPosition(
+                                                            window.firstPeriodIndex
+                                                        )
+                                                        playerConnection.player.playWhenReady = true
+                                                    }
+                                                } else {
+                                                    if (window.mediaItem.metadata!! in selectedSongs){
+                                                        selectedSongs.remove(window.mediaItem.metadata!!)
+                                                        selectedItems.remove(currentItem)
+                                                    } else {
+                                                        selectedSongs.add(window.mediaItem.metadata!!)
+                                                        selectedItems.add(currentItem)
+                                                    }
+                                                }
+                                            },
+                                            onLongClick = {
+                                                menuState.show {
+                                                    PlayerMenu(
+                                                        mediaMetadata = window.mediaItem.metadata!!,
+                                                        navController = navController,
+                                                        playerBottomSheetState = playerBottomSheetState,
+                                                        isQueueTrigger = true,
+                                                        onShowDetailsDialog = {
+                                                            showDetailsDialog = true
+                                                        },
+                                                        onDismiss = menuState::dismiss
+                                                    )
+                                                }
+                                            }
+                                        )
+                                    //.detectReorderAfterLongPress(reorderableState)
+                                )
+                            }
                         }
                     )
                 }
@@ -470,6 +392,43 @@ fun Queue(
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.weight(1f)
                 )
+
+                if (selectedSongs.isNotEmpty()) {
+
+                    IconButton(
+                        onClick = {
+                            selectedSongs.clear()
+                            selectedItems.clear()
+                        }
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.deselect),
+                            contentDescription = null,
+                            tint = LocalContentColor.current
+                        )
+                    }
+                    IconButton(
+                        onClick = {
+                            menuState.show {
+                                SelectionMediaMetadataMenu(
+                                    songSelection = selectedSongs,
+                                    onDismiss = menuState::dismiss,
+                                    clearAction = {
+                                        selectedSongs.clear()
+                                        selectedItems.clear()
+                                                  },
+                                    currentItems = selectedItems
+                                )
+                            }
+                        }
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.more_vert),
+                            contentDescription = null,
+                            tint = LocalContentColor.current
+                        )
+                    }
+                }
 
                 Column(
                     verticalArrangement = Arrangement.spacedBy(4.dp),
@@ -533,6 +492,20 @@ fun Queue(
                 painter = painterResource(R.drawable.expand_more),
                 contentDescription = null,
                 modifier = Modifier.align(Alignment.Center)
+            )
+
+            ResizableIconButton(
+                icon = when (repeatMode) {
+                    Player.REPEAT_MODE_OFF, Player.REPEAT_MODE_ALL -> R.drawable.repeat
+                    Player.REPEAT_MODE_ONE -> R.drawable.repeat_one
+                    else -> throw IllegalStateException()
+                },
+                modifier = Modifier
+                    .size(32.dp)
+                    .padding(4.dp)
+                    .align(Alignment.CenterEnd)
+                    .alpha(if (repeatMode == Player.REPEAT_MODE_OFF) 0.5f else 1f),
+                onClick = playerConnection.player::toggleRepeatMode
             )
         }
     }

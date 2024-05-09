@@ -10,12 +10,6 @@ plugins {
     id("com.google.devtools.ksp")
 }
 
-if (isFullBuild && System.getenv("PULL_REQUEST") == null) {
-    apply(plugin = "com.google.gms.google-services")
-    apply(plugin = "com.google.firebase.crashlytics")
-    apply(plugin = "com.google.firebase.firebase-perf")
-}
-
 android {
     namespace = "com.zionhuang.music"
     compileSdk = 34
@@ -23,10 +17,11 @@ android {
     defaultConfig {
         applicationId = "com.zionhuang.music"
         minSdk = 24
-        targetSdk = 33
-        versionCode = 19
-        versionName = "0.5.4"
+        targetSdk = 34
+        versionCode = 22
+        versionName = "0.6.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
     }
     buildTypes {
         release {
@@ -40,9 +35,6 @@ android {
     }
     flavorDimensions += "version"
     productFlavors {
-        create("full") {
-            dimension = "version"
-        }
         create("foss") {
             dimension = "version"
         }
@@ -58,6 +50,7 @@ android {
         }
     }
     buildFeatures {
+        buildConfig = true
         compose = true
     }
     composeOptions {
@@ -65,15 +58,15 @@ android {
     }
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlin {
-        jvmToolchain(11)
+        jvmToolchain(17)
     }
     kotlinOptions {
         freeCompilerArgs = freeCompilerArgs + "-Xcontext-receivers"
-        jvmTarget = "11"
+        jvmTarget = "17"
     }
     testOptions {
         unitTests.isIncludeAndroidResources = true
@@ -136,17 +129,9 @@ dependencies {
 
     implementation(projects.innertube)
     implementation(projects.kugou)
+    implementation(projects.lrclib)
 
     coreLibraryDesugaring(libs.desugaring)
-
-    "fullImplementation"(platform(libs.firebase.bom))
-    "fullImplementation"(libs.firebase.analytics)
-    "fullImplementation"(libs.firebase.crashlytics)
-    "fullImplementation"(libs.firebase.config)
-    "fullImplementation"(libs.firebase.perf)
-    "fullImplementation"(libs.mlkit.language.id)
-    "fullImplementation"(libs.mlkit.translate)
-    "fullImplementation"(libs.opencc4j)
 
     implementation(libs.timber)
 }

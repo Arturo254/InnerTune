@@ -1,14 +1,28 @@
 package com.zionhuang.music.ui.screens.settings
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.zionhuang.music.LocalPlayerAwareWindowInsets
 import com.zionhuang.music.R
@@ -18,7 +32,9 @@ import com.zionhuang.music.constants.DynamicThemeKey
 import com.zionhuang.music.constants.LyricsTextPositionKey
 import com.zionhuang.music.constants.PureBlackKey
 import com.zionhuang.music.ui.component.EnumListPreference
+import com.zionhuang.music.ui.component.IconButton
 import com.zionhuang.music.ui.component.SwitchPreference
+import com.zionhuang.music.ui.utils.backToMain
 import com.zionhuang.music.utils.rememberEnumPreference
 import com.zionhuang.music.utils.rememberPreference
 
@@ -33,6 +49,7 @@ fun AppearanceSettings(
     val (pureBlack, onPureBlackChange) = rememberPreference(PureBlackKey, defaultValue = false)
     val (defaultOpenTab, onDefaultOpenTabChange) = rememberEnumPreference(DefaultOpenTabKey, defaultValue = NavigationTab.HOME)
     val (lyricsPosition, onLyricsPositionChange) = rememberEnumPreference(LyricsTextPositionKey, defaultValue = LyricsPosition.CENTER)
+    val uriHandler = LocalUriHandler.current
 
     Column(
         Modifier
@@ -72,10 +89,8 @@ fun AppearanceSettings(
             valueText = {
                 when (it) {
                     NavigationTab.HOME -> stringResource(R.string.home)
-                    NavigationTab.SONG -> stringResource(R.string.songs)
-                    NavigationTab.ARTIST -> stringResource(R.string.artists)
-                    NavigationTab.ALBUM -> stringResource(R.string.albums)
-                    NavigationTab.PLAYLIST -> stringResource(R.string.playlists)
+                    NavigationTab.EXPLORE -> stringResource(R.string.explore)
+                    NavigationTab.LIBRARY -> stringResource(R.string.filter_library)
                 }
             }
         )
@@ -92,12 +107,42 @@ fun AppearanceSettings(
                 }
             }
         )
+        Spacer(Modifier.height(20.dp))
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(100.dp),
+            onClick = { uriHandler.openUri("https://innertunne.netlify.app/beta") } // Reemplaza con el enlace correcto de WhatsApp si deseas
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.Center
+            ) {
+                Icon(contentDescription = null, painter = painterResource(R.drawable.radar))
+                Text(
+                    text = "Proximamente :",
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+
+                Text(
+                    text = "Elegir un color de acento personalizado  ⭐❤️ ",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+
+            }
+        }
     }
 
     TopAppBar(
         title = { Text(stringResource(R.string.appearance)) },
         navigationIcon = {
-            IconButton(onClick = navController::navigateUp) {
+            IconButton(
+                onClick = navController::navigateUp,
+                onLongClick = navController::backToMain
+            ) {
                 Icon(
                     painterResource(R.drawable.arrow_back),
                     contentDescription = null
@@ -113,7 +158,7 @@ enum class DarkMode {
 }
 
 enum class NavigationTab {
-    HOME, SONG, ARTIST, ALBUM, PLAYLIST
+    HOME, EXPLORE, LIBRARY
 }
 
 enum class LyricsPosition {

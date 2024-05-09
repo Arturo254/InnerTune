@@ -11,8 +11,8 @@
       "type": "SINGLE",
       "filters": [],
       "attributes": [],
-      "versionCode": 19,
-      "versionName": "0.5.4",
+      "versionCode": 22,
+      "versionName": "0.6.0Beta Version",
       "outputFile": "app-foss-release.apk"
     }
   ],

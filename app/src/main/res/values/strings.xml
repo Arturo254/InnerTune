@@ -5,6 +5,7 @@
     <string name="artists">Artists</string>
     <string name="albums">Albums</string>
     <string name="playlists">Playlists</string>
+    <string name="explore">Explore</string>
 
     <!-- Top bar -->
     <plurals name="n_selected">
@@ -18,7 +19,10 @@
     <string name="account">Account</string>
     <string name="quick_picks">Quick picks</string>
     <string name="quick_picks_empty">Listen to songs to generate your quick picks</string>
-    <string name="new_release_albums">New release albums</string>
+    <string name="new_release_albums">New releases</string>
+    <string name="forgotten_favorites">Forgotten favorites</string>
+    <string name="similar_to">Similar to</string>
+    <string name="keep_listening">Keep listening</string>
 
     <!-- History -->
     <string name="today">Today</string>
@@ -56,6 +60,8 @@
     <string name="liked_songs">Liked songs</string>
     <string name="downloaded_songs">Downloaded songs</string>
     <string name="playlist_is_empty">The playlist is empty</string>
+    <string name="remove_download_playlist_confirm">Do you really want to remove all \"%s\" playlist songs from the Downloaded Songs storage?</string>
+    <string name="delete_playlist_confirm">Do you really want to delete the playlist \"%s\"?</string>
 
     <!-- Button -->
     <string name="retry">Retry</string>
@@ -86,6 +92,8 @@
     <string name="search_online">Search online</string>
     <string name="sync">Sync</string>
     <string name="advanced">Advanced</string>
+    <string name="select">Select all</string>
+    <string name="like_all">Like all</string>
 
     <!-- Sort menu -->
     <string name="sort_by_create_date">Date added</string>
@@ -266,4 +274,12 @@
     <string name="new_version_available">New version available</string>
     <string name="translation_models">Translation Models</string>
     <string name="clear_translation_models">Clear translation models</string>
+
+    <string name="all_time">All time</string>
+    <string name="past_24_hours">Past 24 hours</string>
+    <string name="past_week">Past week</string>
+    <string name="past_month">Past month</string>
+    <string name="past_year">Past year</string>
+    <string name="top_length">My Top list length</string>
+    <string name="betafun">Funciones Beta</string>
 </resources>

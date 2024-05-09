@@ -8,6 +8,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.BoxWithConstraintsScope
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -53,6 +55,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.fastForEachIndexed
+import androidx.compose.ui.zIndex
 import androidx.core.graphics.drawable.toBitmapOrNull
 import androidx.media3.exoplayer.offline.Download
 import androidx.media3.exoplayer.offline.Download.STATE_COMPLETED
@@ -74,6 +77,7 @@ import com.zionhuang.music.R
 import com.zionhuang.music.constants.GridThumbnailHeight
 import com.zionhuang.music.constants.ListItemHeight
 import com.zionhuang.music.constants.ListThumbnailSize
+import com.zionhuang.music.constants.SmallGridThumbnailHeight
 import com.zionhuang.music.constants.ThumbnailCornerRadius
 import com.zionhuang.music.db.entities.Album
 import com.zionhuang.music.db.entities.Artist
@@ -99,12 +103,20 @@ inline fun ListItem(
     noinline subtitle: (@Composable RowScope.() -> Unit)? = null,
     thumbnailContent: @Composable () -> Unit,
     trailingContent: @Composable RowScope.() -> Unit = {},
+    isActive: Boolean = false,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
+        modifier = if (isActive)
+                modifier
+                    .height(ListItemHeight)
+                    .padding(horizontal = 8.dp)
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(color = MaterialTheme.colorScheme.secondaryContainer)
+            else
+                modifier
             .height(ListItemHeight)
-            .padding(horizontal = 6.dp),
+            .padding(horizontal = 8.dp)
     ) {
         Box(
             modifier = Modifier.padding(6.dp),
@@ -144,6 +156,7 @@ fun ListItem(
     badges: @Composable RowScope.() -> Unit = {},
     thumbnailContent: @Composable () -> Unit,
     trailingContent: @Composable RowScope.() -> Unit = {},
+    isActive: Boolean = false
 ) = ListItem(
     title = title,
     subtitle = {
@@ -161,7 +174,8 @@ fun ListItem(
     },
     thumbnailContent = thumbnailContent,
     trailingContent = trailingContent,
-    modifier = modifier
+    modifier = modifier,
+    isActive = isActive
 )
 
 @Composable
@@ -225,6 +239,52 @@ fun GridItem(
 }
 
 @Composable
+fun SmallGridItem(
+    modifier: Modifier = Modifier,
+    title: String,
+    thumbnailContent: @Composable BoxWithConstraintsScope.() -> Unit,
+    thumbnailShape: Shape,
+    thumbnailRatio: Float = 1f,
+    isArtist: Boolean? = false
+) {
+    Column(
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = if (isArtist == true) Alignment.CenterHorizontally else Alignment.Start,
+        modifier = modifier
+            .fillMaxHeight()
+            .width(GridThumbnailHeight * thumbnailRatio)
+            .padding(12.dp)
+    ) {
+        BoxWithConstraints(
+            modifier = Modifier
+                .height(SmallGridThumbnailHeight)
+                .aspectRatio(thumbnailRatio)
+                .clip(thumbnailShape)
+        ) { 
+            thumbnailContent()
+        }
+
+        Spacer(modifier = Modifier.height(6.dp))
+
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.width(SmallGridThumbnailHeight)
+        ) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Medium,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                textAlign = TextAlign.Start,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+    }
+}
+
+@Composable
 fun SongListItem(
     song: Song,
     modifier: Modifier = Modifier,
@@ -232,6 +292,7 @@ fun SongListItem(
     showLikedIcon: Boolean = true,
     showInLibraryIcon: Boolean = false,
     showDownloadIcon: Boolean = true,
+    isSelected: Boolean = false,
     badges: @Composable RowScope.() -> Unit = {
         if (showLikedIcon && song.song.liked) {
             Icon(
@@ -295,12 +356,36 @@ fun SongListItem(
                     enter = fadeIn() + expandIn(expandFrom = Alignment.Center),
                     exit = shrinkOut(shrinkTowards = Alignment.Center) + fadeOut()
                 ) {
-                    Text(
-                        text = albumIndex.toString(),
-                        style = MaterialTheme.typography.labelLarge
-                    )
+
+                    if (isSelected) {
+                        Icon(
+                            painter = painterResource(R.drawable.done),
+                            modifier = Modifier.align(Alignment.Center),
+                            contentDescription = null
+                        )
+                    }else {
+                        Text(
+                            text = albumIndex.toString(),
+                            style = MaterialTheme.typography.labelLarge
+                        )
+                    }
                 }
             } else {
+                if (isSelected) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .zIndex(1000f)
+                            .clip(RoundedCornerShape(ThumbnailCornerRadius))
+                            .background(Color.Black.copy(alpha = 0.5f))
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.done),
+                            modifier = Modifier.align(Alignment.Center),
+                            contentDescription = null
+                        )
+                    }
+                }
                 AsyncImage(
                     model = song.song.thumbnailUrl,
                     contentDescription = null,
@@ -317,13 +402,82 @@ fun SongListItem(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(
-                        color = if (albumIndex != null) Color.Transparent else Color.Black.copy(alpha = 0.4f),
+                        color = if (albumIndex != null) Color.Transparent else Color.Black.copy(
+                            alpha = 0.4f
+                        ),
                         shape = RoundedCornerShape(ThumbnailCornerRadius)
                     )
             )
         }
     },
     trailingContent = trailingContent,
+    modifier = modifier,
+    isActive = isActive
+)
+
+@Composable
+fun SongSmallGridItem(
+    song: Song,
+    modifier: Modifier = Modifier,
+    isActive: Boolean = false,
+    isPlaying: Boolean = false,
+) = SmallGridItem(
+    title = song.song.title,
+    thumbnailContent = {
+        AsyncImage(
+            model = song.song.thumbnailUrl,
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize()
+        )
+
+        AnimatedVisibility(
+            visible = isActive,
+            enter = fadeIn(tween(500)),
+            exit = fadeOut(tween(500))
+        ) {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        color = Color.Black.copy(alpha = if (isPlaying) 0.4f else 0f),
+                        shape = RoundedCornerShape(ThumbnailCornerRadius)
+                    )
+            ) {
+                if (isPlaying) {
+                    PlayingIndicator(
+                        color = Color.White,
+                        modifier = Modifier.height(24.dp)
+                    )
+                }
+            }
+        }
+
+        AnimatedVisibility(
+            visible = !(isActive && isPlaying),
+            enter = fadeIn(),
+            exit = fadeOut(),
+            modifier = Modifier
+                .align(Alignment.Center)
+                .padding(8.dp)
+        ) {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .size(36.dp)
+                    .clip(CircleShape)
+                    .background(Color.Black.copy(alpha = 0.6f))
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.play),
+                    contentDescription = null,
+                    tint = Color.White
+                )
+            }
+        }
+    },
+    thumbnailShape = RoundedCornerShape(ThumbnailCornerRadius),
     modifier = modifier
 )
 
@@ -393,6 +547,25 @@ fun ArtistGridItem(
     thumbnailShape = CircleShape,
     fillMaxWidth = fillMaxWidth,
     modifier = modifier
+)
+
+@Composable
+fun ArtistSmallGridItem(
+    artist: Artist,
+    modifier: Modifier = Modifier,
+) = SmallGridItem(
+    title = artist.artist.name,
+    thumbnailContent = {
+        AsyncImage(
+            model = artist.artist.thumbnailUrl,
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize()
+        )
+    },
+    thumbnailShape = CircleShape,
+    modifier = modifier,
+    isArtist = true
 )
 
 @Composable
@@ -678,17 +851,75 @@ fun AlbumGridItem(
 )
 
 @Composable
+fun AlbumSmallGridItem(
+    song: Song,
+    modifier: Modifier = Modifier,
+    isActive: Boolean = false,
+    isPlaying: Boolean = false,
+) = song.song.albumName?.let {
+    SmallGridItem(
+        title = it,
+        thumbnailContent = {
+            AsyncImage(
+                model = song.song.thumbnailUrl,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
+
+            AnimatedVisibility(
+                visible = isActive,
+                enter = fadeIn(tween(500)),
+                exit = fadeOut(tween(500))
+            ) {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(
+                            color = Color.Black.copy(alpha = 0.4f),
+                            shape = RoundedCornerShape(ThumbnailCornerRadius)
+                        )
+                ) {
+                    if (isPlaying) {
+                        PlayingIndicator(
+                            color = Color.White,
+                            modifier = Modifier.height(24.dp)
+                        )
+                    } else {
+                        Icon(
+                            painter = painterResource(R.drawable.play),
+                            contentDescription = null,
+                            tint = Color.White
+                        )
+                    }
+                }
+            }
+        },
+        thumbnailShape = RoundedCornerShape(ThumbnailCornerRadius),
+        modifier = modifier
+    )
+}
+
+@Composable
 fun PlaylistListItem(
     playlist: Playlist,
     modifier: Modifier = Modifier,
     trailingContent: @Composable RowScope.() -> Unit = {},
+    autoPlaylist: Boolean = true,
 ) = ListItem(
     title = playlist.playlist.name,
-    subtitle = pluralStringResource(R.plurals.n_song, playlist.songCount, playlist.songCount),
+    subtitle = if (autoPlaylist) "" else pluralStringResource(R.plurals.n_song, playlist.songCount, playlist.songCount),
     thumbnailContent = {
+        val painter = when (playlist.playlist.name) {
+            "Liked" -> R.drawable.favorite
+            "Offline" -> R.drawable.offline
+            "My Top 50" -> R.drawable.trending_up
+            else -> R.drawable.queue_music
+        }
         when (playlist.thumbnails.size) {
             0 -> Icon(
-                painter = painterResource(R.drawable.queue_music),
+                painter = painterResource(painter),
                 contentDescription = null,
                 modifier = Modifier.size(ListThumbnailSize)
             )
@@ -735,21 +966,34 @@ fun PlaylistGridItem(
     modifier: Modifier = Modifier,
     badges: @Composable RowScope.() -> Unit = { },
     fillMaxWidth: Boolean = false,
+    autoPlaylist: Boolean = false
 ) = GridItem(
     title = playlist.playlist.name,
-    subtitle = pluralStringResource(R.plurals.n_song, playlist.songCount, playlist.songCount),
+    subtitle = if (autoPlaylist) "" else pluralStringResource(R.plurals.n_song, playlist.songCount, playlist.songCount),
     badges = badges,
     thumbnailContent = {
+        val painter = when (playlist.playlist.name) {
+            "Liked" -> R.drawable.favorite
+            "Offline" -> R.drawable.offline
+            "My Top 50" -> R.drawable.trending_up
+            else -> R.drawable.queue_music
+        }
         val width = maxWidth
         when (playlist.thumbnails.size) {
-            0 -> Icon(
-                painter = painterResource(R.drawable.queue_music),
-                contentDescription = null,
-                tint = LocalContentColor.current.copy(alpha = 0.8f),
+            0 -> Box(
                 modifier = Modifier
-                    .size(width / 2)
-                    .align(Alignment.Center)
-            )
+                    .fillMaxSize()
+                    .background(color = MaterialTheme.colorScheme.secondaryContainer)
+            ){
+                Icon(
+                    painter = painterResource(painter),
+                    contentDescription = null,
+                    tint = LocalContentColor.current.copy(alpha = 0.8f),
+                    modifier = Modifier
+                        .size(width / 2)
+                        .align(Alignment.Center)
+                )
+            }
 
             1 -> AsyncImage(
                 model = playlist.thumbnails[0],
@@ -822,7 +1066,8 @@ fun MediaMetadataListItem(
         )
     },
     trailingContent = trailingContent,
-    modifier = modifier
+    modifier = modifier,
+    isActive = isActive
 )
 
 @Composable
@@ -933,14 +1178,17 @@ fun YouTubeListItem(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(
-                        color = if (albumIndex != null) Color.Transparent else Color.Black.copy(alpha = 0.4f),
+                        color = if (albumIndex != null) Color.Transparent else Color.Black.copy(
+                            alpha = 0.4f
+                        ),
                         shape = thumbnailShape
                     )
             )
         }
     },
     trailingContent = trailingContent,
-    modifier = modifier
+    modifier = modifier,
+    isActive = isActive
 )
 
 @Composable
@@ -1159,3 +1407,32 @@ fun YouTubeGridItem(
         }
     }
 }
+
+@Composable
+fun YouTubeSmallGridItem(
+    item: YTItem,
+    modifier: Modifier = Modifier,
+    coroutineScope: CoroutineScope? = null,
+    isActive: Boolean = false,
+    isPlaying: Boolean = false,
+    fillMaxWidth: Boolean = false,
+) = SmallGridItem(
+    title = item.title,
+    thumbnailContent = {
+        AsyncImage(
+            model = item.thumbnail,
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize()
+        )
+    },
+    thumbnailShape = when (item) {
+        is ArtistItem -> CircleShape
+        else -> RoundedCornerShape(ThumbnailCornerRadius)
+    },
+    modifier = modifier,
+    isArtist = when (item) {
+        is ArtistItem -> true
+        else -> false
+    }
+)

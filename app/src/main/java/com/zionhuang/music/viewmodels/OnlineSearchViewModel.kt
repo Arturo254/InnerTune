@@ -10,17 +10,19 @@ import androidx.lifecycle.viewModelScope
 import com.zionhuang.innertube.YouTube
 import com.zionhuang.innertube.pages.SearchSummaryPage
 import com.zionhuang.music.models.ItemsPage
+import com.zionhuang.music.utils.reportException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import java.net.URLDecoder
+import java.net.URLEncoder
 import javax.inject.Inject
 
 @HiltViewModel
 class OnlineSearchViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
-    val query = URLDecoder.decode(savedStateHandle.get<String>("query")!!, "UTF-8")!!
+    val query = savedStateHandle.get<String>("query")!!
     val filter = MutableStateFlow<YouTube.SearchFilter?>(null)
     var summaryPage by mutableStateOf<SearchSummaryPage?>(null)
     val viewStateMap = mutableStateMapOf<String, ItemsPage?>()
@@ -30,13 +32,23 @@ class OnlineSearchViewModel @Inject constructor(
             filter.collect { filter ->
                 if (filter == null) {
                     if (summaryPage == null) {
-                        summaryPage = YouTube.searchSummary(query).getOrNull()
+                        YouTube.searchSummary(query)
+                            .onSuccess {
+                                summaryPage = it
+                            }
+                            .onFailure {
+                                reportException(it)
+                            }
                     }
                 } else {
                     if (viewStateMap[filter.value] == null) {
-                        viewStateMap[filter.value] = YouTube.search(query, filter).getOrNull()?.let { result ->
-                            ItemsPage(result.items.distinctBy { it.id }, result.continuation)
-                        }
+                        YouTube.search(query, filter)
+                            .onSuccess { result ->
+                                viewStateMap[filter.value] = ItemsPage(result.items.distinctBy { it.id }, result.continuation)
+                            }
+                            .onFailure {
+                                reportException(it)
+                            }
                     }
                 }
             }

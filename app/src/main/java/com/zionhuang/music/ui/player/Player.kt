@@ -1,12 +1,20 @@
 package com.zionhuang.music.ui.player
 
+import android.content.Intent
 import android.content.res.Configuration
+import android.text.format.Formatter
+import android.widget.Toast
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,15 +29,23 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarDefaults
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -45,50 +61,74 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
+import androidx.compose.ui.window.DialogProperties
+import androidx.core.net.toUri
 import androidx.media3.common.C
-import androidx.media3.common.Player.REPEAT_MODE_ALL
-import androidx.media3.common.Player.REPEAT_MODE_OFF
-import androidx.media3.common.Player.REPEAT_MODE_ONE
 import androidx.media3.common.Player.STATE_ENDED
 import androidx.media3.common.Player.STATE_READY
+import androidx.media3.exoplayer.offline.Download
+import androidx.media3.exoplayer.offline.DownloadRequest
+import androidx.media3.exoplayer.offline.DownloadService
 import androidx.navigation.NavController
+import com.zionhuang.music.LocalDatabase
+import com.zionhuang.music.LocalDownloadUtil
 import com.zionhuang.music.LocalPlayerConnection
 import com.zionhuang.music.R
 import com.zionhuang.music.constants.PlayerHorizontalPadding
 import com.zionhuang.music.constants.QueuePeekHeight
+import com.zionhuang.music.constants.ShowLyricsKey
+import com.zionhuang.music.db.entities.PlaylistSongMap
 import com.zionhuang.music.extensions.togglePlayPause
-import com.zionhuang.music.extensions.toggleRepeatMode
 import com.zionhuang.music.models.MediaMetadata
+import com.zionhuang.music.playback.ExoDownloadService
 import com.zionhuang.music.ui.component.BottomSheet
 import com.zionhuang.music.ui.component.BottomSheetState
+import com.zionhuang.music.ui.component.LocalMenuState
 import com.zionhuang.music.ui.component.ResizableIconButton
 import com.zionhuang.music.ui.component.rememberBottomSheetState
+import com.zionhuang.music.ui.menu.AddToPlaylistDialog
+import com.zionhuang.music.ui.menu.PlayerMenu
 import com.zionhuang.music.utils.makeTimeString
+import com.zionhuang.music.utils.rememberPreference
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
+import kotlin.math.roundToInt
 
+@OptIn(ExperimentalFoundationApi::class, ExperimentalAnimationApi::class)
 @Composable
 fun BottomSheetPlayer(
     state: BottomSheetState,
     navController: NavController,
     modifier: Modifier = Modifier,
 ) {
+    val context = LocalContext.current
+    val database = LocalDatabase.current
+    val menuState = LocalMenuState.current
+
+    val clipboardManager = LocalClipboardManager.current
+
     val playerConnection = LocalPlayerConnection.current ?: return
 
     val playbackState by playerConnection.playbackState.collectAsState()
     val isPlaying by playerConnection.isPlaying.collectAsState()
-    val repeatMode by playerConnection.repeatMode.collectAsState()
     val mediaMetadata by playerConnection.mediaMetadata.collectAsState()
     val currentSong by playerConnection.currentSong.collectAsState(initial = null)
 
     val canSkipPrevious by playerConnection.canSkipPrevious.collectAsState()
     val canSkipNext by playerConnection.canSkipNext.collectAsState()
+
+    var showLyrics by rememberPreference(ShowLyricsKey, defaultValue = false)
 
     var position by rememberSaveable(playbackState) {
         mutableStateOf(playerConnection.player.currentPosition)
@@ -100,6 +140,111 @@ fun BottomSheetPlayer(
         mutableStateOf<Long?>(null)
     }
 
+    val download by LocalDownloadUtil.current.getDownload(mediaMetadata?.id ?: "").collectAsState(initial = null)
+
+    val sleepTimerEnabled = remember(playerConnection.service.sleepTimer.triggerTime, playerConnection.service.sleepTimer.pauseWhenSongEnd) {
+        playerConnection.service.sleepTimer.isActive
+    }
+
+    var sleepTimerTimeLeft by remember {
+        mutableStateOf(0L)
+    }
+
+    LaunchedEffect(sleepTimerEnabled) {
+        if (sleepTimerEnabled) {
+            while (isActive) {
+                sleepTimerTimeLeft = if (playerConnection.service.sleepTimer.pauseWhenSongEnd) {
+                    playerConnection.player.duration - playerConnection.player.currentPosition
+                } else {
+                    playerConnection.service.sleepTimer.triggerTime - System.currentTimeMillis()
+                }
+                delay(1000L)
+            }
+        }
+    }
+
+    var showSleepTimerDialog by remember {
+        mutableStateOf(false)
+    }
+
+    var sleepTimerValue by remember {
+        mutableStateOf(30f)
+    }
+    if (showSleepTimerDialog) {
+        AlertDialog(
+            properties = DialogProperties(usePlatformDefaultWidth = false),
+            onDismissRequest = { showSleepTimerDialog = false },
+            icon = { Icon(painter = painterResource(R.drawable.bedtime), contentDescription = null) },
+            title = { Text(stringResource(R.string.sleep_timer)) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showSleepTimerDialog = false
+                        playerConnection.service.sleepTimer.start(sleepTimerValue.roundToInt())
+                    }
+                ) {
+                    Text(stringResource(android.R.string.ok))
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { showSleepTimerDialog = false }
+                ) {
+                    Text(stringResource(android.R.string.cancel))
+                }
+            },
+            text = {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = pluralStringResource(R.plurals.minute, sleepTimerValue.roundToInt(), sleepTimerValue.roundToInt()),
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+
+                    Slider(
+                        value = sleepTimerValue,
+                        onValueChange = { sleepTimerValue = it },
+                        valueRange = 5f..120f,
+                        steps = (120 - 5) / 5 - 1,
+                    )
+
+                    OutlinedButton(
+                        onClick = {
+                            showSleepTimerDialog = false
+                            playerConnection.service.sleepTimer.start(-1)
+                        }
+                    ) {
+                        Text(stringResource(R.string.end_of_song))
+                    }
+                }
+            }
+        )
+    }
+
+    var showChoosePlaylistDialog by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    AddToPlaylistDialog(
+        isVisible = showChoosePlaylistDialog,
+        onAdd = { playlist ->
+            database.transaction {
+                mediaMetadata?.let {
+                    insert(it)
+                    insert(
+                        PlaylistSongMap(
+                        songId = it.id,
+                        playlistId = playlist.id,
+                        position = playlist.songCount
+                    )
+                    )
+                }
+            }
+        },
+        onDismiss = {
+            showChoosePlaylistDialog = false
+        }
+    )
+
     LaunchedEffect(playbackState) {
         if (playbackState == STATE_READY) {
             while (isActive) {
@@ -108,6 +253,73 @@ fun BottomSheetPlayer(
                 duration = playerConnection.player.duration
             }
         }
+    }
+
+    val currentFormat by playerConnection.currentFormat.collectAsState(initial = null)
+
+
+    var showDetailsDialog by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    if (showDetailsDialog) {
+        AlertDialog(
+            properties = DialogProperties(usePlatformDefaultWidth = false),
+            onDismissRequest = { showDetailsDialog = false },
+            icon = {
+                Icon(
+                    painter = painterResource(R.drawable.info),
+                    contentDescription = null
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = { showDetailsDialog = false }
+                ) {
+                    Text(stringResource(android.R.string.ok))
+                }
+            },
+            text = {
+                Column(
+                    modifier = Modifier
+                        .sizeIn(minWidth = 280.dp, maxWidth = 560.dp)
+                        .verticalScroll(rememberScrollState())
+                ) {
+                    listOf(
+                        stringResource(R.string.song_title) to mediaMetadata?.title,
+                        stringResource(R.string.song_artists) to mediaMetadata?.artists?.joinToString { it.name },
+                        stringResource(R.string.media_id) to mediaMetadata?.id,
+                        "Itag" to currentFormat?.itag?.toString(),
+                        stringResource(R.string.mime_type) to currentFormat?.mimeType,
+                        stringResource(R.string.codecs) to currentFormat?.codecs,
+                        stringResource(R.string.bitrate) to currentFormat?.bitrate?.let { "${it / 1000} Kbps" },
+                        stringResource(R.string.sample_rate) to currentFormat?.sampleRate?.let { "$it Hz" },
+                        stringResource(R.string.loudness) to currentFormat?.loudnessDb?.let { "$it dB" },
+                        stringResource(R.string.volume) to "${(playerConnection.player.volume * 100).toInt()}%",
+                        stringResource(R.string.file_size) to currentFormat?.contentLength?.let { Formatter.formatShortFileSize(context, it) }
+                    ).forEach { (label, text) ->
+                        val displayText = text ?: stringResource(R.string.unknown)
+                        Text(
+                            text = label,
+                            style = MaterialTheme.typography.labelMedium
+                        )
+                        Text(
+                            text = displayText,
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier.clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null,
+                                onClick = {
+                                    clipboardManager.setText(AnnotatedString(displayText))
+                                    Toast.makeText(context, R.string.copied, Toast.LENGTH_SHORT).show()
+                                }
+                            )
+                        )
+                        Spacer(Modifier.height(8.dp))
+                    }
+                }
+            }
+        )
     }
 
     val queueSheetState = rememberBottomSheetState(
@@ -137,24 +349,32 @@ fun BottomSheetPlayer(
                 label = "playPauseRoundness"
             )
 
-            Text(
-                text = mediaMetadata.title,
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
+
+            Row(
+                horizontalArrangement = Arrangement.Start,
                 modifier = Modifier
+                    .fillMaxWidth()
                     .padding(horizontal = PlayerHorizontalPadding)
-                    .clickable(enabled = mediaMetadata.album != null) {
-                        navController.navigate("album/${mediaMetadata.album!!.id}")
-                        state.collapseSoft()
-                    }
-            )
+            ) {
+                Text(
+                    text = mediaMetadata.title,
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier
+                        .basicMarquee()
+                        .clickable(enabled = mediaMetadata.album != null) {
+                            navController.navigate("album/${mediaMetadata.album!!.id}")
+                            state.collapseSoft()
+                        }
+                )
+            }
 
             Spacer(Modifier.height(6.dp))
 
             Row(
-                horizontalArrangement = Arrangement.Center,
+                horizontalArrangement = Arrangement.Start,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = PlayerHorizontalPadding)
@@ -182,6 +402,171 @@ fun BottomSheetPlayer(
             }
 
             Spacer(Modifier.height(12.dp))
+
+            Row(
+                horizontalArrangement = Arrangement.Start,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = PlayerHorizontalPadding)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(42.dp)
+                        .clip(RoundedCornerShape(24.dp))
+                        .background(MaterialTheme.colorScheme.secondaryContainer)
+                        .clickable {
+                            playerConnection.service.startRadioSeamlessly()
+                        }
+                ) {
+                    Image(
+                        painter = painterResource(R.drawable.radio),
+                        contentDescription = null,
+                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .size(24.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.size(12.dp))
+
+                Box(
+                    modifier = Modifier
+                        .size(42.dp)
+                        .clip(RoundedCornerShape(24.dp))
+                        .background(MaterialTheme.colorScheme.secondaryContainer)
+                        .clickable {
+                            if (download?.state == Download.STATE_COMPLETED) {
+                                DownloadService.sendRemoveDownload(
+                                    context,
+                                    ExoDownloadService::class.java,
+                                    mediaMetadata.id,
+                                    false
+                                )
+                            } else {
+                                database.transaction {
+                                    insert(mediaMetadata)
+                                }
+                                val downloadRequest = DownloadRequest
+                                    .Builder(mediaMetadata.id, mediaMetadata.id.toUri())
+                                    .setCustomCacheKey(mediaMetadata.id)
+                                    .setData(mediaMetadata.title.toByteArray())
+                                    .build()
+                                DownloadService.sendAddDownload(
+                                    context,
+                                    ExoDownloadService::class.java,
+                                    downloadRequest,
+                                    false
+                                )
+                            }
+                        }
+                ) {
+                    Image(
+                        painter = painterResource(if (download?.state == Download.STATE_COMPLETED) R.drawable.offline else R.drawable.download),
+                        contentDescription = null,
+                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .size(24.dp)
+                    )
+                }
+
+
+                Spacer(modifier = Modifier.size(12.dp))
+
+                Box(
+                    modifier = Modifier
+                        .size(42.dp)
+                        .clip(RoundedCornerShape(24.dp))
+                        .background(MaterialTheme.colorScheme.secondaryContainer)
+                        .clickable {
+                            showChoosePlaylistDialog = true
+                        }
+                ) {
+                    Image(
+                        painter = painterResource(R.drawable.playlist_add),
+                        contentDescription = null,
+                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .size(24.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.size(12.dp))
+
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .size(42.dp)
+                        .clip(RoundedCornerShape(24.dp))
+                        .background(MaterialTheme.colorScheme.secondaryContainer)
+                        .clickable {
+                            val intent = Intent().apply {
+                                action = Intent.ACTION_SEND
+                                type = "text/plain"
+                                putExtra(
+                                    Intent.EXTRA_TEXT,
+                                    "https://music.youtube.com/watch?v=${mediaMetadata.id}"
+                                )
+                            }
+                            context.startActivity(Intent.createChooser(intent, null))
+                        }
+                ) {
+                    AnimatedContent(
+                        label = "sleepTimer",
+                        targetState = sleepTimerEnabled
+                    ) { sleepTimerEnabled ->
+                        if (sleepTimerEnabled) {
+                            Text(
+                                text = makeTimeString(sleepTimerTimeLeft),
+                                style = MaterialTheme.typography.labelLarge,
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(50))
+                                    .clickable(onClick = playerConnection.service.sleepTimer::clear)
+                            )
+                        } else {
+                            IconButton(onClick = { showSleepTimerDialog = true }) {
+                                Icon(
+                                    painter = painterResource(R.drawable.bedtime),
+                                    contentDescription = null
+                                )
+                            }
+                        }
+                    }
+                }
+                
+                Spacer(modifier = Modifier.weight(1f))
+
+
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .size(42.dp)
+                        .clip(RoundedCornerShape(24.dp))
+                        .background(MaterialTheme.colorScheme.secondaryContainer)
+                        .clickable {
+                            menuState.show {
+                                PlayerMenu(
+                                    mediaMetadata = mediaMetadata,
+                                    navController = navController,
+                                    playerBottomSheetState = state,
+                                    onShowDetailsDialog = { showDetailsDialog = true },
+                                    onDismiss = menuState::dismiss
+                                )
+                            }
+                        }
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.more_horiz),
+                        contentDescription = null
+                    )
+                }
+            }
+
+
+            Spacer(Modifier.height(6.dp))
 
             Slider(
                 value = (sliderPosition ?: position).toFloat(),
@@ -221,7 +606,7 @@ fun BottomSheetPlayer(
                 )
             }
 
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(6.dp))
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -291,20 +676,15 @@ fun BottomSheetPlayer(
                     )
                 }
 
+
                 Box(modifier = Modifier.weight(1f)) {
-                    ResizableIconButton(
-                        icon = when (repeatMode) {
-                            REPEAT_MODE_OFF, REPEAT_MODE_ALL -> R.drawable.repeat
-                            REPEAT_MODE_ONE -> R.drawable.repeat_one
-                            else -> throw IllegalStateException()
-                        },
-                        modifier = Modifier
-                            .size(32.dp)
-                            .padding(4.dp)
-                            .align(Alignment.Center)
-                            .alpha(if (repeatMode == REPEAT_MODE_OFF) 0.5f else 1f),
-                        onClick = playerConnection.player::toggleRepeatMode
-                    )
+                    IconButton(onClick = { showLyrics = !showLyrics }) {
+                        Icon(
+                            painter = painterResource(R.drawable.lyrics),
+                            contentDescription = null,
+                            modifier = Modifier.alpha(if (showLyrics) 1f else 0.5f)
+                        )
+                    }
                 }
             }
         }

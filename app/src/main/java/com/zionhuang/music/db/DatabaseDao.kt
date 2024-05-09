@@ -1,13 +1,45 @@
 package com.zionhuang.music.db
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.RawQuery
+import androidx.room.Transaction
+import androidx.room.Update
+import androidx.room.Upsert
 import androidx.sqlite.db.SupportSQLiteQuery
 import com.zionhuang.innertube.models.SongItem
 import com.zionhuang.innertube.pages.AlbumPage
 import com.zionhuang.innertube.pages.ArtistPage
-import com.zionhuang.music.constants.*
-import com.zionhuang.music.db.entities.*
+import com.zionhuang.music.constants.AlbumSortType
+import com.zionhuang.music.constants.ArtistSongSortType
+import com.zionhuang.music.constants.ArtistSortType
+import com.zionhuang.music.constants.PlaylistSortType
+import com.zionhuang.music.constants.SongSortType
+import com.zionhuang.music.db.entities.Album
+import com.zionhuang.music.db.entities.AlbumArtistMap
+import com.zionhuang.music.db.entities.AlbumEntity
+import com.zionhuang.music.db.entities.AlbumWithSongs
+import com.zionhuang.music.db.entities.Artist
+import com.zionhuang.music.db.entities.ArtistEntity
+import com.zionhuang.music.db.entities.Event
+import com.zionhuang.music.db.entities.EventWithSong
+import com.zionhuang.music.db.entities.FormatEntity
+import com.zionhuang.music.db.entities.LyricsEntity
+import com.zionhuang.music.db.entities.Playlist
+import com.zionhuang.music.db.entities.PlaylistEntity
+import com.zionhuang.music.db.entities.PlaylistSong
+import com.zionhuang.music.db.entities.PlaylistSongMap
+import com.zionhuang.music.db.entities.RelatedSongMap
+import com.zionhuang.music.db.entities.SearchHistory
+import com.zionhuang.music.db.entities.Song
+import com.zionhuang.music.db.entities.SongAlbumMap
+import com.zionhuang.music.db.entities.SongArtistMap
+import com.zionhuang.music.db.entities.SongEntity
 import com.zionhuang.music.extensions.reversed
+import com.zionhuang.music.extensions.toMediaItem
 import com.zionhuang.music.extensions.toSQLiteQuery
 import com.zionhuang.music.models.MediaMetadata
 import com.zionhuang.music.models.toMediaMetadata
@@ -145,18 +177,88 @@ interface DatabaseDao {
 
     @Transaction
     @Query(
+"""
+                SELECT
+                    song.*
+                FROM
+                    (
+                        SELECT
+                            n.songId AS eid,
+                            SUM(playTime) AS oldPlayTime,
+                            newPlayTime
+                        FROM
+                            event
+                        JOIN
+                            (
+                              SELECT
+                                songId,
+                                SUM(playTime) AS newPlayTime
+                              FROM
+                                event
+                            WHERE
+                                timestamp > (:now - 86400000 * 30 * 1)
+                              GROUP BY
+                                songId
+                              ORDER BY
+                               newPlayTime
+                            ) as n
+                        ON event.songId = n.songId
+                        WHERE
+                            timestamp < (:now - 86400000 * 30 * 1)
+                        GROUP BY
+                            n.songId
+                        ORDER BY
+                            oldPlayTime
+                    ) AS t
+                JOIN song on song.id = t.eid
+                WHERE 0.2 * t.oldPlayTime > t.newPlayTime
+                LIMIT 100
+
         """
-        SELECT *
+    )
+    fun forgottenFavorites(now: Long = System.currentTimeMillis()) : Flow<List<Song>>
+
+    @Transaction
+    @Query(
+    """
+        SELECT
+            song.*
+        FROM
+            event
+        JOIN
+            song ON event.songId = song.id
+        WHERE
+            event.timestamp > (:now - 86400000 * 7 * 2)
+        GROUP BY
+            song.albumId
+        HAVING
+            song.albumId IS NOT NULL
+        ORDER BY
+            sum(event.playTime) DESC
+        LIMIT :limit
+        OFFSET :offset
+        
+        """
+    )
+    fun getRecommendationAlbum(now: Long = System.currentTimeMillis(), limit: Int = 5, offset: Int = 0) : Flow<List<Song>>
+
+    @Transaction
+    @Query(
+        """
+        SELECT song.*
         FROM song
-        WHERE id IN (SELECT songId
+        JOIN (SELECT songId
                      FROM event
                      WHERE timestamp > :fromTimeStamp
                      GROUP BY songId
                      ORDER BY SUM(playTime) DESC
                      LIMIT :limit)
+        ON song.id = songId
+        LIMIT :limit
+        OFFSET :offset
     """
     )
-    fun mostPlayedSongs(fromTimeStamp: Long, limit: Int = 6): Flow<List<Song>>
+    fun mostPlayedSongs(fromTimeStamp: Long, limit: Int = 6, offset: Int = 0): Flow<List<Song>>
 
     @Transaction
     @Query(
@@ -164,9 +266,9 @@ interface DatabaseDao {
         SELECT artist.*,
                (SELECT COUNT(1)
                 FROM song_artist_map
-                         JOIN song ON song_artist_map.songId = song.id
+                         JOIN event ON song_artist_map.songId = event.songId
                 WHERE artistId = artist.id
-                  AND song.inLibrary IS NOT NULL) AS songCount
+                  AND timestamp > :fromTimeStamp) AS songCount
         FROM artist
                  JOIN(SELECT artistId, SUM(songTotalPlayTime) AS totalPlayTime
                       FROM song_artist_map
@@ -177,11 +279,12 @@ interface DatabaseDao {
                                     ON song_artist_map.songId = e.songId
                       GROUP BY artistId
                       ORDER BY totalPlayTime DESC
-                      LIMIT :limit)
+                      LIMIT :limit
+                      OFFSET :offset)
                      ON artist.id = artistId
     """
     )
-    fun mostPlayedArtists(fromTimeStamp: Long, limit: Int = 6): Flow<List<Artist>>
+    fun mostPlayedArtists(fromTimeStamp: Long, limit: Int = 6, offset: Int = 0): Flow<List<Artist>>
 
     @Transaction
     @Query(
@@ -211,6 +314,35 @@ interface DatabaseDao {
     @Transaction
     @Query("SELECT * FROM song")
     fun allSongs(): Flow<List<Song>>
+
+    @Transaction
+    @Query(
+        """
+        SELECT DISTINCT artist.*,
+               (SELECT COUNT(1)
+                FROM song_artist_map
+                         JOIN event ON song_artist_map.songId = event.songId
+                WHERE artistId = artist.id) AS songCount
+        FROM artist
+                 LEFT JOIN(SELECT artistId, SUM(songTotalPlayTime) AS totalPlayTime
+                      FROM song_artist_map
+                               JOIN (SELECT songId, SUM(playTime) AS songTotalPlayTime
+                                     FROM event
+                                     GROUP BY songId) AS e
+                                    ON song_artist_map.songId = e.songId
+                      GROUP BY artistId
+                      ORDER BY totalPlayTime DESC) AS artistTotalPlayTime
+                     ON artist.id = artistId
+                     OR artist.bookmarkedAt IS NOT NULL
+                     ORDER BY 
+                      CASE 
+                        WHEN artistTotalPlayTime.artistId IS NULL THEN 1 
+                        ELSE 0 
+                      END, 
+                      artistTotalPlayTime.totalPlayTime DESC
+    """
+    )
+    fun allArtistsByPlayTime(): Flow<List<Artist>>
 
     @Query("SELECT * FROM format WHERE id = :id")
     fun format(id: String?): Flow<FormatEntity?>
@@ -449,7 +581,7 @@ interface DatabaseDao {
     fun searchSongs(query: String, previewSize: Int = Int.MAX_VALUE): Flow<List<Song>>
 
     @Transaction
-    @Query("SELECT *, (SELECT COUNT(1) FROM song_artist_map JOIN song ON song_artist_map.songId = song.id WHERE artistId = artist.id AND song.inLibrary IS NOT NULL) AS songCount FROM artist WHERE name LIKE '%' || :query || '%'  AND bookmarkedAt IS NOT NULL LIMIT :previewSize")
+    @Query("SELECT *, (SELECT COUNT(1) FROM song_artist_map JOIN song ON song_artist_map.songId = song.id WHERE artistId = artist.id AND song.inLibrary IS NOT NULL) AS songCount FROM artist WHERE name LIKE '%' || :query || '%' AND songCount > 0 LIMIT :previewSize")
     fun searchArtists(query: String, previewSize: Int = Int.MAX_VALUE): Flow<List<Artist>>
 
     @Transaction
@@ -501,7 +633,7 @@ interface DatabaseDao {
     @Query("SELECT * FROM artist WHERE name = :name")
     fun artistByName(name: String): ArtistEntity?
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(song: SongEntity): Long
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)

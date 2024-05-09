@@ -31,6 +31,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -48,6 +50,7 @@ import com.zionhuang.music.constants.PlaylistSortDescendingKey
 import com.zionhuang.music.constants.PlaylistSortType
 import com.zionhuang.music.constants.PlaylistSortTypeKey
 import com.zionhuang.music.constants.PlaylistViewTypeKey
+import com.zionhuang.music.db.entities.Playlist
 import com.zionhuang.music.db.entities.PlaylistEntity
 import com.zionhuang.music.ui.component.HideOnScrollFAB
 import com.zionhuang.music.ui.component.LocalMenuState
@@ -59,15 +62,18 @@ import com.zionhuang.music.ui.menu.PlaylistMenu
 import com.zionhuang.music.utils.rememberEnumPreference
 import com.zionhuang.music.utils.rememberPreference
 import com.zionhuang.music.viewmodels.LibraryPlaylistsViewModel
+import java.util.UUID
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun LibraryPlaylistsScreen(
     navController: NavController,
+    filterContent: @Composable () -> Unit,
     viewModel: LibraryPlaylistsViewModel = hiltViewModel(),
 ) {
     val menuState = LocalMenuState.current
     val database = LocalDatabase.current
+    val haptic = LocalHapticFeedback.current
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -76,6 +82,27 @@ fun LibraryPlaylistsScreen(
     val (sortDescending, onSortDescendingChange) = rememberPreference(PlaylistSortDescendingKey, true)
 
     val playlists by viewModel.allPlaylists.collectAsState()
+
+    val topSize by viewModel.topValue.collectAsState(initial = 50)
+    val likedPlaylist = Playlist(
+        playlist = PlaylistEntity(id = UUID.randomUUID().toString(), name = "Liked"),
+        songCount = 0,
+        thumbnails = emptyList()
+    )
+
+    val downloadPlaylist = Playlist(
+        playlist = PlaylistEntity(id = UUID.randomUUID().toString(), name = "Offline"),
+        songCount = 0,
+        thumbnails = emptyList()
+    )
+
+    val topSizeInt = topSize.toString().toInt()
+
+    val topPlaylist = Playlist(
+        playlist = PlaylistEntity(id = UUID.randomUUID().toString(), name = "My Top $topSize"),
+        songCount = 0,
+        thumbnails = emptyList()
+    )
 
     val lazyListState = rememberLazyListState()
     val lazyGridState = rememberLazyGridState()
@@ -157,10 +184,67 @@ fun LibraryPlaylistsScreen(
                     contentPadding = LocalPlayerAwareWindowInsets.current.asPaddingValues()
                 ) {
                     item(
+                        key = "filter",
+                        contentType = CONTENT_TYPE_HEADER
+                    ) {
+                        filterContent()
+                    }
+
+                    item(
                         key = "header",
                         contentType = CONTENT_TYPE_HEADER
                     ) {
                         headerContent()
+                    }
+
+
+                    item(
+                        key = "likedPlaylist",
+                        contentType = { CONTENT_TYPE_PLAYLIST }
+                    ) {
+                        PlaylistListItem(
+                            playlist = likedPlaylist,
+                            autoPlaylist = true,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    navController.navigate("auto_playlist/liked")
+                                }
+                                .animateItemPlacement()
+                        )
+                    }
+
+
+                    item(
+                        key = "downloadedPlaylist",
+                        contentType = { CONTENT_TYPE_PLAYLIST }
+                    ) {
+                        PlaylistListItem(
+                            playlist = downloadPlaylist,
+                            autoPlaylist = true,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    navController.navigate("auto_playlist/downloaded")
+                                }
+                                .animateItemPlacement()
+                        )
+                    }
+
+                    item(
+                        key = "TopPlaylist",
+                        contentType = { CONTENT_TYPE_PLAYLIST }
+                    ) {
+                        PlaylistListItem(
+                            playlist = topPlaylist,
+                            autoPlaylist = true,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    navController.navigate("top_playlist/$topSize")
+                                }
+                                .animateItemPlacement()
+                        )
                     }
 
                     items(
@@ -214,11 +298,76 @@ fun LibraryPlaylistsScreen(
                     contentPadding = LocalPlayerAwareWindowInsets.current.asPaddingValues()
                 ) {
                     item(
+                        key = "filter",
+                        span = { GridItemSpan(maxLineSpan) },
+                        contentType = CONTENT_TYPE_HEADER
+                    ) {
+                        filterContent()
+                    }
+
+                    item(
                         key = "header",
                         span = { GridItemSpan(maxLineSpan) },
                         contentType = CONTENT_TYPE_HEADER
                     ) {
                         headerContent()
+                    }
+
+                    item(
+                        key = "likedPlaylist",
+                        contentType = { CONTENT_TYPE_PLAYLIST }
+                    ) {
+                        PlaylistGridItem(
+                            playlist = likedPlaylist,
+                            fillMaxWidth = true,
+                            autoPlaylist = true,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .combinedClickable(
+                                    onClick = {
+                                        navController.navigate("auto_playlist/liked")
+                                    },
+                                )
+                                .animateItemPlacement()
+                        )
+                    }
+
+                    item(
+                        key = "downloadedPlaylist",
+                        contentType = { CONTENT_TYPE_PLAYLIST }
+                    ) {
+                        PlaylistGridItem(
+                            playlist = downloadPlaylist,
+                            fillMaxWidth = true,
+                            autoPlaylist = true,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .combinedClickable(
+                                    onClick = {
+                                        navController.navigate("auto_playlist/downloaded")
+                                    },
+                                )
+                                .animateItemPlacement()
+                        )
+                    }
+
+                    item(
+                        key = "TopPlaylist",
+                        contentType = { CONTENT_TYPE_PLAYLIST }
+                    ) {
+                        PlaylistGridItem(
+                            playlist = topPlaylist,
+                            fillMaxWidth = true,
+                            autoPlaylist = true,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .combinedClickable(
+                                    onClick = {
+                                        navController.navigate("top_playlist/$topSize")
+                                    },
+                                )
+                                .animateItemPlacement()
+                        )
                     }
 
                     items(
@@ -236,6 +385,7 @@ fun LibraryPlaylistsScreen(
                                         navController.navigate("local_playlist/${playlist.id}")
                                     },
                                     onLongClick = {
+                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                         menuState.show {
                                             PlaylistMenu(
                                                 playlist = playlist,

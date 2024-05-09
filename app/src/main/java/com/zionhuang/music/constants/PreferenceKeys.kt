@@ -4,6 +4,8 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 val DynamicThemeKey = booleanPreferencesKey("dynamicTheme")
 val DarkModeKey = stringPreferencesKey("darkMode")
@@ -46,11 +48,10 @@ val PlaylistSortTypeKey = stringPreferencesKey("playlistSortType")
 val PlaylistSortDescendingKey = booleanPreferencesKey("playlistSortDescending")
 val ArtistSongSortTypeKey = stringPreferencesKey("artistSongSortType")
 val ArtistSongSortDescendingKey = booleanPreferencesKey("artistSongSortDescending")
+val MixSortTypeKey = stringPreferencesKey("mixSortType")
+val MixSortDescendingKey = booleanPreferencesKey("albumSortDescending")
 
-val SongFilterKey = stringPreferencesKey("songFilter")
-val ArtistFilterKey = stringPreferencesKey("artistFilter")
 val ArtistViewTypeKey = stringPreferencesKey("artistViewType")
-val AlbumFilterKey = stringPreferencesKey("albumFilter")
 val AlbumViewTypeKey = stringPreferencesKey("albumViewType")
 val PlaylistViewTypeKey = stringPreferencesKey("playlistViewType")
 
@@ -89,17 +90,24 @@ enum class PlaylistSortType {
     CREATE_DATE, NAME, SONG_COUNT
 }
 
-enum class SongFilter {
-    LIBRARY, LIKED, DOWNLOADED
+enum class MixSortType {
+    CREATE_DATE, NAME
 }
 
-enum class ArtistFilter {
-    LIBRARY, LIKED
+enum class MyTopFilter {
+    ALL_TIME, DAY, WEEK, MONTH, YEAR;
+
+    fun toTimeMillis(): Long =
+        when (this) {
+            DAY -> LocalDateTime.now().minusDays(1).toInstant(ZoneOffset.UTC).toEpochMilli()
+            WEEK -> LocalDateTime.now().minusWeeks(1).toInstant(ZoneOffset.UTC).toEpochMilli()
+            MONTH -> LocalDateTime.now().minusMonths(1).toInstant(ZoneOffset.UTC).toEpochMilli()
+            YEAR -> LocalDateTime.now().minusMonths(12).toInstant(ZoneOffset.UTC).toEpochMilli()
+            ALL_TIME -> 0
+        }
 }
 
-enum class AlbumFilter {
-    LIBRARY, LIKED
-}
+val TopSize = stringPreferencesKey("topSize")
 
 val ShowLyricsKey = booleanPreferencesKey("showLyrics")
 val LyricsTextPositionKey = stringPreferencesKey("lyricsTextPosition")

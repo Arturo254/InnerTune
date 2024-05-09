@@ -20,6 +20,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -36,12 +38,14 @@ import com.zionhuang.music.playback.queues.YouTubeQueue
 import com.zionhuang.music.ui.component.AlbumGridItem
 import com.zionhuang.music.ui.component.ArtistGridItem
 import com.zionhuang.music.ui.component.ChipsRow
+import com.zionhuang.music.ui.component.IconButton
 import com.zionhuang.music.ui.component.LocalMenuState
 import com.zionhuang.music.ui.component.NavigationTitle
 import com.zionhuang.music.ui.component.SongListItem
 import com.zionhuang.music.ui.menu.AlbumMenu
 import com.zionhuang.music.ui.menu.ArtistMenu
 import com.zionhuang.music.ui.menu.SongMenu
+import com.zionhuang.music.ui.utils.backToMain
 import com.zionhuang.music.viewmodels.StatsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -51,6 +55,7 @@ fun StatsScreen(
     viewModel: StatsViewModel = hiltViewModel(),
 ) {
     val menuState = LocalMenuState.current
+    val haptic = LocalHapticFeedback.current
     val playerConnection = LocalPlayerConnection.current ?: return
     val isPlaying by playerConnection.isPlaying.collectAsState()
     val mediaMetadata by playerConnection.mediaMetadata.collectAsState()
@@ -116,18 +121,30 @@ fun StatsScreen(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .combinedClickable {
-                        if (song.id == mediaMetadata?.id) {
-                            playerConnection.player.togglePlayPause()
-                        } else {
-                            playerConnection.playQueue(
-                                YouTubeQueue(
-                                    endpoint = WatchEndpoint(song.id),
-                                    preloadItem = song.toMediaMetadata()
+                    .combinedClickable (
+                        onClick = {
+                            if (song.id == mediaMetadata?.id) {
+                                playerConnection.player.togglePlayPause()
+                            } else {
+                                playerConnection.playQueue(
+                                    YouTubeQueue(
+                                        endpoint = WatchEndpoint(song.id),
+                                        preloadItem = song.toMediaMetadata()
+                                    )
                                 )
-                            )
+                            }
+                        },
+                        onLongClick = {
+                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                            menuState.show {
+                                SongMenu(
+                                    originalSong = song,
+                                    navController = navController,
+                                    onDismiss = menuState::dismiss
+                                )
+                            }
                         }
-                    }
+                    )
                     .animateItemPlacement()
             )
         }
@@ -154,6 +171,7 @@ fun StatsScreen(
                                     navController.navigate("artist/${artist.id}")
                                 },
                                 onLongClick = {
+                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                     menuState.show {
                                         ArtistMenu(
                                             originalArtist = artist,
@@ -195,6 +213,7 @@ fun StatsScreen(
                                         navController.navigate("album/${album.id}")
                                     },
                                     onLongClick = {
+                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                         menuState.show {
                                             AlbumMenu(
                                                 originalAlbum = album,
@@ -215,7 +234,10 @@ fun StatsScreen(
     TopAppBar(
         title = { Text(stringResource(R.string.stats)) },
         navigationIcon = {
-            IconButton(onClick = navController::navigateUp) {
+            IconButton(
+                onClick = navController::navigateUp,
+                onLongClick = navController::backToMain
+            ) {
                 Icon(
                     painterResource(R.drawable.arrow_back),
                     contentDescription = null

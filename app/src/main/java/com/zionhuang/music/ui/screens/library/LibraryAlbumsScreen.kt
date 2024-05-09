@@ -26,9 +26,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -38,7 +39,6 @@ import com.zionhuang.music.R
 import com.zionhuang.music.constants.*
 import com.zionhuang.music.ui.component.AlbumGridItem
 import com.zionhuang.music.ui.component.AlbumListItem
-import com.zionhuang.music.ui.component.ChipsRow
 import com.zionhuang.music.ui.component.LocalMenuState
 import com.zionhuang.music.ui.component.SortHeader
 import com.zionhuang.music.ui.menu.AlbumMenu
@@ -50,14 +50,15 @@ import com.zionhuang.music.viewmodels.LibraryAlbumsViewModel
 @Composable
 fun LibraryAlbumsScreen(
     navController: NavController,
+    filterContent: @Composable () -> Unit,
     viewModel: LibraryAlbumsViewModel = hiltViewModel(),
 ) {
     val menuState = LocalMenuState.current
+    val haptic = LocalHapticFeedback.current
     val playerConnection = LocalPlayerConnection.current ?: return
     val isPlaying by playerConnection.isPlaying.collectAsState()
     val mediaMetadata by playerConnection.mediaMetadata.collectAsState()
 
-    var filter by rememberEnumPreference(AlbumFilterKey, AlbumFilter.LIBRARY)
     var viewType by rememberEnumPreference(AlbumViewTypeKey, LibraryViewType.GRID)
     val (sortType, onSortTypeChange) = rememberEnumPreference(AlbumSortTypeKey, AlbumSortType.CREATE_DATE)
     val (sortDescending, onSortDescendingChange) = rememberPreference(AlbumSortDescendingKey, true)
@@ -66,41 +67,10 @@ fun LibraryAlbumsScreen(
 
     val coroutineScope = rememberCoroutineScope()
 
-    val filterContent = @Composable {
-        Row {
-            ChipsRow(
-                chips = listOf(
-                    AlbumFilter.LIBRARY to stringResource(R.string.filter_library),
-                    AlbumFilter.LIKED to stringResource(R.string.filter_liked)
-                ),
-                currentValue = filter,
-                onValueUpdate = { filter = it },
-                modifier = Modifier.weight(1f)
-            )
-
-            IconButton(
-                onClick = {
-                    viewType = viewType.toggle()
-                },
-                modifier = Modifier.padding(end = 6.dp)
-            ) {
-                Icon(
-                    painter = painterResource(
-                        when (viewType) {
-                            LibraryViewType.LIST -> R.drawable.list
-                            LibraryViewType.GRID -> R.drawable.grid_view
-                        }
-                    ),
-                    contentDescription = null
-                )
-            }
-        }
-    }
-
     val headerContent = @Composable {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(horizontal = 16.dp)
+            modifier = Modifier.padding(start = 16.dp)
         ) {
             SortHeader(
                 sortType = sortType,
@@ -127,6 +97,23 @@ fun LibraryAlbumsScreen(
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.secondary
             )
+
+            IconButton(
+                onClick = {
+                    viewType = viewType.toggle()
+                },
+                modifier = Modifier.padding(start = 6.dp, end = 6.dp)
+            ) {
+                Icon(
+                    painter = painterResource(
+                        when (viewType) {
+                            LibraryViewType.LIST -> R.drawable.list
+                            LibraryViewType.GRID -> R.drawable.grid_view
+                        }
+                    ),
+                    contentDescription = null
+                )
+            }
         }
     }
 
@@ -228,6 +215,7 @@ fun LibraryAlbumsScreen(
                                         navController.navigate("album/${album.id}")
                                     },
                                     onLongClick = {
+                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                         menuState.show {
                                             AlbumMenu(
                                                 originalAlbum = album,

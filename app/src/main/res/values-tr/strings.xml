@@ -267,4 +267,5 @@
     <string name="new_version_available">Yeni sürüm mevcut</string>
     <string name="translation_models">Translation Models</string>
     <string name="clear_translation_models">Clear translation models</string>
+    <string name="betafun">Funciones Beta</string>
 </resources>

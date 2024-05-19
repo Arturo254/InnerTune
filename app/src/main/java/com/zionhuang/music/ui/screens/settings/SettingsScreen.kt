@@ -1,14 +1,21 @@
 package com.zionhuang.music.ui.screens.settings
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
@@ -27,13 +34,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.NotificationCompat.Style
 import androidx.navigation.NavController
 import com.zionhuang.music.BuildConfig
 import com.zionhuang.music.LocalPlayerAwareWindowInsets
@@ -48,15 +60,88 @@ fun SettingsScreen(
     latestVersion: Long,
     navController: NavController,
     scrollBehavior: TopAppBarScrollBehavior,
+    cornerRadius: Dp = 16.dp
 ) {
     val uriHandler = LocalUriHandler.current
     var isBetaFunEnabled by remember { mutableStateOf(false) }
+    val backgroundImages = listOf(
+        R.drawable.cardbg1,
+        R.drawable.cardbg2,
+        R.drawable.cardbg3,
+        R.drawable.cardbg4,
+        R.drawable.cardbg5,
+        R.drawable.cardbg6,
+        R.drawable.cardbg7,
+        R.drawable.cardbg8,
+        R.drawable.cardbg9,
+
+
+
+
+        // ...
+    )
+    var currentImageIndex by remember { mutableStateOf(0) }
+
+
+    fun changeBackgroundImage(offset: Int) {
+        currentImageIndex = (currentImageIndex + offset + backgroundImages.size) % backgroundImages.size
+    }
+
 
     Column(
         modifier = Modifier
             .windowInsetsPadding(LocalPlayerAwareWindowInsets.current)
             .verticalScroll(rememberScrollState())
     ) {
+        Box(
+            modifier = Modifier
+                .height(220.dp)
+                .clip(RoundedCornerShape(cornerRadius))
+                .background(color = Color.Transparent)
+                .pointerInput(Unit) {
+                    detectHorizontalDragGestures { _, dragAmount ->
+                        if (dragAmount > 100f) {
+                            changeBackgroundImage(-1) // Change Image to previous
+                        } else if (dragAmount < -100f) {
+                            changeBackgroundImage(1) // Change Image to next
+                        }
+                    }
+                }
+        ) {
+
+
+            Image(
+
+                painter = painterResource(id = backgroundImages[currentImageIndex]),
+                contentDescription = "Image Background",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize(),
+
+            )
+            Icon(
+                painter = painterResource(R.drawable.launcher_monochrome),
+                contentDescription = null,
+                tint = Color.White,
+                modifier = Modifier.padding( 1.dp, 20.dp, 12.dp),
+
+            )
+
+            Text(
+                text = "InnerTune",
+                color = Color.White,
+                fontSize = 26.sp,
+                modifier = Modifier.padding(16.dp),
+                style = MaterialTheme.typography.titleSmall,
+
+            )
+
+
+
+
+        }
+
+
+
         PreferenceEntry(
             title = { Text(stringResource(R.string.appearance)) },
             icon = { Icon(painterResource(R.drawable.palette), null) },
@@ -95,16 +180,19 @@ fun SettingsScreen(
         PreferenceEntry(
             title = { Text(stringResource(R.string.betafun)) },
             icon = { Icon(painterResource(R.drawable.funbeta), null) },
+
             trailingContent = {
 
                 Switch(
                     checked = isBetaFunEnabled,
                     onCheckedChange = { isBetaFunEnabled = it },
+
                     modifier = Modifier.padding(end = 16.dp)
                 )
 
             },
             onClick = {
+
 
             }
         )
@@ -115,23 +203,29 @@ fun SettingsScreen(
 
         )
         if (latestVersion > BuildConfig.VERSION_CODE) {
-            PreferenceEntry(
-                title = {
-                    Text(
-                        text = stringResource(R.string.new_version_available),
-                    )
-                },
-                icon = {
-                    BadgedBox(
-                        badge = { Badge() }
+            @Composable
+            fun VersionUpdateCard(
+                newVersionAvailable: Boolean,
+                onClickAction: () -> Unit
+            ) {
+                if (newVersionAvailable) {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(100.dp)
                     ) {
-                        Icon(painterResource(R.drawable.update), null)
+                        PreferenceEntry(
+                            title = { Text(text = stringResource(R.string.new_version_available)) },
+                            icon = {
+                                BadgedBox(badge = { Badge() }) {
+                                    Icon(painterResource(R.drawable.update), null)
+                                }
+                            },
+                            onClick = onClickAction
+                        )
                     }
-                },
-                onClick = {
-                    uriHandler.openUri("https://github.com/Arturo254/InnerTune/releases/latest")
                 }
-            )
+            }
         }
         Spacer(Modifier.height(25.dp))
         Card(
@@ -162,7 +256,7 @@ fun SettingsScreen(
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(100.dp),
+                .height(120.dp),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surface,
             ),

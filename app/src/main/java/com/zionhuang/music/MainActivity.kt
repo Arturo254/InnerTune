@@ -13,18 +13,53 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
-import androidx.compose.animation.core.*
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.add
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.AlertDialogDefaults
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.contentColorFor
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -64,21 +99,45 @@ import com.valentinilk.shimmer.LocalShimmerTheme
 import com.zionhuang.innertube.YouTube
 import com.zionhuang.innertube.models.SongItem
 import com.zionhuang.innertube.models.WatchEndpoint
-import com.zionhuang.music.constants.*
+import com.zionhuang.music.constants.AppBarHeight
+import com.zionhuang.music.constants.DarkModeKey
+import com.zionhuang.music.constants.DefaultOpenTabKey
+import com.zionhuang.music.constants.DynamicThemeKey
+import com.zionhuang.music.constants.MiniPlayerHeight
+import com.zionhuang.music.constants.NavigationBarAnimationSpec
+import com.zionhuang.music.constants.NavigationBarHeight
+import com.zionhuang.music.constants.PauseSearchHistoryKey
+import com.zionhuang.music.constants.PureBlackKey
+import com.zionhuang.music.constants.SearchSource
+import com.zionhuang.music.constants.SearchSourceKey
 import com.zionhuang.music.db.MusicDatabase
 import com.zionhuang.music.db.entities.SearchHistory
-import com.zionhuang.music.extensions.*
+import com.zionhuang.music.extensions.toEnum
 import com.zionhuang.music.models.toMediaMetadata
 import com.zionhuang.music.playback.DownloadUtil
 import com.zionhuang.music.playback.MusicService
 import com.zionhuang.music.playback.MusicService.MusicBinder
 import com.zionhuang.music.playback.PlayerConnection
 import com.zionhuang.music.playback.queues.YouTubeQueue
-import com.zionhuang.music.ui.component.*
+import com.zionhuang.music.ui.component.BottomSheetMenu
+import com.zionhuang.music.ui.component.IconButton
+import com.zionhuang.music.ui.component.LocalMenuState
+import com.zionhuang.music.ui.component.SearchBar
+import com.zionhuang.music.ui.component.rememberBottomSheetState
 import com.zionhuang.music.ui.component.shimmer.ShimmerTheme
 import com.zionhuang.music.ui.menu.YouTubeSongMenu
 import com.zionhuang.music.ui.player.BottomSheetPlayer
-import com.zionhuang.music.ui.screens.*
+import com.zionhuang.music.ui.screens.AccountScreen
+import com.zionhuang.music.ui.screens.AlbumScreen
+import com.zionhuang.music.ui.screens.ExploreScreen
+import com.zionhuang.music.ui.screens.HistoryScreen
+import com.zionhuang.music.ui.screens.HomeScreen
+import com.zionhuang.music.ui.screens.LoginScreen
+import com.zionhuang.music.ui.screens.MoodAndGenresScreen
+import com.zionhuang.music.ui.screens.NewReleaseScreen
+import com.zionhuang.music.ui.screens.Screens
+import com.zionhuang.music.ui.screens.StatsScreen
+import com.zionhuang.music.ui.screens.YouTubeBrowseScreen
 import com.zionhuang.music.ui.screens.artist.ArtistItemsScreen
 import com.zionhuang.music.ui.screens.artist.ArtistScreen
 import com.zionhuang.music.ui.screens.artist.ArtistSongsScreen
@@ -90,8 +149,20 @@ import com.zionhuang.music.ui.screens.playlist.TopPlaylistScreen
 import com.zionhuang.music.ui.screens.search.LocalSearchScreen
 import com.zionhuang.music.ui.screens.search.OnlineSearchResult
 import com.zionhuang.music.ui.screens.search.OnlineSearchScreen
-import com.zionhuang.music.ui.screens.settings.*
-import com.zionhuang.music.ui.theme.*
+import com.zionhuang.music.ui.screens.settings.AboutScreen
+import com.zionhuang.music.ui.screens.settings.AppearanceSettings
+import com.zionhuang.music.ui.screens.settings.BackupAndRestore
+import com.zionhuang.music.ui.screens.settings.ContentSettings
+import com.zionhuang.music.ui.screens.settings.DarkMode
+import com.zionhuang.music.ui.screens.settings.NavigationTab
+import com.zionhuang.music.ui.screens.settings.PlayerSettings
+import com.zionhuang.music.ui.screens.settings.PrivacySettings
+import com.zionhuang.music.ui.screens.settings.SettingsScreen
+import com.zionhuang.music.ui.screens.settings.StorageSettings
+import com.zionhuang.music.ui.theme.ColorSaver
+import com.zionhuang.music.ui.theme.DefaultThemeColor
+import com.zionhuang.music.ui.theme.InnerTuneTheme
+import com.zionhuang.music.ui.theme.extractThemeColor
 import com.zionhuang.music.ui.utils.appBarScrollBehavior
 import com.zionhuang.music.ui.utils.backToMain
 import com.zionhuang.music.ui.utils.canNavigateUp
@@ -132,7 +203,7 @@ class MainActivity : ComponentActivity() {
             playerConnection = null
         }
     }
-    var latestVersion by mutableStateOf(BuildConfig.VERSION_CODE.toLong())
+    private var latestVersion by mutableStateOf(BuildConfig.VERSION_CODE.toLong())
 
     override fun onStart() {
         super.onStart()
@@ -639,6 +710,7 @@ class MainActivity : ComponentActivity() {
                                             }
                                     )
                                     Spacer(modifier = Modifier.width(20.dp)) // Espacio horizontal entre los iconos
+
                                 },
                                 trailingIcon = {
                                     if (active) {
@@ -738,6 +810,7 @@ class MainActivity : ComponentActivity() {
                         BottomSheetPlayer(
                             state = playerBottomSheetState,
                             navController = navController
+
                         )
 
                         NavigationBar(

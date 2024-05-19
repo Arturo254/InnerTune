@@ -112,9 +112,11 @@ fun BottomSheetPlayer(
     navController: NavController,
     modifier: Modifier = Modifier,
 ) {
+
     val context = LocalContext.current
     val database = LocalDatabase.current
     val menuState = LocalMenuState.current
+
 
     val clipboardManager = LocalClipboardManager.current
 

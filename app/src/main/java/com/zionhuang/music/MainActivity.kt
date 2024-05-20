@@ -150,6 +150,7 @@ import com.zionhuang.music.ui.screens.search.LocalSearchScreen
 import com.zionhuang.music.ui.screens.search.OnlineSearchResult
 import com.zionhuang.music.ui.screens.search.OnlineSearchScreen
 import com.zionhuang.music.ui.screens.settings.AboutScreen
+import com.zionhuang.music.ui.screens.settings.Changelog
 import com.zionhuang.music.ui.screens.settings.AppearanceSettings
 import com.zionhuang.music.ui.screens.settings.BackupAndRestore
 import com.zionhuang.music.ui.screens.settings.ContentSettings
@@ -637,6 +638,9 @@ class MainActivity : ComponentActivity() {
                             }
                             composable("settings/about") {
                                 AboutScreen(navController, scrollBehavior)
+                            }
+                            composable("settings/changelog") {
+                                Changelog(navController, scrollBehavior)
                             }
                             composable("login") {
                                 LoginScreen(navController)

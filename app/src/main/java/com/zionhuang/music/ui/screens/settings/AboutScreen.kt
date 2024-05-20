@@ -80,6 +80,7 @@ fun AboutScreen(
                 .clickable { }
         )
 
+
         Row(
             verticalAlignment = Alignment.Top,
         ) {

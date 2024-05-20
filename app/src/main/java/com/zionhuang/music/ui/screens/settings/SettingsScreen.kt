@@ -3,7 +3,7 @@ package com.zionhuang.music.ui.screens.settings
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -36,7 +35,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
@@ -45,7 +43,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.app.NotificationCompat.Style
 import androidx.navigation.NavController
 import com.zionhuang.music.BuildConfig
 import com.zionhuang.music.LocalPlayerAwareWindowInsets
@@ -74,19 +71,21 @@ fun SettingsScreen(
         R.drawable.cardbg7,
         R.drawable.cardbg8,
         R.drawable.cardbg9,
-
-
-
-
-        // ...
+        R.drawable.cardbgb,
+        R.drawable.cardbgc,
+        R.drawable.cardbgd,
+        R.drawable.cardbge,
+        R.drawable.cardbgf,
+        R.drawable.cardbgg,
+        R.drawable.cardbgh,
     )
-    var currentImageIndex by remember { mutableStateOf(0) }
+
+    var currentImageIndex by remember { mutableStateOf((0..backgroundImages.lastIndex).random()) }
 
 
-    fun changeBackgroundImage(offset: Int) {
-        currentImageIndex = (currentImageIndex + offset + backgroundImages.size) % backgroundImages.size
+    fun changeBackgroundImage() {
+        currentImageIndex = (currentImageIndex + 1) % backgroundImages.size
     }
-
 
     Column(
         modifier = Modifier
@@ -98,25 +97,13 @@ fun SettingsScreen(
                 .height(220.dp)
                 .clip(RoundedCornerShape(cornerRadius))
                 .background(color = Color.Transparent)
-                .pointerInput(Unit) {
-                    detectHorizontalDragGestures { _, dragAmount ->
-                        if (dragAmount > 100f) {
-                            changeBackgroundImage(-1) // Change Image to previous
-                        } else if (dragAmount < -100f) {
-                            changeBackgroundImage(1) // Change Image to next
-                        }
-                    }
-                }
+                .clickable { changeBackgroundImage() } // Cambiar a la siguiente imagen al hacer clic
         ) {
-
-
             Image(
-
                 painter = painterResource(id = backgroundImages[currentImageIndex]),
-                contentDescription = "Image Background",
+                contentDescription = "Imagen de fondo",
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize(),
-
+                modifier = Modifier.fillMaxSize()
             )
             Icon(
                 painter = painterResource(R.drawable.launcher_monochrome),
@@ -176,6 +163,13 @@ fun SettingsScreen(
             title = { Text(stringResource(R.string.about)) },
             icon = { Icon(painterResource(R.drawable.info), null) },
             onClick = { navController.navigate("settings/about") }
+
+        )
+        PreferenceEntry(
+            title = { Text(stringResource(R.string.changelog)) },
+            icon = { Icon(painterResource(R.drawable.changelogset), null) },
+            onClick = { navController.navigate("settings/changelog") }
+
         )
         PreferenceEntry(
             title = { Text(stringResource(R.string.betafun)) },
@@ -202,31 +196,7 @@ fun SettingsScreen(
             color = MaterialTheme.colorScheme.tertiary
 
         )
-        if (latestVersion > BuildConfig.VERSION_CODE) {
-            @Composable
-            fun VersionUpdateCard(
-                newVersionAvailable: Boolean,
-                onClickAction: () -> Unit
-            ) {
-                if (newVersionAvailable) {
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(100.dp)
-                    ) {
-                        PreferenceEntry(
-                            title = { Text(text = stringResource(R.string.new_version_available)) },
-                            icon = {
-                                BadgedBox(badge = { Badge() }) {
-                                    Icon(painterResource(R.drawable.update), null)
-                                }
-                            },
-                            onClick = onClickAction
-                        )
-                    }
-                }
-            }
-        }
+
         Spacer(Modifier.height(25.dp))
         Card(
             modifier = Modifier

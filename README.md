@@ -13,9 +13,8 @@
   </a>
 </div>
 
->[!NOTE]
->
-> la aplicación original tiene 2 años sin actualización , se reescribio el codigo usando al 100% kotlin y actualizando a material Design 3
+
+![mock](https://github.com/Arturo254/InnerTune/assets/87346871/672d6022-fd69-4347-bc0f-4d78720a1f0f)
 
 ## ✨ Características
 
@@ -49,17 +48,7 @@ _Mediante CLI:_
 ./gradlew assembleDebug
 ```
 
-## ❓ Preguntas frecuentes
 
-### ¿Cómo transferir música a LastFM, LibreFM, ListenBrainz o GNU FM?
-
-Utilice otras aplicaciones de scrobbler de música. Recomendamos [Pano Scrobbler](https://play.google.com/store/apps/details?id=com.arn.scrobble).
-
-### ¿Por qué InnerTune no se muestra en Android Auto?
-
-1. Vaya a la configuración de Android Auto y toque varias veces la versión en la parte inferior para habilitar la configuración del desarrollador.
-2. En el menú de tres puntos en la parte superior derecha de la pantalla, haga clic en "Configuración de desarrollador".
-3. Habilite "Fuentes desconocidas".
 
 ## 🌐 Contribuyendo con traducciones
 
@@ -67,7 +56,7 @@ Siga las [instrucciones](https://developer.android.com/guide/topics/resources/lo
 
 ## 💰 Donar
 
-Si te gusta InnerTune, puedes enviar una donación. Las donaciones apoyarán el desarrollo, incluyendo correcciones de errores y nuevas funciones.
+Si te gusta InnerTune (fork), puedes enviar una donación. Las donaciones apoyarán el desarrollo, incluyendo correcciones de errores y nuevas funciones.
 
 © 2023 Open Source Projects, Dev: [Arturo Cervantes](https://www.paypal.com/paypalme/ArturoCervantes254)
 

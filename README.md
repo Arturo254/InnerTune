@@ -60,4 +60,7 @@ Si te gusta InnerTune (fork), puedes enviar una donación. Las donaciones apoyar
 
 © 2023 Open Source Projects, Dev: [Arturo Cervantes](https://www.paypal.com/paypalme/ArturoCervantes254)
 
+
+ https://innertune.vercel.app (alternativa web)
+
 ### TAMBIEN PUEDEES CONVERTIRTE EN SPONSOR ❤️😊

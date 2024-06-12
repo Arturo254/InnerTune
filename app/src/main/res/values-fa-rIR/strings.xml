@@ -267,5 +267,6 @@
     <string name="new_version_available">نسخه‌ی جدید دردسترس‌است</string>
     <string name="translation_models">نمونه‌های ترجمه</string>
     <string name="clear_translation_models">پاک‌کردن نمونه‌های ترجمه</string>
-    <string name="betafun">Funciones Beta</string>
+    <string name="changelog">Changelog</string>
+    <string name="betafun">Beta Features</string>
 </resources>

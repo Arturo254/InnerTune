@@ -1,29 +1,20 @@
 package com.zionhuang.music.ui.screens.settings
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.zionhuang.music.LocalPlayerAwareWindowInsets
@@ -40,20 +31,17 @@ import com.zionhuang.music.ui.utils.backToMain
 import com.zionhuang.music.utils.rememberEnumPreference
 import com.zionhuang.music.utils.rememberPreference
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppearanceSettings(
     navController: NavController,
     scrollBehavior: TopAppBarScrollBehavior,
 ) {
-
     val (dynamicTheme, onDynamicThemeChange) = rememberPreference(DynamicThemeKey, defaultValue = true)
     val (darkMode, onDarkModeChange) = rememberEnumPreference(DarkModeKey, defaultValue = DarkMode.AUTO)
     val (pureBlack, onPureBlackChange) = rememberPreference(PureBlackKey, defaultValue = false)
     val (defaultOpenTab, onDefaultOpenTabChange) = rememberEnumPreference(DefaultOpenTabKey, defaultValue = NavigationTab.HOME)
     val (lyricsPosition, onLyricsPositionChange) = rememberEnumPreference(LyricsTextPositionKey, defaultValue = LyricsPosition.CENTER)
-    val uriHandler = LocalUriHandler.current
 
     Column(
         Modifier
@@ -65,10 +53,7 @@ fun AppearanceSettings(
             icon = { Icon(painterResource(R.drawable.palette), null) },
             checked = dynamicTheme,
             onCheckedChange = onDynamicThemeChange
-
         )
-
-
         EnumListPreference(
             title = { Text(stringResource(R.string.dark_theme)) },
             icon = { Icon(painterResource(R.drawable.dark_mode), null) },
@@ -82,15 +67,12 @@ fun AppearanceSettings(
                 }
             }
         )
-
         SwitchPreference(
             title = { Text(stringResource(R.string.pure_black)) },
             icon = { Icon(painterResource(R.drawable.contrast), null) },
             checked = pureBlack,
             onCheckedChange = onPureBlackChange
         )
-
-
         EnumListPreference(
             title = { Text(stringResource(R.string.default_open_tab)) },
             icon = { Icon(painterResource(R.drawable.tab), null) },
@@ -117,13 +99,7 @@ fun AppearanceSettings(
                 }
             }
         )
-
     }
-
-
-
-
-
 
     TopAppBar(
         title = { Text(stringResource(R.string.appearance)) },

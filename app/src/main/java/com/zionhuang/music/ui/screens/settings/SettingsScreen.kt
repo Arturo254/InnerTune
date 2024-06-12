@@ -16,8 +16,6 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Badge
-import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -54,7 +52,6 @@ import com.zionhuang.music.ui.utils.backToMain
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
-    latestVersion: Long,
     navController: NavController,
     scrollBehavior: TopAppBarScrollBehavior,
     cornerRadius: Dp = 16.dp
@@ -111,7 +108,7 @@ fun SettingsScreen(
                 tint = Color.White,
                 modifier = Modifier.padding( 1.dp, 20.dp, 12.dp),
 
-            )
+                )
 
             Text(
                 text = "InnerTune",
@@ -120,7 +117,7 @@ fun SettingsScreen(
                 modifier = Modifier.padding(16.dp),
                 style = MaterialTheme.typography.titleSmall,
 
-            )
+                )
 
 
 
@@ -165,12 +162,12 @@ fun SettingsScreen(
             onClick = { navController.navigate("settings/about") }
 
         )
-        PreferenceEntry(
-            title = { Text(stringResource(R.string.changelog)) },
-            icon = { Icon(painterResource(R.drawable.changelogset), null) },
-            onClick = { navController.navigate("settings/changelog") }
+        // PreferenceEntry(
+        //    title = { Text(stringResource(R.string.changelog)) },
+          //  icon = { Icon(painterResource(R.drawable.changelogset), null) },
+            //onClick = { navController.navigate("settings/Changelog") }
 
-        )
+        // )
         PreferenceEntry(
             title = { Text(stringResource(R.string.betafun)) },
             icon = { Icon(painterResource(R.drawable.funbeta), null) },
@@ -190,24 +187,18 @@ fun SettingsScreen(
 
             }
         )
-        Text(
-            text = "Ten en cuenta que al salir se desactivara el swich por cuestiones de seguridad",
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.tertiary
 
-        )
-
-        Spacer(Modifier.height(25.dp))
         Card(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(60.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface,
-            ),
-            border = BorderStroke(1.dp, Color.Gray),
 
-        ) {
+                .fillMaxWidth()
+                .height(160.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.background,
+            ),
+            border = BorderStroke(1.dp, Color.White),
+
+            ) {
             Column(
                 modifier = Modifier.padding(17.dp),
                 verticalArrangement = Arrangement.Center
@@ -215,7 +206,40 @@ fun SettingsScreen(
 
                 Spacer(Modifier.height(3.dp))
                 Text(
-                    text = "\uD835\uDE85\uD835\uDE8E\uD835\uDE9B\uD835\uDE9C\uD835\uDE92\uD835\uDE98\uD835\uDE97 : ${BuildConfig.VERSION_NAME}",
+                    text = "In this new version, when activating the switch, the new API will be used.\n" +
+                            "Also note that it will be disabled when you exit the application",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.tertiary
+
+                )
+
+            }
+        }
+
+
+        Spacer(Modifier.height(25.dp))
+        Card(
+
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(90.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface,
+
+            ),
+            border = BorderStroke(1.dp, Color.Gray),
+            onClick = { uriHandler.openUri("https://github.com/Arturo254/InnerTune/releases/latest") }
+
+            ) {
+            Column(
+                modifier = Modifier.padding(17.dp),
+                verticalArrangement = Arrangement.Center
+            ) {
+
+                Spacer(Modifier.height(3.dp))
+                Text(
+                    text = "\uD835\uDE85\uD835\uDE8E\uD835\uDE9B\uD835\uDE9C\uD835\uDE92\uD835\uDE98\uD835\uDE97 : ${BuildConfig.VERSION_NAME} \n" +
+                            "(\uD835\uDE24\uD835\uDE2D\uD835\uDE2A\uD835\uDE24\uD835\uDE2C \uD835\uDE35\uD835\uDE30 \uD835\uDE36\uD835\uDE31\uD835\uDE25\uD835\uDE22\uD835\uDE35\uD835\uDE26)",
                     style = MaterialTheme.typography.bodyLarge.copy(fontSize = 17.sp),
                     color = MaterialTheme.colorScheme.secondary,
                 )
@@ -253,6 +277,10 @@ fun SettingsScreen(
 
             }
         }
+
+
+
+
 
 
     }

@@ -10,16 +10,17 @@ import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -97,8 +98,6 @@ fun HomeScreen(
     val homeSecondContinuation by viewModel.homeSecondContinuation.collectAsState()
     val homeThirdContinuation by viewModel.homeThirdContinuation.collectAsState()
 
-    val youtubePlaylists by viewModel.youtubePlaylists.collectAsState()
-
     val isRefreshing by viewModel.isRefreshing.collectAsState()
     val mostPlayedLazyGridState = rememberLazyGridState()
 
@@ -142,45 +141,48 @@ fun HomeScreen(
             }
 
             Column(
-                modifier = Modifier.verticalScroll(scrollState)
-            ) {
-                Spacer(Modifier.height(LocalPlayerAwareWindowInsets.current.asPaddingValues().calculateTopPadding()))
+                modifier = Modifier
+                    .verticalScroll(scrollState),
 
-                Row(
+            )
+
+            {
+                Spacer(Modifier.height(LocalPlayerAwareWindowInsets.current.asPaddingValues().calculateTopPadding()))
+                Box(
                     modifier = Modifier
                         .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Horizontal))
                         .padding(horizontal = 12.dp, vertical = 6.dp)
                         .fillMaxWidth()
+
                 ) {
-                    NavigationTile(
-                        title = stringResource(R.string.history),
-                        icon = R.drawable.history,
-                        onClick = { navController.navigate("history") },
-                        modifier = Modifier.weight(1f)
-                    )
-
-                    NavigationTile(
-                        title = stringResource(R.string.stats),
-                        icon = R.drawable.trending_up,
-                        onClick = { navController.navigate("stats") },
-                        modifier = Modifier.weight(1f)
-                    )
-                    NavigationTile(
-                        title = "Liked",
-                        icon = R.drawable.corcircu,
-                        onClick = { navController.navigate("auto_playlist/liked") },
-                        modifier = Modifier.weight(1f)
-                    )
-
-                    if (isLoggedIn) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
                         NavigationTile(
-                            title = stringResource(R.string.account),
-                            icon = R.drawable.person,
-                            onClick = {
-                                navController.navigate("account")
-                            },
+                            title = stringResource(R.string.history),
+                            icon = R.drawable.history,
+                            onClick = { navController.navigate("history") },
+                            modifier = Modifier
+                                .weight(1f)
+                        )
+
+                        NavigationTile(
+                            title = stringResource(R.string.stats),
+                            icon = R.drawable.trending_up,
+                            onClick = { navController.navigate("stats") },
                             modifier = Modifier.weight(1f)
                         )
+
+                        if (isLoggedIn) {
+                            NavigationTile(
+                                title = stringResource(R.string.account),
+                                icon = R.drawable.person,
+                                onClick = {
+                                    navController.navigate("account")
+                                },
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
                     }
                 }
 
@@ -270,45 +272,6 @@ fun HomeScreen(
                                         )
                                 )
                             }
-                        }
-                    }
-                }
-
-                if (youtubePlaylists?.isNotEmpty() == true) {
-                    NavigationTitle(
-                        title = "Your Youtube playlists",
-                        onClick = {
-                            navController.navigate("account")
-                        }
-                    )
-                    LazyRow(
-                        contentPadding = WindowInsets.systemBars
-                            .only(WindowInsetsSides.Horizontal)
-                            .asPaddingValues()
-                    ) {
-                        items(
-                            items = youtubePlaylists.orEmpty(),
-                            key = { it.id }
-                        ) { item ->
-                            YouTubeGridItem(
-                                item = item,
-                                modifier = Modifier
-                                    .combinedClickable(
-                                        onClick = {
-                                            navController.navigate("online_playlist/${item.id}")
-                                        },
-                                        onLongClick = {
-                                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                            menuState.show {
-                                                YouTubePlaylistMenu(
-                                                    playlist = item,
-                                                    coroutineScope = coroutineScope,
-                                                    onDismiss = menuState::dismiss
-                                                )
-                                            }
-                                        }
-                                    )
-                            )
                         }
                     }
                 }

@@ -267,5 +267,6 @@
     <string name="new_version_available">Nieuwe versie beschikbaar</string>
     <string name="translation_models">Vertaalmodellen</string>
     <string name="clear_translation_models">Verwijder vertaalmodellen</string>
-    <string name="betafun">Funciones Beta</string>
+    <string name="changelog">Changelog</string>
+    <string name="betafun">Beta Features</string>
 </resources>

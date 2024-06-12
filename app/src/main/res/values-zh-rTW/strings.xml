@@ -260,5 +260,6 @@
     <string name="new_version_available">發現新版本</string>
     <string name="translation_models">翻譯模型</string>
     <string name="clear_translation_models">清除翻譯模型</string>
-    <string name="betafun">Funciones Beta</string>
+    <string name="changelog">Changelog</string>
+    <string name="betafun">Beta Features</string>
 </resources>

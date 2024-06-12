@@ -285,5 +285,6 @@
     <string name="new_version_available">Dostępna nowa wersja</string>
     <string name="translation_models">Translation Models</string>
     <string name="clear_translation_models">Clear translation models</string>
-    <string name="betafun">Funciones Beta</string>
+    <string name="changelog">Changelog</string>
+    <string name="betafun">Beta Features</string>
 </resources>

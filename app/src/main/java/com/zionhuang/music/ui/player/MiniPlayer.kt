@@ -80,8 +80,9 @@ fun MiniPlayer(
             progress = (position.toFloat() / duration).coerceIn(0f, 1f),
             modifier = Modifier
                 .fillMaxWidth()
-                .height(2.dp)
+                .height(5.dp)
                 .align(Alignment.BottomCenter)
+                .clip(RoundedCornerShape(2.dp))
         )
         Row(
             verticalAlignment = Alignment.CenterVertically,

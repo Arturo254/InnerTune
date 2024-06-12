@@ -285,5 +285,6 @@
     <string name="new_version_available">Доступна новая версия</string>
     <string name="translation_models">Модели перевода</string>
     <string name="clear_translation_models">Очистить модели перевода</string>
-    <string name="betafun">Funciones Beta</string>
+    <string name="changelog">Changelog</string>
+    <string name="betafun">Beta Features</string>
 </resources>

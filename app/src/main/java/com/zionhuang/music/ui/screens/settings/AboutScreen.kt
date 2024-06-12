@@ -40,7 +40,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.zionhuang.music.BuildConfig
@@ -48,7 +47,6 @@ import com.zionhuang.music.LocalPlayerAwareWindowInsets
 import com.zionhuang.music.R
 import com.zionhuang.music.ui.component.IconButton
 import com.zionhuang.music.ui.utils.backToMain
-
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -355,8 +353,6 @@ fun AboutScreen(
 
 
 
-
-
     }
 
     TopAppBar(
@@ -375,3 +371,4 @@ fun AboutScreen(
         scrollBehavior = scrollBehavior
     )
 }
+

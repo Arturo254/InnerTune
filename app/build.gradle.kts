@@ -13,15 +13,14 @@ plugins {
 android {
     namespace = "com.zionhuang.music"
     compileSdk = 34
-    buildToolsVersion = "34.0.0"
+    buildToolsVersion = "30.0.3"
     defaultConfig {
         applicationId = "com.zionhuang.music"
         minSdk = 24
         targetSdk = 34
         versionCode = 22
-        versionName = "0.6.1"
+        versionName = "0.6.3"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
     }
     buildTypes {
         release {
@@ -82,7 +81,6 @@ ksp {
 }
 
 dependencies {
-
     implementation(libs.guava)
     implementation(libs.coroutines.guava)
     implementation(libs.concurrent.futures)
@@ -119,6 +117,7 @@ dependencies {
     implementation(libs.media3.okhttp)
 
     implementation(libs.room.runtime)
+    implementation(libs.okhttp)
     annotationProcessor(libs.room.compiler)
     ksp(libs.room.compiler)
     implementation(libs.room.ktx)
@@ -135,7 +134,6 @@ dependencies {
     coreLibraryDesugaring(libs.desugaring)
 
     implementation(libs.timber)
-
 
 
 }

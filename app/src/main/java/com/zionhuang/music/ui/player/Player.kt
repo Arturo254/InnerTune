@@ -112,11 +112,9 @@ fun BottomSheetPlayer(
     navController: NavController,
     modifier: Modifier = Modifier,
 ) {
-
     val context = LocalContext.current
     val database = LocalDatabase.current
     val menuState = LocalMenuState.current
-
 
     val clipboardManager = LocalClipboardManager.current
 
@@ -207,6 +205,8 @@ fun BottomSheetPlayer(
                         onValueChange = { sleepTimerValue = it },
                         valueRange = 5f..120f,
                         steps = (120 - 5) / 5 - 1,
+                        modifier = Modifier
+
                     )
 
                     OutlinedButton(

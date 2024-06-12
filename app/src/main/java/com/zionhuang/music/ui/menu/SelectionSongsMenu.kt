@@ -20,7 +20,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
-import androidx.media3.common.Timeline
 import androidx.media3.exoplayer.offline.Download
 import androidx.media3.exoplayer.offline.DownloadRequest
 import androidx.media3.exoplayer.offline.DownloadService
@@ -31,7 +30,6 @@ import com.zionhuang.music.R
 import com.zionhuang.music.db.entities.PlaylistSongMap
 import com.zionhuang.music.db.entities.Song
 import com.zionhuang.music.extensions.toMediaItem
-import com.zionhuang.music.models.MediaMetadata
 import com.zionhuang.music.playback.ExoDownloadService
 import com.zionhuang.music.playback.queues.ListQueue
 import com.zionhuang.music.ui.component.DefaultDialog
@@ -43,8 +41,7 @@ import com.zionhuang.music.ui.component.GridMenuItem
 fun SelectionSongMenu(
     songSelection: List<Song>,
     onDismiss: () -> Unit,
-    clearAction: () -> Unit,
-    songPosition: List<PlaylistSongMap>? = emptyList(),
+    clearAction: () -> Unit
 ){
     val context = LocalContext.current
     val database = LocalDatabase.current
@@ -149,13 +146,13 @@ fun SelectionSongMenu(
             title = R.string.play
         ) {
             onDismiss()
+            clearAction()
             playerConnection.playQueue(
                 ListQueue(
                     title = "Selection",
                     items = songSelection.map { it.toMediaItem() }
                 )
             )
-            clearAction()
         }
 
         GridMenuItem(
@@ -163,13 +160,13 @@ fun SelectionSongMenu(
             title = R.string.shuffle
         ) {
             onDismiss()
+            clearAction()
             playerConnection.playQueue(
                 ListQueue(
                     title = "Selection",
                     items = songSelection.shuffled().map { it.toMediaItem() }
                 )
             )
-            clearAction()
         }
 
         GridMenuItem(
@@ -177,8 +174,8 @@ fun SelectionSongMenu(
             title = R.string.add_to_queue
         ) {
             onDismiss()
-            playerConnection.addToQueue(songSelection.map { it.toMediaItem() })
             clearAction()
+            playerConnection.addToQueue(songSelection.map { it.toMediaItem() })
         }
 
         GridMenuItem(
@@ -195,225 +192,6 @@ fun SelectionSongMenu(
                     val downloadRequest = DownloadRequest.Builder(song.id, song.id.toUri())
                         .setCustomCacheKey(song.id)
                         .setData(song.song.title.toByteArray())
-                        .build()
-                    DownloadService.sendAddDownload(
-                        context,
-                        ExoDownloadService::class.java,
-                        downloadRequest,
-                        false
-                    )
-                }
-            },
-            onRemoveDownload = {
-                showRemoveDownloadDialog = true
-            }
-        )
-
-        GridMenuItem(
-            icon = if (songSelection.all{it.song.liked}) R.drawable.favorite else R.drawable.favorite_border,
-            title = R.string.like_all
-        ) {
-            val allLiked = songSelection.all {
-                it.song.liked
-            }
-            onDismiss()
-            database.query {
-                songSelection.forEach { song ->
-                    if ((!allLiked && !song.song.liked) || allLiked)
-                        update(song.song.toggleLike())
-                }
-            }
-        }
-
-        if (songPosition != null) {
-            GridMenuItem(
-                icon = R.drawable.delete,
-                title = R.string.delete
-            ) {
-                onDismiss()
-                var i = 0
-                database.query {
-                    songPosition.forEach {cur ->
-                        move(cur.playlistId, cur.position - i, Int.MAX_VALUE)
-                        delete(cur.copy(position = Int.MAX_VALUE))
-                        i++
-                    }
-                }
-                clearAction()
-            }
-        }
-    }
-}
-
-@Composable
-fun SelectionMediaMetadataMenu(
-    songSelection: List<MediaMetadata>,
-    currentItems: List<Timeline.Window>,
-    onDismiss: () -> Unit,
-    clearAction: () -> Unit,
-){
-    val context = LocalContext.current
-    val database = LocalDatabase.current
-    val downloadUtil = LocalDownloadUtil.current
-    val playerConnection = LocalPlayerConnection.current ?: return
-
-    var downloadState by remember {
-        mutableStateOf(Download.STATE_STOPPED)
-    }
-
-    LaunchedEffect(songSelection) {
-        if (songSelection.isEmpty()) return@LaunchedEffect
-        downloadUtil.downloads.collect { downloads ->
-            downloadState =
-                if (songSelection.all { downloads[it.id]?.state == Download.STATE_COMPLETED })
-                    Download.STATE_COMPLETED
-                else if (songSelection.all {
-                        downloads[it.id]?.state == Download.STATE_QUEUED
-                                || downloads[it.id]?.state == Download.STATE_DOWNLOADING
-                                || downloads[it.id]?.state == Download.STATE_COMPLETED
-                    })
-                    Download.STATE_DOWNLOADING
-                else
-                    Download.STATE_STOPPED
-        }
-    }
-
-    var showChoosePlaylistDialog by rememberSaveable {
-        mutableStateOf(false)
-    }
-
-    AddToPlaylistDialog(
-        isVisible = showChoosePlaylistDialog,
-        onAdd = { playlist ->
-            database.query {
-                songSelection.forEach { song ->
-                    insert(
-                        PlaylistSongMap(
-                            songId = song.id,
-                            playlistId = playlist.id,
-                            position = playlist.songCount
-                        )
-                    )
-                }
-            }
-        },
-        onDismiss = { showChoosePlaylistDialog = false }
-    )
-
-    var showRemoveDownloadDialog by remember {
-        mutableStateOf(false)
-    }
-
-    if (showRemoveDownloadDialog) {
-        DefaultDialog(
-            onDismiss = { showRemoveDownloadDialog = false },
-            content = {
-                Text(
-                    text = stringResource(R.string.remove_download_playlist_confirm, "selection"),
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.padding(horizontal = 18.dp)
-                )
-            },
-            buttons = {
-                TextButton(
-                    onClick = {
-                        showRemoveDownloadDialog = false
-                    }
-                ) {
-                    Text(text = stringResource(android.R.string.cancel))
-                }
-
-                TextButton(
-                    onClick = {
-                        showRemoveDownloadDialog = false
-                        songSelection.forEach { song ->
-                            DownloadService.sendRemoveDownload(
-                                context,
-                                ExoDownloadService::class.java,
-                                song.id,
-                                false
-                            )
-                        }
-                    }
-                ) {
-                    Text(text = stringResource(android.R.string.ok))
-                }
-            }
-        )
-    }
-
-    GridMenu (
-        contentPadding = PaddingValues(
-            start = 8.dp,
-            top = 8.dp,
-            end = 8.dp,
-            bottom = 8.dp + WindowInsets.systemBars.asPaddingValues().calculateBottomPadding()
-        )
-    ){
-        GridMenuItem(
-            icon = R.drawable.delete,
-            title = R.string.delete
-        ) {
-            onDismiss()
-            var i = 0
-            currentItems.forEach { cur ->
-                playerConnection.player.removeMediaItem(cur.firstPeriodIndex - i)
-                i++
-            }
-            clearAction()
-        }
-
-        GridMenuItem(
-            icon = R.drawable.play,
-            title = R.string.play
-        ) {
-            onDismiss()
-            playerConnection.playQueue(
-                ListQueue(
-                    title = "Selection",
-                    items = songSelection.map { it.toMediaItem() }
-                )
-            )
-            clearAction()
-        }
-
-        GridMenuItem(
-            icon = R.drawable.shuffle,
-            title = R.string.shuffle
-        ) {
-            onDismiss()
-            playerConnection.playQueue(
-                ListQueue(
-                    title = "Selection",
-                    items = songSelection.shuffled().map { it.toMediaItem() }
-                )
-            )
-            clearAction()
-        }
-
-        GridMenuItem(
-            icon = R.drawable.queue_music,
-            title = R.string.add_to_queue
-        ) {
-            onDismiss()
-            playerConnection.addToQueue(songSelection.map { it.toMediaItem() })
-            clearAction()
-        }
-
-        GridMenuItem(
-            icon = R.drawable.playlist_add,
-            title = R.string.add_to_playlist
-        ) {
-            showChoosePlaylistDialog = true
-        }
-
-        DownloadGridMenu(
-            state = downloadState,
-            onDownload = {
-                songSelection.forEach { song ->
-                    val downloadRequest = DownloadRequest.Builder(song.id, song.id.toUri())
-                        .setCustomCacheKey(song.id)
-                        .setData(song.title.toByteArray())
                         .build()
                     DownloadService.sendAddDownload(
                         context,

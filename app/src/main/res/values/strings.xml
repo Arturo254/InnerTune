@@ -12,6 +12,7 @@
         <item quantity="other">%d selected</item>
     </plurals>
 
+
     <!-- Home -->
     <string name="history">History</string>
     <string name="stats">Stats</string>
@@ -281,4 +282,11 @@
     <string name="top_length">My Top list length</string>
     <string name="changelog">Changelog</string>
     <string name="betafun">Beta Features</string>
+    <string name="Donate">Donate</string>
+    <string name="BetaDescription">In this new version, when activating the switch, the new API will be used.                             Also note that it will be disabled when you exit the application</string>
+    <string name="Telegramchanel">Official Channel</string>
+    <string name="TelegramDescription">You can join the official channel to report bugs or stay up to date with updates</string>
+    <string name="your_likes">your likes</string>
+    <string name="select">select</string>
+    <string name="like_all">like all</string>
 </resources>

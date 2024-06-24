@@ -14,6 +14,7 @@
     </plurals>
 
     <!-- Home -->
+    <string name="explore">Explorar</string>
     <string name="history">History</string>
     <string name="stats">Stats</string>
     <string name="mood_and_genres">Mood and Genres</string>
@@ -23,6 +24,9 @@
     <string name="new_release_albums">New release álbuns</string>
 
     <!-- History -->
+    <string name="forgotten_favorites">esquecidos favoritos</string>
+    <string name="similar_to">Igual a</string>
+    <string name="keep_listening">Continue ouvindo</string>
     <string name="today">Today</string>
     <string name="yesterday">Yesterday</string>
     <string name="this_week">This week</string>
@@ -60,6 +64,8 @@
     <string name="playlist_is_empty">The playlist is empty</string>
 
     <!-- Button -->
+    <string name="remove_download_playlist_confirm">remover lista de reprodução de download confirmar</string>
+    <string name="delete_playlist_confirm">excluir lista de reprodução confirmar</string>
     <string name="retry">Tentar novamente</string>
     <string name="radio">Rádio</string>
     <string name="shuffle">Aleatório</string>
@@ -278,4 +284,12 @@
     <string name="clear_translation_models">Clear translation models</string>
     <string name="changelog">Changelog</string>
     <string name="betafun">Recursos beta</string>
+    <string name="Donate">Doar</string>
+    <string name="app_name">InnerTune</string>
+    <string name="BetaDescription">Nesta nova versão, ao ativar o switch, será utilizada a nova API. Observe também que ele será desativado quando você sair do aplicativo</string>
+    <string name="Telegramchanel">Canal Oficial</string>
+    <string name="TelegramDescription">Você pode entrar no canal oficial para relatar bugs ou manter-se atualizado com atualizações</string>
+    <string name="your_likes">Suas curtidas</string>
+    <string name="Security">Segurança</string>
+    <string name="Privacy">Política de privacidade ❯</string>
 </resources>

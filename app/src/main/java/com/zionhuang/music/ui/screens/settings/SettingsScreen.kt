@@ -31,6 +31,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -59,6 +60,7 @@ fun SettingsScreen(
     val uriHandler = LocalUriHandler.current
     var isBetaFunEnabled by remember { mutableStateOf(false) }
     val backgroundImages = listOf(
+
         R.drawable.cardbg1,
         R.drawable.cardbg2,
         R.drawable.cardbg3,
@@ -75,9 +77,18 @@ fun SettingsScreen(
         R.drawable.cardbgf,
         R.drawable.cardbgg,
         R.drawable.cardbgh,
-    )
+
+
+
+
+
+        )
 
     var currentImageIndex by remember { mutableStateOf((0..backgroundImages.lastIndex).random()) }
+
+
+
+
 
 
     fun changeBackgroundImage() {
@@ -95,12 +106,17 @@ fun SettingsScreen(
                 .clip(RoundedCornerShape(cornerRadius))
                 .background(color = Color.Transparent)
                 .clickable { changeBackgroundImage() } // Cambiar a la siguiente imagen al hacer clic
+
+
         ) {
             Image(
                 painter = painterResource(id = backgroundImages[currentImageIndex]),
                 contentDescription = "Imagen de fondo",
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .fillMaxSize()
+                // Aplica un efecto de desenfoque al fondo : .blur( 1.dp)
+
             )
             Icon(
                 painter = painterResource(R.drawable.launcher_monochrome),
@@ -160,14 +176,13 @@ fun SettingsScreen(
             title = { Text(stringResource(R.string.about)) },
             icon = { Icon(painterResource(R.drawable.info), null) },
             onClick = { navController.navigate("settings/about") }
-
         )
-        // PreferenceEntry(
-        //    title = { Text(stringResource(R.string.changelog)) },
-          //  icon = { Icon(painterResource(R.drawable.changelogset), null) },
-            //onClick = { navController.navigate("settings/Changelog") }
+        PreferenceEntry(
+            title = { Text(stringResource(R.string.Donate)) },
+            icon = { Icon(painterResource(R.drawable.donatebuy), null) },
+            onClick = { uriHandler.openUri("https://buymeacoffee.com/arturocervantes") }
+        )
 
-        // )
         PreferenceEntry(
             title = { Text(stringResource(R.string.betafun)) },
             icon = { Icon(painterResource(R.drawable.funbeta), null) },
@@ -205,15 +220,9 @@ fun SettingsScreen(
             ) {
 
                 Spacer(Modifier.height(3.dp))
-                Text(
-                    text = "In this new version, when activating the switch, the new API will be used.\n" +
-                            "Also note that it will be disabled when you exit the application",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.tertiary
-
-                )
-
+                Text(stringResource(R.string.BetaDescription))
             }
+
         }
 
 
@@ -226,11 +235,11 @@ fun SettingsScreen(
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surface,
 
-            ),
+                ),
             border = BorderStroke(1.dp, Color.Gray),
             onClick = { uriHandler.openUri("https://github.com/Arturo254/InnerTune/releases/latest") }
 
-            ) {
+        ) {
             Column(
                 modifier = Modifier.padding(17.dp),
                 verticalArrangement = Arrangement.Center
@@ -250,7 +259,7 @@ fun SettingsScreen(
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(120.dp),
+                .height(126.dp),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surface,
             ),
@@ -262,18 +271,10 @@ fun SettingsScreen(
                 verticalArrangement = Arrangement.Center
             ) {
                 Icon(contentDescription = null, painter = painterResource(R.drawable.telegram))
-                Text(
-                    text = "Canal Oficial :",
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-
-                Text(
-                    text = "Aqui puedes reportar problemas y sugerencias de la aplicacion ",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
+                Text(stringResource(R.string.Telegramchanel))
+                Spacer(Modifier.height(4.dp))
+                Text(stringResource(R.string.TelegramDescription)
+                    , color = MaterialTheme.colorScheme.error,)
 
             }
         }

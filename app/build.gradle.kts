@@ -13,13 +13,13 @@ plugins {
 android {
     namespace = "com.zionhuang.music"
     compileSdk = 34
-    buildToolsVersion = "30.0.3"
+    buildToolsVersion = "34.0.0"
     defaultConfig {
         applicationId = "com.zionhuang.music"
         minSdk = 24
         targetSdk = 34
-        versionCode = 22
-        versionName = "0.6.3"
+        versionCode = 23
+        versionName = "0.6.6"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -117,7 +117,6 @@ dependencies {
     implementation(libs.media3.okhttp)
 
     implementation(libs.room.runtime)
-    implementation(libs.okhttp)
     annotationProcessor(libs.room.compiler)
     ksp(libs.room.compiler)
     implementation(libs.room.ktx)
@@ -134,6 +133,4 @@ dependencies {
     coreLibraryDesugaring(libs.desugaring)
 
     implementation(libs.timber)
-
-
 }

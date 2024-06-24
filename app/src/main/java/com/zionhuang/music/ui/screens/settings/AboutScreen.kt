@@ -42,6 +42,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
 import com.zionhuang.music.BuildConfig
 import com.zionhuang.music.LocalPlayerAwareWindowInsets
 import com.zionhuang.music.R
@@ -184,7 +185,7 @@ fun AboutScreen(
                 containerColor = MaterialTheme.colorScheme.surface,
             ),
             border = BorderStroke(1.dp, Color.Gray),
-            onClick = { uriHandler.openUri("https://innertunne.netlify.app/pdp") } // Reemplaza con el enlace correcto de WhatsApp si deseas
+            onClick = { uriHandler.openUri("https://innertunne.netlify.app/pdp") }
         ) {
             Column(
                 modifier = Modifier.padding(16.dp),
@@ -329,26 +330,209 @@ fun AboutScreen(
                 )
 
             }
+
+
+        }
+        Spacer(Modifier.height(20.dp))
+        Row(
+            verticalAlignment = Alignment.Top,
+        ) {
+            Text(
+                text = "Contributors:",
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(top = 8.dp, bottom = 4.dp)
+            )
+
+
+        }
+// Users:
+
+        // Arturo254
+        Spacer(Modifier.height(20.dp))
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(100.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface,
+            ),
+            border = BorderStroke(1.dp, Color.Gray),
+            onClick = { uriHandler.openUri("https://github.com/Arturo254") }
+        ) {
+            Row(
+                modifier = Modifier.padding(26.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    painter = rememberAsyncImagePainter(
+                        model = "https://avatars.githubusercontent.com/u/87346871?v=4",
+
+                        ),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .background(
+                            MaterialTheme.colorScheme.surfaceColorAtElevation(
+                                NavigationBarDefaults.Elevation
+                            )
+                        )
+                        .clickable { }
+                )
+
+                Text(
+                    text = "  \uD835\uDE08\uD835\uDE33\uD835\uDE35\uD835\uDE36\uD835\uDE33\uD835\uDE30254:",
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Spacer(modifier = Modifier.height(4.dp))  // Espacio entre el nombre y otros elementos
+
+                Text(
+                    text = "   \uD835\uDE47\uD835\uDE5A\uD835\uDE56\uD835\uDE59 \uD835\uDE3F\uD835\uDE5A\uD835\uDE6B\uD835\uDE5A\uD835\uDE61\uD835\uDE64\uD835\uDE65\uD835\uDE5A\uD835\uDE67",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+
+
+            }
+
+
         }
 
+        // Tom Bulled
+
+        Spacer(Modifier.height(20.dp))
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(100.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface,
+            ),
+            border = BorderStroke(1.dp, Color.Gray),
+            onClick = { uriHandler.openUri("https://github.com/tombulled") }
+        ) {
+            Row(
+                modifier = Modifier.padding(26.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    painter = rememberAsyncImagePainter(
+                        model = "https://avatars.githubusercontent.com/u/26026015?v=4",
+
+                        ),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .background(
+                            MaterialTheme.colorScheme.surfaceColorAtElevation(
+                                NavigationBarDefaults.Elevation
+                            )
+                        )
+                        .clickable { }
+                )
+
+                Text(
+                    text = "  \uD835\uDE1B\uD835\uDE30\uD835\uDE2E \uD835\uDE09\uD835\uDE36\uD835\uDE2D\uD835\uDE2D\uD835\uDE26\uD835\uDE25:",
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Spacer(modifier = Modifier.height(4.dp))  // Espacio entre el nombre y otros elementos
+
+                Text(
+                    text = " \uD835\uDE3C\uD835\uDE4B\uD835\uDE44 \uD835\uDE54\uD835\uDE64\uD835\uDE6A\uD835\uDE69\uD835\uDE6A\uD835\uDE57\uD835\uDE5A \uD835\uDE48\uD835\uDE6A\uD835\uDE68\uD835\uDE5E\uD835\uDE58",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+
+
+            }
+
+
+        }
+        Spacer(Modifier.height(20.dp))
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(100.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface,
+            ),
+            border = BorderStroke(1.dp, Color.Gray),
+            onClick = { uriHandler.openUri("https://github.com/Fabito02/") }
+        ) {
+            Row(
+                modifier = Modifier.padding(26.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    painter = rememberAsyncImagePainter(
+                        model = "https://avatars.githubusercontent.com/u/138934847?v=4",
+
+                        ),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.surfaceColorAtElevation(NavigationBarDefaults.Elevation))
+                        .clickable { }
+                )
+
+                Text(
+                    text = "  \uD835\uDE0D\uD835\uDE22\uD835\uDE23\uD835\uDE2A\uD835\uDE35\uD835\uDE3002",
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Spacer(modifier = Modifier.height(4.dp))  // Espacio entre el nombre y otros elementos
+
+                Text(
+                    text = "  \uD835\uDE4F\uD835\uDE67\uD835\uDE56\uD835\uDE59\uD835\uDE6A\uD835\uDE58\uD835\uDE69\uD835\uDE64\uD835\uDE67 (\uD835\uDE4B\uD835\uDE67-\uD835\uDE3D\uD835\uDE4D)",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
 
 
 
+            }
 
 
+        }
 
+        // Contribution by:
 
+        Spacer(Modifier.height(20.dp))
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(100.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface,
+            ),
+            border = BorderStroke(1.dp, Color.Gray),
+            onClick = { uriHandler.openUri("https://github.com/Arturo254/InnerTune/new/master") } // Reemplaza con el enlace correcto de WhatsApp si deseas
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.Center
+            ) {
 
+                Text(
+                    text = "\uD835\uDDD6\uD835\uDDFC\uD835\uDDFB\uD835\uDE01\uD835\uDDFF\uD835\uDDF6\uD835\uDDEF\uD835\uDE02\uD835\uDE01\uD835\uDDF2?",
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
 
+                Text(
+                    text = "\uD835\uDE10\uD835\uDE27 \uD835\uDE3A\uD835\uDE30\uD835\uDE36 \uD835\uDE38\uD835\uDE22\uD835\uDE2F\uD835\uDE35 \uD835\uDE35\uD835\uDE30 \uD835\uDE24\uD835\uDE30\uD835\uDE2F\uD835\uDE35\uD835\uDE33\uD835\uDE2A\uD835\uDE23\uD835\uDE36\uD835\uDE35\uD835\uDE26, \uD835\uDE24\uD835\uDE2D\uD835\uDE2A\uD835\uDE24\uD835\uDE2C \uD835\uDE29\uD835\uDE26\uD835\uDE33\uD835\uDE26 ❯ ",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
 
-
-
-
-
-
-
-
-
+            }
+        }
 
 
 

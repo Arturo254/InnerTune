@@ -144,7 +144,7 @@ fun HomeScreen(
                 modifier = Modifier
                     .verticalScroll(scrollState),
 
-            )
+                )
 
             {
                 Spacer(Modifier.height(LocalPlayerAwareWindowInsets.current.asPaddingValues().calculateTopPadding()))
@@ -170,6 +170,12 @@ fun HomeScreen(
                             title = stringResource(R.string.stats),
                             icon = R.drawable.trending_up,
                             onClick = { navController.navigate("stats") },
+                            modifier = Modifier.weight(1f)
+                        )
+                        NavigationTile(
+                            title = stringResource(R.string.your_likes),
+                            icon = R.drawable.corcircu,
+                            onClick = { navController.navigate("auto_playlist/liked") },
                             modifier = Modifier.weight(1f)
                         )
 
@@ -355,8 +361,8 @@ fun HomeScreen(
                                                         }
                                                     }
                                                 ),
-                                                isActive = keepListeningSongs!![it - 10].song.id == mediaMetadata?.id,
-                                                isPlaying = isPlaying,
+                                            isActive = keepListeningSongs!![it - 10].song.id == mediaMetadata?.id,
+                                            isPlaying = isPlaying,
                                         )
                                     }
                                 }

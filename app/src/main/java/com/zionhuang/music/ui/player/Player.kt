@@ -205,8 +205,6 @@ fun BottomSheetPlayer(
                         onValueChange = { sleepTimerValue = it },
                         valueRange = 5f..120f,
                         steps = (120 - 5) / 5 - 1,
-                        modifier = Modifier
-
                     )
 
                     OutlinedButton(

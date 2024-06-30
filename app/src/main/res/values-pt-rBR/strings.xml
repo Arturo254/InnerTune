@@ -290,6 +290,21 @@
     <string name="Telegramchanel">Canal Oficial</string>
     <string name="TelegramDescription">Você pode entrar no canal oficial para relatar bugs ou manter-se atualizado com atualizações</string>
     <string name="your_likes">Suas curtidas</string>
-    <string name="Security">Segurança</string>
     <string name="Privacy">Política de privacidade ❯</string>
+    <string name="privacy_policy">segurança</string>
+    <string name="license">Licença</string>
+    <string name="license_text">LICENÇA PÚBLICA GERAL GNU ❯</string>
+    <string name="code">Código fonte</string>
+    <string name="code_text">Acesse o código-fonte do aplicativo ❯</string>
+    <string name="bugs">Problemas</string>
+    <string name="bugs_text">Bugs ou problemas? Relate-os aqui ❯</string>
+    <string name="help">Ajuda</string>
+    <string name="help_text">Entre em contato com o desenvolvedor ❯</string>
+    <string name="contributors">Contribuidores</string>
+    <string name="contribution">contribuir ?</string>
+    <string name="contribution_text">Se quiser contribuir, clique aqui</string>
+    <string name="sort_by_last_updated">classificar pela última atualização</string>
+    <string name="default_lib_chips">chips lib padrão</string>
+    <string name="set_quick_picks">definir escolhas rápidas</string>
+    <string name="last_song_listened">última música ouvida</string>
 </resources>

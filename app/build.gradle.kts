@@ -11,15 +11,15 @@ plugins {
 }
 
 android {
-    namespace = "com.zionhuang.music"
+    namespace = "com.malopieds.innertune"
     compileSdk = 34
     buildToolsVersion = "34.0.0"
     defaultConfig {
-        applicationId = "com.zionhuang.music"
+        applicationId = "com.Arturo254.innertune"
         minSdk = 24
         targetSdk = 34
-        versionCode = 23
-        versionName = "0.6.6"
+        versionCode = 24
+        versionName = "0.5.7"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

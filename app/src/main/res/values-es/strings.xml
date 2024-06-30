@@ -290,5 +290,21 @@
     <string name="Telegramchanel">Canal Oficial</string>
     <string name="TelegramDescription">Puedes unirte al canal oficial para informar errores o mantenerte actualizado con las actualizaciones.</string>
     <string name="your_likes">Tus Me Gusta</string>
-    <string name="Security">Seguridad</string>
+    <string name="Privacy">Política de Privacidad ❯</string>
+    <string name="privacy_policy">security</string>
+    <string name="license">Licencia</string>
+    <string name="license_text">LICENCIA PÚBLICA GENERAL GNU ❯</string>
+    <string name="code">Codigo Fuente</string>
+    <string name="code_text">Accede al codigo fuente de la app  ❯</string>
+    <string name="bugs">Asuntos</string>
+    <string name="bugs_text">"Bugs O Problemas?. Reportalos Aqui ❯ "</string>
+    <string name="help">Ayuda</string>
+    <string name="help_text">Contacto con el Dev ❯</string>
+    <string name="contributors">Colaboradores</string>
+    <string name="contribution">contribuir ?</string>
+    <string name="contribution_text">Si quieres contribuir da click aqui</string>
+    <string name="sort_by_last_updated">ordenar por última actualización</string>
+    <string name="default_lib_chips">chips de biblioteca predeterminados</string>
+    <string name="set_quick_picks">establecer selecciones rápidas</string>
+    <string name="last_song_listened">última canción escuchada</string>
 </resources>

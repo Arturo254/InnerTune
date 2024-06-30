@@ -180,6 +180,7 @@
         <item quantity="one">1 minute</item>
         <item quantity="other">%d minutes</item>
     </plurals>
+    <plurals name="n_elements">n_elements</plurals>
     <string name="error_no_stream">No stream available</string>
     <string name="error_no_internet">No network connection</string>
     <string name="error_timeout">Timeout</string>
@@ -289,4 +290,26 @@
     <string name="your_likes">your likes</string>
     <string name="select">select</string>
     <string name="like_all">like all</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="license">License</string>
+    <string name="license_text">GNU GENERAL PUBLIC LICENSE  ❯</string>
+    <string name="code">Source code</string>
+    <string name="code_text">Access the source code of the app ❯</string>
+    <string name="bugs">Issues</string>
+    <string name="bugs_text">Bugs or Problems? Report them here ❯</string>
+    <string name="help">Help</string>
+    <string name="help_text">Contact Dev ❯</string>
+    <string name="Privacy">Privacy Policy ❯</string>
+    <string name="contributors">Contributors</string>
+    <string name="contribution">contribution ?</string>
+    <string name="contribution_text">If you want to contribute, click here</string>
+    <string name="liked">liked</string>
+    <string name="offline">offline</string>
+    <string name="your_ytb_playlists">your YT playlist</string>
+    <string name="my_top">my top</string>
+    <string name="sort_by_last_updated">sort by last updated</string>
+    <string name="proxy">proxy</string>
+    <string name="default_lib_chips">default lib chips</string>
+    <string name="set_quick_picks">set quick picks</string>
+    <string name="last_song_listened">last song listened</string>
 </resources>

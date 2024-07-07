@@ -140,8 +140,8 @@ fun AutoPlaylistScreen(
                     Download.STATE_COMPLETED
                 } else if (songs?.all {
                         downloads[it.song.id]?.state == Download.STATE_QUEUED ||
-                            downloads[it.song.id]?.state == Download.STATE_DOWNLOADING ||
-                            downloads[it.song.id]?.state == Download.STATE_COMPLETED
+                                downloads[it.song.id]?.state == Download.STATE_DOWNLOADING ||
+                                downloads[it.song.id]?.state == Download.STATE_COMPLETED
                     } == true
                 ) {
                     Download.STATE_DOWNLOADING
@@ -223,9 +223,9 @@ fun AutoPlaylistScreen(
                                     contentDescription = null,
                                     contentScale = ContentScale.Crop,
                                     modifier =
-                                        Modifier
-                                            .size(AlbumThumbnailSize)
-                                            .clip(RoundedCornerShape(ThumbnailCornerRadius)),
+                                    Modifier
+                                        .size(AlbumThumbnailSize)
+                                        .clip(RoundedCornerShape(ThumbnailCornerRadius)),
                                 )
 
                                 Column(
@@ -241,11 +241,11 @@ fun AutoPlaylistScreen(
 
                                     Text(
                                         text =
-                                            pluralStringResource(
-                                                R.plurals.n_song,
-                                                songs!!.size,
-                                                songs!!.size,
-                                            ),
+                                        pluralStringResource(
+                                            R.plurals.n_song,
+                                            songs!!.size,
+                                            songs!!.size,
+                                        ),
                                         style = MaterialTheme.typography.titleMedium,
                                         fontWeight = FontWeight.Normal,
                                     )
@@ -401,15 +401,15 @@ fun AutoPlaylistScreen(
                                 ) {
                                     Icon(
                                         painter =
-                                            painterResource(
-                                                if (count ==
-                                                    wrappedSongs?.size
-                                                ) {
-                                                    R.drawable.deselect
-                                                } else {
-                                                    R.drawable.select_all
-                                                },
-                                            ),
+                                        painterResource(
+                                            if (count ==
+                                                wrappedSongs?.size
+                                            ) {
+                                                R.drawable.deselect
+                                            } else {
+                                                R.drawable.select_all
+                                            },
+                                        ),
                                         contentDescription = null,
                                     )
                                 }
@@ -501,37 +501,37 @@ fun AutoPlaylistScreen(
                             },
                             isSelected = songWrapper.isSelected && selection,
                             modifier =
-                                Modifier
-                                    .fillMaxWidth()
-                                    .combinedClickable(
-                                        onClick = {
-                                            if (!selection) {
-                                                if (songWrapper.item.song.id == mediaMetadata?.id) {
-                                                    playerConnection.player.togglePlayPause()
-                                                } else {
-                                                    playerConnection.playQueue(
-                                                        ListQueue(
-                                                            title = playlist,
-                                                            items = songs!!.map { it.toMediaItem() },
-                                                            startIndex = index,
-                                                        ),
-                                                    )
-                                                }
+                            Modifier
+                                .fillMaxWidth()
+                                .combinedClickable(
+                                    onClick = {
+                                        if (!selection) {
+                                            if (songWrapper.item.song.id == mediaMetadata?.id) {
+                                                playerConnection.player.togglePlayPause()
                                             } else {
-                                                songWrapper.isSelected = !songWrapper.isSelected
-                                            }
-                                        },
-                                        onLongClick = {
-                                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                            menuState.show {
-                                                SongMenu(
-                                                    originalSong = songWrapper.item,
-                                                    navController = navController,
-                                                    onDismiss = menuState::dismiss,
+                                                playerConnection.playQueue(
+                                                    ListQueue(
+                                                        title = playlist,
+                                                        items = songs!!.map { it.toMediaItem() },
+                                                        startIndex = index,
+                                                    ),
                                                 )
                                             }
-                                        },
-                                    ),
+                                        } else {
+                                            songWrapper.isSelected = !songWrapper.isSelected
+                                        }
+                                    },
+                                    onLongClick = {
+                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                        menuState.show {
+                                            SongMenu(
+                                                originalSong = songWrapper.item,
+                                                navController = navController,
+                                                onDismiss = menuState::dismiss,
+                                            )
+                                        }
+                                    },
+                                ),
                         )
                     }
                 }

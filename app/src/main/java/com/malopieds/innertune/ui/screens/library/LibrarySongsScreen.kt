@@ -211,37 +211,37 @@ fun LibrarySongsScreen(
                     },
                     isSelected = songWrapper.isSelected && selection,
                     modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .combinedClickable(
-                                onClick = {
-                                    if (!selection) {
-                                        if (songWrapper.item.id == mediaMetadata?.id) {
-                                            playerConnection.player.togglePlayPause()
-                                        } else {
-                                            playerConnection.playQueue(
-                                                ListQueue(
-                                                    title = context.getString(R.string.queue_all_songs),
-                                                    items = songs.map { it.toMediaItem() },
-                                                    startIndex = index,
-                                                ),
-                                            )
-                                        }
+                    Modifier
+                        .fillMaxWidth()
+                        .combinedClickable(
+                            onClick = {
+                                if (!selection) {
+                                    if (songWrapper.item.id == mediaMetadata?.id) {
+                                        playerConnection.player.togglePlayPause()
                                     } else {
-                                        songWrapper.isSelected = !songWrapper.isSelected
-                                    }
-                                },
-                                onLongClick = {
-                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                    menuState.show {
-                                        SongMenu(
-                                            originalSong = songWrapper.item,
-                                            navController = navController,
-                                            onDismiss = menuState::dismiss,
+                                        playerConnection.playQueue(
+                                            ListQueue(
+                                                title = context.getString(R.string.queue_all_songs),
+                                                items = songs.map { it.toMediaItem() },
+                                                startIndex = index,
+                                            ),
                                         )
                                     }
-                                },
-                            ).animateItemPlacement(),
+                                } else {
+                                    songWrapper.isSelected = !songWrapper.isSelected
+                                }
+                            },
+                            onLongClick = {
+                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                menuState.show {
+                                    SongMenu(
+                                        originalSong = songWrapper.item,
+                                        navController = navController,
+                                        onDismiss = menuState::dismiss,
+                                    )
+                                }
+                            },
+                        ).animateItemPlacement(),
                 )
             }
         }

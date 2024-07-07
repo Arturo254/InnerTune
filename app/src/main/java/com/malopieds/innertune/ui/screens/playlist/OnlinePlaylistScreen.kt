@@ -143,9 +143,9 @@ fun OnlinePlaylistScreen(
                                     model = playlist.thumbnail,
                                     contentDescription = null,
                                     modifier =
-                                        Modifier
-                                            .size(AlbumThumbnailSize)
-                                            .clip(RoundedCornerShape(ThumbnailCornerRadius)),
+                                    Modifier
+                                        .size(AlbumThumbnailSize)
+                                        .clip(RoundedCornerShape(ThumbnailCornerRadius)),
                                 )
 
                                 Spacer(Modifier.width(16.dp))
@@ -166,11 +166,11 @@ fun OnlinePlaylistScreen(
                                             buildAnnotatedString {
                                                 withStyle(
                                                     style =
-                                                        MaterialTheme.typography.titleMedium
-                                                            .copy(
-                                                                fontWeight = FontWeight.Normal,
-                                                                color = MaterialTheme.colorScheme.onBackground,
-                                                            ).toSpanStyle(),
+                                                    MaterialTheme.typography.titleMedium
+                                                        .copy(
+                                                            fontWeight = FontWeight.Normal,
+                                                            color = MaterialTheme.colorScheme.onBackground,
+                                                        ).toSpanStyle(),
                                                 ) {
                                                     if (artist.id != null) {
                                                         pushStringAnnotation(artist.id!!, artist.name)
@@ -309,15 +309,15 @@ fun OnlinePlaylistScreen(
                                 ) {
                                     Icon(
                                         painter =
-                                            painterResource(
-                                                if (count ==
-                                                    wrappedSongs.size
-                                                ) {
-                                                    R.drawable.deselect
-                                                } else {
-                                                    R.drawable.select_all
-                                                },
-                                            ),
+                                        painterResource(
+                                            if (count ==
+                                                wrappedSongs.size
+                                            ) {
+                                                R.drawable.deselect
+                                            } else {
+                                                R.drawable.select_all
+                                            },
+                                        ),
                                         contentDescription = null,
                                     )
                                 }
@@ -385,36 +385,36 @@ fun OnlinePlaylistScreen(
                                 }
                             },
                             modifier =
-                                Modifier
-                                    .combinedClickable(
-                                        onClick = {
-                                            if (!selection) {
-                                                if (song.item.id == mediaMetadata?.id) {
-                                                    playerConnection.player.togglePlayPause()
-                                                } else {
-                                                    playerConnection.playQueue(
-                                                        YouTubeQueue(
-                                                            song.item.endpoint
-                                                                ?: WatchEndpoint(videoId = song.item.id),
-                                                            song.item.toMediaMetadata(),
-                                                        ),
-                                                    )
-                                                }
+                            Modifier
+                                .combinedClickable(
+                                    onClick = {
+                                        if (!selection) {
+                                            if (song.item.id == mediaMetadata?.id) {
+                                                playerConnection.player.togglePlayPause()
                                             } else {
-                                                song.isSelected = !song.isSelected
-                                            }
-                                        },
-                                        onLongClick = {
-                                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                            menuState.show {
-                                                YouTubeSongMenu(
-                                                    song = song.item,
-                                                    navController = navController,
-                                                    onDismiss = menuState::dismiss,
+                                                playerConnection.playQueue(
+                                                    YouTubeQueue(
+                                                        song.item.endpoint
+                                                            ?: WatchEndpoint(videoId = song.item.id),
+                                                        song.item.toMediaMetadata(),
+                                                    ),
                                                 )
                                             }
-                                        },
-                                    ).animateItemPlacement(),
+                                        } else {
+                                            song.isSelected = !song.isSelected
+                                        }
+                                    },
+                                    onLongClick = {
+                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                        menuState.show {
+                                            YouTubeSongMenu(
+                                                song = song.item,
+                                                navController = navController,
+                                                onDismiss = menuState::dismiss,
+                                            )
+                                        }
+                                    },
+                                ).animateItemPlacement(),
                         )
                     }
                 } else {
@@ -424,10 +424,10 @@ fun OnlinePlaylistScreen(
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     Spacer(
                                         modifier =
-                                            Modifier
-                                                .size(AlbumThumbnailSize)
-                                                .clip(RoundedCornerShape(ThumbnailCornerRadius))
-                                                .background(MaterialTheme.colorScheme.onSurface),
+                                        Modifier
+                                            .size(AlbumThumbnailSize)
+                                            .clip(RoundedCornerShape(ThumbnailCornerRadius))
+                                            .background(MaterialTheme.colorScheme.onSurface),
                                     )
 
                                     Spacer(Modifier.width(16.dp))
@@ -480,9 +480,9 @@ fun OnlinePlaylistScreen(
         SnackbarHost(
             hostState = snackbarHostState,
             modifier =
-                Modifier
-                    .windowInsetsPadding(LocalPlayerAwareWindowInsets.current)
-                    .align(Alignment.BottomCenter),
+            Modifier
+                .windowInsetsPadding(LocalPlayerAwareWindowInsets.current)
+                .align(Alignment.BottomCenter),
         )
     }
 }

@@ -144,6 +144,8 @@ class MainActivity : ComponentActivity() {
         super.onStop()
     }
 
+
+
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -541,10 +543,11 @@ class MainActivity : ComponentActivity() {
                                 )
                             ) {
                                 YouTubeBrowseScreen(navController, scrollBehavior)
+
                             }
                             composable("settings") {
                                 val latestVersion = 0
-                                SettingsScreen(latestVersion, navController, scrollBehavior)
+                                SettingsScreen(latestVersion.toLong(), navController, scrollBehavior)
                             }
                             composable("settings/appearance") {
                                 AppearanceSettings(navController, scrollBehavior)
@@ -684,12 +687,12 @@ class MainActivity : ComponentActivity() {
                                         ) {
 
 
-                                                Icon(
-                                                    painter = painterResource(R.drawable.settings),
-                                                    contentDescription = null
-                                                )
-                                            }
+                                            Icon(
+                                                painter = painterResource(R.drawable.settings),
+                                                contentDescription = null
+                                            )
                                         }
+                                    }
                                 },
                                 focusRequester = searchBarFocusRequester,
                                 modifier = Modifier.align(Alignment.TopCenter),
@@ -830,6 +833,8 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+
 
     @SuppressLint("ObsoleteSdkInt")
     private fun setSystemBarAppearance(isDark: Boolean) {

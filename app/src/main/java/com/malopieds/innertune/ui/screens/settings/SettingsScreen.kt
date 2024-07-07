@@ -52,7 +52,7 @@ import com.malopieds.innertune.ui.utils.backToMain
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
-    latestVersion: Int,
+    latestVersion: Long,
     navController: NavController,
     scrollBehavior: TopAppBarScrollBehavior,
 ) {

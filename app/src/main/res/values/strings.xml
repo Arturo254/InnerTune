@@ -312,4 +312,6 @@
     <string name="default_lib_chips">default lib chips</string>
     <string name="set_quick_picks">set quick picks</string>
     <string name="last_song_listened">last song listened</string>
+    <string name="already_in_playlist">already in playlist</string>
+    <string name="enable_lrclib">enable lrclib</string>
 </resources>

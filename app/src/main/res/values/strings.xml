@@ -308,10 +308,16 @@
     <string name="your_ytb_playlists">your YT playlist</string>
     <string name="my_top">my top</string>
     <string name="sort_by_last_updated">sort by last updated</string>
-    <string name="proxy">proxy</string>
+    <string name="proxy" translatable="false">proxy</string>
     <string name="default_lib_chips">default lib chips</string>
     <string name="set_quick_picks">set quick picks</string>
     <string name="last_song_listened">last song listened</string>
     <string name="already_in_playlist">already in playlist</string>
     <string name="enable_lrclib">enable lrclib</string>
+    <string name="BetaFeatures">Beta Features</string>
+    <string name="IAFeatures">AI Features</string>
+    <string name="TextIAFeatures">playlist generation</string>
+    <string name="APIFeatures">API Features</string>
+    <string name="TextAPIFeatures">New features built into the API</string>
+    <string name="mytop">My Top</string>
 </resources>

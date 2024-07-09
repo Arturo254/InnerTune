@@ -189,12 +189,6 @@ fun HomeScreen(
                         onClick = { navController.navigate("stats") },
                         modifier = Modifier.weight(1f),
                     )
-                    NavigationTile(
-                        title = stringResource(R.string.your_likes),
-                        icon = R.drawable.corcircu,
-                        onClick = { navController.navigate("auto_playlist/liked") },
-                        modifier = Modifier.weight(1f)
-                    )
 
                     if (isLoggedIn) {
                         NavigationTile(

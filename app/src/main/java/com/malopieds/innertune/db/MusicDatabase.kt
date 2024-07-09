@@ -89,10 +89,10 @@ abstract class InternalDatabase : RoomDatabase() {
         fun newInstance(context: Context): MusicDatabase =
             MusicDatabase(
                 delegate =
-                    Room
-                        .databaseBuilder(context, InternalDatabase::class.java, DB_NAME)
-                        .addMigrations(MIGRATION_1_2)
-                        .build(),
+                Room
+                    .databaseBuilder(context, InternalDatabase::class.java, DB_NAME)
+                    .addMigrations(MIGRATION_1_2)
+                    .build(),
             )
     }
 }
@@ -369,13 +369,13 @@ class Migration11To12 : AutoMigrationSpec {
                     table = "album",
                     conflictAlgorithm = SQLiteDatabase.CONFLICT_IGNORE,
                     values =
-                        contentValuesOf(
-                            "id" to albumId,
-                            "title" to albumName,
-                            "songCount" to 0,
-                            "duration" to 0,
-                            "lastUpdateTime" to 0,
-                        ),
+                    contentValuesOf(
+                        "id" to albumId,
+                        "title" to albumName,
+                        "songCount" to 0,
+                        "duration" to 0,
+                        "lastUpdateTime" to 0,
+                    ),
                 )
             }
         }
@@ -383,12 +383,13 @@ class Migration11To12 : AutoMigrationSpec {
     }
 }
 
-@DeleteColumn.Entries(
-    DeleteColumn(tableName = "song", columnName = "inLibrary"),
-)
+// @DeleteColumn.Entries(
+//    DeleteColumn(tableName = "song", columnName = "inLibrary"),
+// )
 class Migration12To13 : AutoMigrationSpec {
     override fun onPostMigrate(db: SupportSQLiteDatabase) {
-        db.execSQL("UPDATE song SET liked = 1 WHERE inLibrary IS NOT NULL")
+//        db.execSQL("UPDATE song SET liked = 1 WHERE inLibrary IS NOT NULL")
+        // commented because rolled back on this decision
     }
 }
 
@@ -397,5 +398,30 @@ class Migration13To14 : AutoMigrationSpec {
     override fun onPostMigrate(db: SupportSQLiteDatabase) {
         db.execSQL("UPDATE playlist SET createdAt = '${Converters().dateToTimestamp(LocalDateTime.now())}'")
         db.execSQL("UPDATE playlist SET lastUpdateTime = '${Converters().dateToTimestamp(LocalDateTime.now())}'")
+    }
+}
+
+class Migration14To15 : AutoMigrationSpec {
+    override fun onPostMigrate(db: SupportSQLiteDatabase) {
+        val columnExists =
+            db.query("PRAGMA table_info(song)").use { cursor ->
+                var exists = false
+                while (cursor.moveToNext()) {
+                    val nameIndex = cursor.getColumnIndex("inLibrary")
+                    if (nameIndex != -1) {
+                        val name = cursor.getString(nameIndex)
+                        if (name == "inLibrary") {
+                            exists = true
+                            break
+                        }
+                    }
+                }
+                exists
+            }
+
+        if (!columnExists) {
+            db.execSQL("ALTER TABLE song ADD COLUMN inLibrary INTEGER DEFAULT 0 NOT NULL")
+            db.execSQL("UPDATE song SET inLibrary = ${Converters().dateToTimestamp(LocalDateTime.now())} WHERE liked == 1")
+        }
     }
 }

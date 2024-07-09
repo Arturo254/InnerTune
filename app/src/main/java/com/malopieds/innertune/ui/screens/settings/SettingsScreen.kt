@@ -76,6 +76,12 @@ fun SettingsScreen(
         R.drawable.cardbgf,
         R.drawable.cardbgg,
         R.drawable.cardbgh,
+        R.drawable.cardbgj,
+        R.drawable.cardbgi,
+        R.drawable.cardbgk,
+        R.drawable.cardbgm,
+        R.drawable.cardbgk
+
 
 
 
@@ -105,13 +111,13 @@ fun SettingsScreen(
                 .height(220.dp)
                 .clip(RoundedCornerShape(20.dp))
                 .background(color = Color.Transparent)
-                .clickable { changeBackgroundImage() } // Cambiar a la siguiente imagen al hacer clic
+                .clickable { changeBackgroundImage() }
 
 
         ) {
             Image(
                 painter = painterResource(id = backgroundImages[currentImageIndex]),
-                contentDescription = "Imagen de fondo",
+                contentDescription = "background image",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxSize()
@@ -198,6 +204,7 @@ fun SettingsScreen(
 
             },
             onClick = {
+                navController.navigate("settings/betafeatures")
 
 
             }

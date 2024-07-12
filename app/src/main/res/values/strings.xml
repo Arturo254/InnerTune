@@ -320,4 +320,7 @@
     <string name="APIFeatures">API Features</string>
     <string name="TextAPIFeatures">New features built into the API</string>
     <string name="mytop">My Top</string>
+    <string name="player_background_style">player background style</string>
+    <string name="follow_theme">follow theme</string>
+    <string name="gradient">gradient</string>
 </resources>

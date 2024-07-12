@@ -570,7 +570,7 @@ class MainActivity : ComponentActivity() {
                             composable("settings/about") {
                                 AboutScreen(navController, scrollBehavior)
                             }
-                            composable("settings/betafeatures") {
+                            composable("settings/BetaFeatures") {
                                 BetaFeatures(navController, scrollBehavior)
                             }
                             composable("login") {

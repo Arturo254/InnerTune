@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.only
@@ -147,7 +146,7 @@ fun HomeScreen(
         indicatorPadding = LocalPlayerAwareWindowInsets.current.asPaddingValues(),
     ) {
         BoxWithConstraints(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxWidth(),
         ) {
             val horizontalLazyGridItemWidthFactor = if (maxWidth * 0.475f >= 320.dp) 0.475f else 0.9f
             val horizontalLazyGridItemWidth = maxWidth * horizontalLazyGridItemWidthFactor
@@ -167,7 +166,13 @@ fun HomeScreen(
             Column(
                 modifier = Modifier.verticalScroll(scrollState),
             ) {
-                Spacer(Modifier.height(LocalPlayerAwareWindowInsets.current.asPaddingValues().calculateTopPadding()))
+                Spacer(
+                    Modifier.height(
+                        LocalPlayerAwareWindowInsets.current
+                            .asPaddingValues()
+                            .calculateTopPadding(),
+                    ),
+                )
 
                 Row(
                     modifier =
@@ -189,7 +194,12 @@ fun HomeScreen(
                         onClick = { navController.navigate("stats") },
                         modifier = Modifier.weight(1f),
                     )
-
+                    NavigationTile(
+                        title = stringResource(R.string.liked_songs),
+                        icon = R.drawable.corcircu,
+                        onClick = { navController.navigate("auto_playlist/liked") },
+                        modifier = Modifier.weight(1f),
+                    )
                     if (isLoggedIn) {
                         NavigationTile(
                             title = stringResource(R.string.account),
@@ -224,7 +234,10 @@ fun HomeScreen(
                         LazyHorizontalGrid(
                             state = mostPlayedLazyGridState,
                             rows = GridCells.Fixed(4),
-                            flingBehavior = rememberSnapFlingBehavior(snapLayoutInfoProviderQuickPicks),
+                            flingBehavior =
+                                rememberSnapFlingBehavior(
+                                    snapLayoutInfoProviderQuickPicks,
+                                ),
                             contentPadding =
                                 WindowInsets.systemBars
                                     .only(WindowInsetsSides.Horizontal)
@@ -238,7 +251,9 @@ fun HomeScreen(
                                 items = quickPicks,
                                 key = { it.id },
                             ) { originalSong ->
-                                val song by database.song(originalSong.id).collectAsState(initial = originalSong)
+                                val song by database
+                                    .song(originalSong.id)
+                                    .collectAsState(initial = originalSong)
 
                                 SongListItem(
                                     song = song!!,
@@ -396,6 +411,7 @@ fun HomeScreen(
                                                         ),
                                             )
                                         }
+
                                     in 10..19 ->
                                         item {
                                             SongSmallGridItem(
@@ -466,7 +482,11 @@ fun HomeScreen(
                                                 .combinedClickable(
                                                     onClick = {
                                                         when (item) {
-                                                            is PlaylistItem -> navController.navigate("online_playlist/${item.id}")
+                                                            is PlaylistItem ->
+                                                                navController.navigate(
+                                                                    "online_playlist/${item.id}",
+                                                                )
+
                                                             is SongItem -> {
                                                                 if (item.id == mediaMetadata?.id) {
                                                                     playerConnection.player.togglePlayPause()
@@ -479,13 +499,16 @@ fun HomeScreen(
                                                                     )
                                                                 }
                                                             }
+
                                                             is AlbumItem -> navController.navigate("album/${item.id}")
 
                                                             else -> navController.navigate("artist/${item.id}")
                                                         }
                                                     },
                                                     onLongClick = {
-                                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                                        haptic.performHapticFeedback(
+                                                            HapticFeedbackType.LongPress,
+                                                        )
                                                         menuState.show {
                                                             when (item) {
                                                                 is PlaylistItem ->
@@ -540,7 +563,10 @@ fun HomeScreen(
                         LazyHorizontalGrid(
                             state = forgottenFavoritesLazyGridState,
                             rows = GridCells.Fixed(4),
-                            flingBehavior = rememberSnapFlingBehavior(snapLayoutInfoProviderForgottenFavorite),
+                            flingBehavior =
+                                rememberSnapFlingBehavior(
+                                    snapLayoutInfoProviderForgottenFavorite,
+                                ),
                             contentPadding =
                                 WindowInsets.systemBars
                                     .only(WindowInsetsSides.Horizontal)
@@ -554,7 +580,9 @@ fun HomeScreen(
                                 items = forgottenFavorite,
                                 key = { it.id },
                             ) { originalSong ->
-                                val song by database.song(originalSong.id).collectAsState(initial = originalSong)
+                                val song by database
+                                    .song(originalSong.id)
+                                    .collectAsState(initial = originalSong)
                                 SongListItem(
                                     song = song!!,
                                     showInLibraryIcon = true,
@@ -629,7 +657,8 @@ fun HomeScreen(
                                     key = { it.id },
                                 ) { playlist ->
                                     playlist.author ?: run {
-                                        playlist.author = Artist(name = "YouTube Music", id = null)
+                                        playlist.author =
+                                            Artist(name = "YouTube Music", id = null)
                                     }
                                     YouTubeGridItem(
                                         item = playlist,
@@ -643,7 +672,9 @@ fun HomeScreen(
                                                         navController.navigate("online_playlist/${playlist.id}")
                                                     },
                                                     onLongClick = {
-                                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                                        haptic.performHapticFeedback(
+                                                            HapticFeedbackType.LongPress,
+                                                        )
                                                         menuState.show {
                                                             YouTubePlaylistMenu(
                                                                 playlist = playlist,
@@ -689,7 +720,9 @@ fun HomeScreen(
                                                         navController.navigate("online_playlist/${album.id}")
                                                     },
                                                     onLongClick = {
-                                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                                        haptic.performHapticFeedback(
+                                                            HapticFeedbackType.LongPress,
+                                                        )
                                                         menuState.show {
                                                             YouTubePlaylistMenu(
                                                                 playlist = album,
@@ -724,7 +757,8 @@ fun HomeScreen(
                                     key = { it.id },
                                 ) { playlist ->
                                     playlist.author ?: run {
-                                        playlist.author = Artist(name = "YouTube Music", id = null)
+                                        playlist.author =
+                                            Artist(name = "YouTube Music", id = null)
                                     }
                                     YouTubeGridItem(
                                         item = playlist,
@@ -738,7 +772,9 @@ fun HomeScreen(
                                                         navController.navigate("online_playlist/${playlist.id}")
                                                     },
                                                     onLongClick = {
-                                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                                        haptic.performHapticFeedback(
+                                                            HapticFeedbackType.LongPress,
+                                                        )
                                                         menuState.show {
                                                             YouTubePlaylistMenu(
                                                                 playlist = playlist,
@@ -782,7 +818,11 @@ fun HomeScreen(
                                                 .combinedClickable(
                                                     onClick = {
                                                         when (item) {
-                                                            is PlaylistItem -> navController.navigate("online_playlist/${item.id}")
+                                                            is PlaylistItem ->
+                                                                navController.navigate(
+                                                                    "online_playlist/${item.id}",
+                                                                )
+
                                                             is SongItem -> {
                                                                 if (item.id == mediaMetadata?.id) {
                                                                     playerConnection.player.togglePlayPause()
@@ -795,13 +835,16 @@ fun HomeScreen(
                                                                     )
                                                                 }
                                                             }
+
                                                             is AlbumItem -> navController.navigate("album/${item.id}")
 
                                                             else -> navController.navigate("artist/${item.id}")
                                                         }
                                                     },
                                                     onLongClick = {
-                                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                                        haptic.performHapticFeedback(
+                                                            HapticFeedbackType.LongPress,
+                                                        )
                                                         menuState.show {
                                                             when (item) {
                                                                 is PlaylistItem ->
@@ -865,7 +908,8 @@ fun HomeScreen(
                                     key = { it.id },
                                 ) { playlist ->
                                     playlist.author ?: run {
-                                        playlist.author = Artist(name = "YouTube Music", id = null)
+                                        playlist.author =
+                                            Artist(name = "YouTube Music", id = null)
                                     }
                                     YouTubeGridItem(
                                         item = playlist,
@@ -879,7 +923,9 @@ fun HomeScreen(
                                                         navController.navigate("online_playlist/${playlist.id}")
                                                     },
                                                     onLongClick = {
-                                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                                        haptic.performHapticFeedback(
+                                                            HapticFeedbackType.LongPress,
+                                                        )
                                                         menuState.show {
                                                             YouTubePlaylistMenu(
                                                                 playlist = playlist,
@@ -925,7 +971,9 @@ fun HomeScreen(
                                                         navController.navigate("online_playlist/${album.id}")
                                                     },
                                                     onLongClick = {
-                                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                                        haptic.performHapticFeedback(
+                                                            HapticFeedbackType.LongPress,
+                                                        )
                                                         menuState.show {
                                                             YouTubePlaylistMenu(
                                                                 playlist = album,
@@ -960,7 +1008,8 @@ fun HomeScreen(
                                     key = { it.id },
                                 ) { playlist ->
                                     playlist.author ?: run {
-                                        playlist.author = Artist(name = "YouTube Music", id = null)
+                                        playlist.author =
+                                            Artist(name = "YouTube Music", id = null)
                                     }
                                     YouTubeGridItem(
                                         item = playlist,
@@ -974,7 +1023,9 @@ fun HomeScreen(
                                                         navController.navigate("online_playlist/${playlist.id}")
                                                     },
                                                     onLongClick = {
-                                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                                        haptic.performHapticFeedback(
+                                                            HapticFeedbackType.LongPress,
+                                                        )
                                                         menuState.show {
                                                             YouTubePlaylistMenu(
                                                                 playlist = playlist,
@@ -1018,7 +1069,11 @@ fun HomeScreen(
                                                 .combinedClickable(
                                                     onClick = {
                                                         when (item) {
-                                                            is PlaylistItem -> navController.navigate("online_playlist/${item.id}")
+                                                            is PlaylistItem ->
+                                                                navController.navigate(
+                                                                    "online_playlist/${item.id}",
+                                                                )
+
                                                             is SongItem -> {
                                                                 if (item.id == mediaMetadata?.id) {
                                                                     playerConnection.player.togglePlayPause()
@@ -1031,13 +1086,16 @@ fun HomeScreen(
                                                                     )
                                                                 }
                                                             }
+
                                                             is AlbumItem -> navController.navigate("album/${item.id}")
 
                                                             else -> navController.navigate("artist/${item.id}")
                                                         }
                                                     },
                                                     onLongClick = {
-                                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                                        haptic.performHapticFeedback(
+                                                            HapticFeedbackType.LongPress,
+                                                        )
                                                         menuState.show {
                                                             when (item) {
                                                                 is PlaylistItem ->
@@ -1127,7 +1185,13 @@ fun HomeScreen(
                         }
                     }
                 }
-                Spacer(Modifier.height(LocalPlayerAwareWindowInsets.current.asPaddingValues().calculateBottomPadding()))
+                Spacer(
+                    Modifier.height(
+                        LocalPlayerAwareWindowInsets.current
+                            .asPaddingValues()
+                            .calculateBottomPadding(),
+                    ),
+                )
             }
 
             HideOnScrollFAB(

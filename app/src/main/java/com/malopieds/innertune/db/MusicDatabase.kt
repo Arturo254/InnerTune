@@ -89,10 +89,10 @@ abstract class InternalDatabase : RoomDatabase() {
         fun newInstance(context: Context): MusicDatabase =
             MusicDatabase(
                 delegate =
-                Room
-                    .databaseBuilder(context, InternalDatabase::class.java, DB_NAME)
-                    .addMigrations(MIGRATION_1_2)
-                    .build(),
+                    Room
+                        .databaseBuilder(context, InternalDatabase::class.java, DB_NAME)
+                        .addMigrations(MIGRATION_1_2)
+                        .build(),
             )
     }
 }
@@ -369,13 +369,13 @@ class Migration11To12 : AutoMigrationSpec {
                     table = "album",
                     conflictAlgorithm = SQLiteDatabase.CONFLICT_IGNORE,
                     values =
-                    contentValuesOf(
-                        "id" to albumId,
-                        "title" to albumName,
-                        "songCount" to 0,
-                        "duration" to 0,
-                        "lastUpdateTime" to 0,
-                    ),
+                        contentValuesOf(
+                            "id" to albumId,
+                            "title" to albumName,
+                            "songCount" to 0,
+                            "duration" to 0,
+                            "lastUpdateTime" to 0,
+                        ),
                 )
             }
         }

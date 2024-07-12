@@ -55,6 +55,10 @@ val ArtistSongSortDescendingKey = booleanPreferencesKey("artistSongSortDescendin
 val MixSortTypeKey = stringPreferencesKey("mixSortType")
 val MixSortDescendingKey = booleanPreferencesKey("albumSortDescending")
 
+val SongFilterKey = stringPreferencesKey("songFilter")
+val ArtistFilterKey = stringPreferencesKey("artistFilter")
+val AlbumFilterKey = stringPreferencesKey("albumFilter")
+
 val ArtistViewTypeKey = stringPreferencesKey("artistViewType")
 val AlbumViewTypeKey = stringPreferencesKey("albumViewType")
 val PlaylistViewTypeKey = stringPreferencesKey("playlistViewType")
@@ -73,6 +77,22 @@ enum class LibraryViewType {
             LIST -> GRID
             GRID -> LIST
         }
+}
+
+enum class SongFilter {
+    LIBRARY,
+    LIKED,
+    DOWNLOADED,
+}
+
+enum class ArtistFilter {
+    LIBRARY,
+    LIKED,
+}
+
+enum class AlbumFilter {
+    LIBRARY,
+    LIKED,
 }
 
 enum class SongSortType {
@@ -174,8 +194,14 @@ enum class PreferredLyricsProvider {
     LRCLIB,
 }
 
+enum class PlayerBackgroundStyle {
+    DEFAULT,
+    GRADIENT,
+}
+
 val TopSize = stringPreferencesKey("topSize")
 
+val PlayerBackgroundStyleKey = stringPreferencesKey("playerBackgroundStyle")
 val ShowLyricsKey = booleanPreferencesKey("showLyrics")
 val LyricsTextPositionKey = stringPreferencesKey("lyricsTextPosition")
 val TranslateLyricsKey = booleanPreferencesKey("translateLyrics")

@@ -14,13 +14,12 @@ plugins {
 android {
     namespace = "com.malopieds.innertune"
     compileSdk = 34
-    buildToolsVersion = "34.0.0"
     defaultConfig {
         applicationId = "com.Arturo254.innertune"
         minSdk = 24
         targetSdk = 34
         versionCode = 24
-        versionName = "0.7.0"
+        versionName = "0.7.2"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -71,6 +70,10 @@ android {
     }
     lint {
         disable += "MissingTranslation"
+    }
+    dependenciesInfo {
+        includeInApk = false
+        includeInBundle = false
     }
 }
 

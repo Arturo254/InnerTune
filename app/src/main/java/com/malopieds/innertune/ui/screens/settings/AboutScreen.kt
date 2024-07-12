@@ -91,7 +91,7 @@ fun AboutScreen(
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
-                text = BuildConfig.VERSION_NAME,
+                text = "0.7.2",
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.secondary
             )

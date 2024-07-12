@@ -35,7 +35,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -121,7 +120,7 @@ fun AlbumScreen(
 
     val downloadUtil = LocalDownloadUtil.current
     var downloadState by remember {
-        mutableIntStateOf(Download.STATE_STOPPED)
+        mutableStateOf(Download.STATE_STOPPED)
     }
 
     LaunchedEffect(albumWithSongs) {
@@ -133,8 +132,8 @@ fun AlbumScreen(
                     Download.STATE_COMPLETED
                 } else if (songs.all {
                         downloads[it]?.state == Download.STATE_QUEUED ||
-                                downloads[it]?.state == Download.STATE_DOWNLOADING ||
-                                downloads[it]?.state == Download.STATE_COMPLETED
+                            downloads[it]?.state == Download.STATE_DOWNLOADING ||
+                            downloads[it]?.state == Download.STATE_COMPLETED
                     }
                 ) {
                     Download.STATE_DOWNLOADING
@@ -160,9 +159,9 @@ fun AlbumScreen(
                             model = albumWithSongs.album.thumbnailUrl,
                             contentDescription = null,
                             modifier =
-                            Modifier
-                                .size(AlbumThumbnailSize)
-                                .clip(RoundedCornerShape(ThumbnailCornerRadius)),
+                                Modifier
+                                    .size(AlbumThumbnailSize)
+                                    .clip(RoundedCornerShape(ThumbnailCornerRadius)),
                         )
 
                         Spacer(Modifier.width(16.dp))
@@ -182,11 +181,11 @@ fun AlbumScreen(
                                 buildAnnotatedString {
                                     withStyle(
                                         style =
-                                        MaterialTheme.typography.titleMedium
-                                            .copy(
-                                                fontWeight = FontWeight.Normal,
-                                                color = MaterialTheme.colorScheme.onBackground,
-                                            ).toSpanStyle(),
+                                            MaterialTheme.typography.titleMedium
+                                                .copy(
+                                                    fontWeight = FontWeight.Normal,
+                                                    color = MaterialTheme.colorScheme.onBackground,
+                                                ).toSpanStyle(),
                                     ) {
                                         albumWithSongs.artists.fastForEachIndexed { index, artist ->
                                             pushStringAnnotation(artist.id, artist.name)
@@ -222,24 +221,24 @@ fun AlbumScreen(
                                 ) {
                                     Icon(
                                         painter =
-                                        painterResource(
+                                            painterResource(
+                                                if (albumWithSongs.album.bookmarkedAt !=
+                                                    null
+                                                ) {
+                                                    R.drawable.favorite
+                                                } else {
+                                                    R.drawable.favorite_border
+                                                },
+                                            ),
+                                        contentDescription = null,
+                                        tint =
                                             if (albumWithSongs.album.bookmarkedAt !=
                                                 null
                                             ) {
-                                                R.drawable.favorite
+                                                MaterialTheme.colorScheme.error
                                             } else {
-                                                R.drawable.favorite_border
+                                                LocalContentColor.current
                                             },
-                                        ),
-                                        contentDescription = null,
-                                        tint =
-                                        if (albumWithSongs.album.bookmarkedAt !=
-                                            null
-                                        ) {
-                                            MaterialTheme.colorScheme.error
-                                        } else {
-                                            LocalContentColor.current
-                                        },
                                     )
                                 }
 
@@ -318,6 +317,7 @@ fun AlbumScreen(
                                                 originalAlbum = Album(albumWithSongs.album, albumWithSongs.artists),
                                                 navController = navController,
                                                 onDismiss = menuState::dismiss,
+                                                selectAction = { selection = true },
                                             )
                                         }
                                     },
@@ -465,37 +465,37 @@ fun AlbumScreen(
                         },
                         isSelected = songWrapper.isSelected && selection,
                         modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .combinedClickable(
-                                onClick = {
-                                    if (!selection) {
-                                        if (songWrapper.item.id == mediaMetadata?.id) {
-                                            playerConnection.player.togglePlayPause()
+                            Modifier
+                                .fillMaxWidth()
+                                .combinedClickable(
+                                    onClick = {
+                                        if (!selection) {
+                                            if (songWrapper.item.id == mediaMetadata?.id) {
+                                                playerConnection.player.togglePlayPause()
+                                            } else {
+                                                playerConnection.playQueue(
+                                                    ListQueue(
+                                                        title = albumWithSongs.album.title,
+                                                        items = albumWithSongs.songs.map { it.toMediaItem() },
+                                                        startIndex = index,
+                                                    ),
+                                                )
+                                            }
                                         } else {
-                                            playerConnection.playQueue(
-                                                ListQueue(
-                                                    title = albumWithSongs.album.title,
-                                                    items = albumWithSongs.songs.map { it.toMediaItem() },
-                                                    startIndex = index,
-                                                ),
+                                            songWrapper.isSelected = !songWrapper.isSelected
+                                        }
+                                    },
+                                    onLongClick = {
+                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                        menuState.show {
+                                            SongMenu(
+                                                originalSong = songWrapper.item,
+                                                navController = navController,
+                                                onDismiss = menuState::dismiss,
                                             )
                                         }
-                                    } else {
-                                        songWrapper.isSelected = !songWrapper.isSelected
-                                    }
-                                },
-                                onLongClick = {
-                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                    menuState.show {
-                                        SongMenu(
-                                            originalSong = songWrapper.item,
-                                            navController = navController,
-                                            onDismiss = menuState::dismiss,
-                                        )
-                                    }
-                                },
-                            ),
+                                    },
+                                ),
                     )
                 }
             }
@@ -518,20 +518,20 @@ fun AlbumScreen(
                                 isPlaying = isPlaying,
                                 coroutineScope = coroutineScope,
                                 modifier =
-                                Modifier
-                                    .combinedClickable(
-                                        onClick = { navController.navigate("album/${item.id}") },
-                                        onLongClick = {
-                                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                            menuState.show {
-                                                YouTubeAlbumMenu(
-                                                    albumItem = item,
-                                                    navController = navController,
-                                                    onDismiss = menuState::dismiss,
-                                                )
-                                            }
-                                        },
-                                    ).animateItemPlacement(),
+                                    Modifier
+                                        .combinedClickable(
+                                            onClick = { navController.navigate("album/${item.id}") },
+                                            onLongClick = {
+                                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                                menuState.show {
+                                                    YouTubeAlbumMenu(
+                                                        albumItem = item,
+                                                        navController = navController,
+                                                        onDismiss = menuState::dismiss,
+                                                    )
+                                                }
+                                            },
+                                        ).animateItemPlacement(),
                             )
                         }
                     }
@@ -544,10 +544,10 @@ fun AlbumScreen(
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Spacer(
                                 modifier =
-                                Modifier
-                                    .size(AlbumThumbnailSize)
-                                    .clip(RoundedCornerShape(ThumbnailCornerRadius))
-                                    .background(MaterialTheme.colorScheme.onSurface),
+                                    Modifier
+                                        .size(AlbumThumbnailSize)
+                                        .clip(RoundedCornerShape(ThumbnailCornerRadius))
+                                        .background(MaterialTheme.colorScheme.onSurface),
                             )
 
                             Spacer(Modifier.width(16.dp))
@@ -593,6 +593,5 @@ fun AlbumScreen(
                 )
             }
         },
-        scrollBehavior = scrollBehavior,
     )
 }

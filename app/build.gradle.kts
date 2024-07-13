@@ -12,14 +12,15 @@ plugins {
 }
 
 android {
-    namespace = "com.malopieds.innertune"
+    namespace = "com.dd3boh.outertune"
     compileSdk = 34
+
     defaultConfig {
         applicationId = "com.Arturo254.innertune"
         minSdk = 24
         targetSdk = 34
-        versionCode = 24
-        versionName = "0.7.2"
+        versionCode = 20
+        versionName = "0.7.3"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -32,26 +33,58 @@ android {
             applicationIdSuffix = ".debug"
         }
     }
-    flavorDimensions += "version"
-    productFlavors {
-        create("foss") {
-            dimension = "version"
+
+    buildFeatures {
+        compose = true
+        buildConfig = true
+    }
+
+// build variants and stuff
+    splits {
+        abi {
+            isEnable = true
+            reset()
+
+            // all common abis
+            // include("x86_64", "x86", "armeabi-v7a", "arm64-v8a") // universal
+            isUniversalApk = false
         }
     }
-    signingConfigs {
-        getByName("debug") {
-            if (System.getenv("MUSIC_DEBUG_SIGNING_STORE_PASSWORD") != null) {
-                storeFile = file(System.getenv("MUSIC_DEBUG_KEYSTORE_FILE"))
-                storePassword = System.getenv("MUSIC_DEBUG_SIGNING_STORE_PASSWORD")
-                keyAlias = "debug"
-                keyPassword = System.getenv("MUSIC_DEBUG_SIGNING_KEY_PASSWORD")
+
+    flavorDimensions.add("abi")
+
+    productFlavors {
+        // universal
+        create("universal") {
+            isDefault = true
+            dimension = "abi"
+            ndk {
+                abiFilters.addAll(listOf("x86", "x86_64", "armeabi-v7a", "arm64-v8a"))
+            }
+        }
+        // arm64 only
+        create("arm64") {
+            dimension = "abi"
+            ndk {
+                abiFilters.add("arm64-v8a")
+            }
+        }
+        // x86_64 only
+        create("x86_64") {
+            dimension = "abi"
+            ndk {
+                abiFilters.add("x86_64")
+            }
+        }
+        // for uncommon, but non-obscure architectures
+        create("uncommon_abi") {
+            dimension = "abi"
+            ndk {
+                abiFilters.addAll(listOf("x86", "x86_64", "armeabi-v7a"))
             }
         }
     }
-    buildFeatures {
-        buildConfig = true
-        compose = true
-    }
+
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_17
@@ -64,17 +97,16 @@ android {
         freeCompilerArgs = freeCompilerArgs + "-Xcontext-receivers"
         jvmTarget = "17"
     }
+
     testOptions {
         unitTests.isIncludeAndroidResources = true
         unitTests.isReturnDefaultValues = true
     }
+
     lint {
         disable += "MissingTranslation"
     }
-    dependenciesInfo {
-        includeInApk = false
-        includeInBundle = false
-    }
+
 }
 
 ksp {
@@ -97,8 +129,8 @@ dependencies {
     implementation(libs.compose.ui.util)
     implementation(libs.compose.ui.tooling)
     implementation(libs.compose.animation)
-    implementation(libs.compose.animation.graphics)
     implementation(libs.compose.reorderable)
+    implementation(libs.compose.icons.extended)
 
     implementation(libs.viewmodel)
     implementation(libs.viewmodel.compose)
@@ -118,20 +150,28 @@ dependencies {
     implementation(libs.media3.okhttp)
 
     implementation(libs.room.runtime)
-    annotationProcessor(libs.room.compiler)
     ksp(libs.room.compiler)
     implementation(libs.room.ktx)
 
     implementation(libs.apache.lang3)
 
     implementation(libs.hilt)
-    kapt(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
 
     implementation(projects.innertube)
     implementation(projects.kugou)
-    implementation(projects.lrclib)
 
     coreLibraryDesugaring(libs.desugaring)
 
     implementation(libs.timber)
+
+    /**
+     * Custom FFmpeg metadata extractor
+     *
+     * My boss has requested prebuilt libraries by default. Shall you choose
+     * to work on the scanner itself, switch the implementation below AND
+     * include the project (uncomment the include line) in /settings.gradle.kts
+     */
+      implementation(files("prebuilt/ffMetadataEx-release.aar")) // prebuilt
+//     implementation(project(":ffMetadataEx")) // self built
 }

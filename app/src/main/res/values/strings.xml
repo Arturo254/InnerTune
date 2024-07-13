@@ -5,13 +5,12 @@
     <string name="artists">Artists</string>
     <string name="albums">Albums</string>
     <string name="playlists">Playlists</string>
-    <string name="explore">Explore</string>
+    <string name="library">Library</string>
 
     <!-- Top bar -->
     <plurals name="n_selected">
         <item quantity="other">%d selected</item>
     </plurals>
-
 
     <!-- Home -->
     <string name="history">History</string>
@@ -20,10 +19,8 @@
     <string name="account">Account</string>
     <string name="quick_picks">Quick picks</string>
     <string name="quick_picks_empty">Listen to songs to generate your quick picks</string>
-    <string name="new_release_albums">New releases</string>
-    <string name="forgotten_favorites">Forgotten favorites</string>
-    <string name="similar_to">Similar to</string>
-    <string name="keep_listening">Keep listening</string>
+    <string name="new_release_albums">New release albums</string>
+    <string name="recent_activity">Recent activity</string>
 
     <!-- History -->
     <string name="today">Today</string>
@@ -63,6 +60,7 @@
     <string name="playlist_is_empty">The playlist is empty</string>
     <string name="remove_download_playlist_confirm">Do you really want to remove all \"%s\" playlist songs from the Downloaded Songs storage?</string>
     <string name="delete_playlist_confirm">Do you really want to delete the playlist \"%s\"?</string>
+    <string name="auto_playlist">Auto playlist</string>
 
     <!-- Button -->
     <string name="retry">Retry</string>
@@ -77,13 +75,12 @@
     <string name="play">Play</string>
     <string name="play_next">Play next</string>
     <string name="add_to_queue">Add to queue</string>
-    <string name="add_to_library">Add to library</string>
-    <string name="remove_from_library">Remove from library</string>
     <string name="download">Download</string>
     <string name="downloading">Downloading</string>
     <string name="remove_download">Remove download</string>
     <string name="import_playlist">Import playlist</string>
     <string name="add_to_playlist">Add to playlist</string>
+    <string name="remove_from_playlist">Remove from playlist</string>
     <string name="view_artist">View artist</string>
     <string name="view_album">View album</string>
     <string name="refetch">Refetch</string>
@@ -93,6 +90,8 @@
     <string name="search_online">Search online</string>
     <string name="sync">Sync</string>
     <string name="advanced">Advanced</string>
+    <string name="select">Selection mode</string>
+    <string name="like_all">Like all</string>
 
     <!-- Sort menu -->
     <string name="sort_by_create_date">Date added</string>
@@ -105,6 +104,7 @@
     <string name="sort_by_custom">Custom order</string>
 
     <!-- Dialog -->
+    <string name="play_count">Play count</string>
     <string name="media_id">Media id</string>
     <string name="mime_type">MIME type</string>
     <string name="codecs">Codecs</string>
@@ -171,6 +171,7 @@
     <string name="removed_song_from_playlist">Removed \"%s\" from playlist</string>
     <string name="playlist_synced">Playlist synced</string>
     <string name="undo">Undo</string>
+    <string name="song_added_to_queue">\"%s\" added to queue</string>
 
     <!-- Player -->
     <string name="lyrics_not_found">Lyrics not found</string>
@@ -180,7 +181,6 @@
         <item quantity="one">1 minute</item>
         <item quantity="other">%d minutes</item>
     </plurals>
-    <plurals name="n_elements">n_elements</plurals>
     <string name="error_no_stream">No stream available</string>
     <string name="error_no_internet">No network connection</string>
     <string name="error_timeout">Timeout</string>
@@ -197,20 +197,26 @@
 
     <!-- Queue Title -->
     <string name="queue_all_songs">All songs</string>
-    <string name="queue_searched_songs">Searched songs</string>
+    <string name="queue_searched_songs">Search: </string>
 
     <!-- Notification name -->
     <string name="music_player">Music Player</string>
 
     <!-- Settings -->
     <string name="settings">Settings</string>
+    <string name="settings_debug">Debug</string>
     <string name="appearance">Appearance</string>
     <string name="enable_dynamic_theme">Enable dynamic theme</string>
+    <string name="player_background_style">Player background style</string>
+    <string name="player_background_default">Follow theme</string>
+    <string name="player_background_gradient">Gradient</string>
+    <string name="player_background_blur">Blur</string>
     <string name="dark_theme">Dark theme</string>
     <string name="dark_theme_on">On</string>
     <string name="dark_theme_off">Off</string>
     <string name="dark_theme_follow_system">Follow system</string>
     <string name="pure_black">Pure black</string>
+    <string name="new_interface">New interface layout</string>
     <string name="default_open_tab">Default open tab</string>
     <string name="customize_navigation_tabs">Customize navigation tabs</string>
     <string name="lyrics_text_position">Lyrics text position</string>
@@ -220,6 +226,7 @@
 
     <string name="content">Content</string>
     <string name="login">Login</string>
+    <string name="ytm_sync">Automatically sync with your YouTube Music account</string>
     <string name="content_language">Default content language</string>
     <string name="content_country">Default content country</string>
     <string name="system_default">System default</string>
@@ -234,9 +241,12 @@
     <string name="audio_quality_high">High</string>
     <string name="audio_quality_low">Low</string>
     <string name="persistent_queue">Persistent queue</string>
+    <string name="swipe_to_dismiss_title">Swipe to remove songs in queue</string>
+    <string name="swipe_to_dismiss_description">Disable to prevent unwanted deletions when scrolling</string>
     <string name="skip_silence">Skip silence</string>
     <string name="audio_normalization">Audio normalization</string>
     <string name="equalizer">Equalizer</string>
+    <string name="lyrics_settings_title">Lyrics</string>
 
     <string name="storage">Storage</string>
     <string name="cache">Cache</string>
@@ -263,33 +273,80 @@
     <string name="backup_restore">Backup and restore</string>
     <string name="backup">Backup</string>
     <string name="restore">Restore</string>
+    <string name="import_innertune_tooltip">Restoring InnerTune backups are supported, albeit a possibility of anomalies due to technical limitations</string>
+    <string name="import_m3u">Import a playlist (m3u)</string>
     <string name="imported_playlist">Imported playlist</string>
     <string name="backup_create_success">Backup created successfully</string>
     <string name="backup_create_failed">Couldn\'t create backup</string>
     <string name="restore_failed">Failed to restore backup</string>
+    <string name="m3u_import_failed">Failed to import playlist</string>
 
     <string name="about">About</string>
     <string name="app_version">App version</string>
 
-    <string name="new_version_available">New version available</string>
-    <string name="translation_models">Translation Models</string>
-    <string name="clear_translation_models">Clear translation models</string>
+    <!--experimental settings-->
+    <string name="experimental_settings_title">Experimental</string>
+    <string name="dev_settings_title">Enable developer settings</string>
+    <string name="dev_settings_description">Reveals additional advanced settings intended for development use</string>
 
-    <string name="all_time">All time</string>
-    <string name="past_24_hours">Past 24 hours</string>
-    <string name="past_week">Past week</string>
-    <string name="past_month">Past month</string>
-    <string name="past_year">Past year</string>
-    <string name="top_length">My Top list length</string>
-    <string name="changelog">Changelog</string>
+    <!--local player-->
+    <string name="local_player_settings_title">Local Media</string>
+    <!--scanner page settings-->
+    <string name="local_scanner_title">Local scanner</string>
+
+    <string name="auto_scanner_title">Scan automatically</string>
+    <string name="auto_scanner_description">Automatically scan for songs when opening the app. This does not reload metadata of existing songs.</string>
+
+    <string name="scan_paths_title">Configure scan locations…</string>
+    <string name="scan_paths_tooltip">All subdirectories will also be affected</string>
+    <string name="scan_paths_add_folder">Add new folder</string>
+    <string name="scan_paths_incl">Scan paths</string>
+    <string name="scan_paths_excl">Excluded scan paths</string>
+
+
+    <string name="manual_scanner_title">Manual scanner</string>
+    <string name="scanner_warning">By default, the scanner will NOT reload any metadata of existing songs unless you specify otherwise above. Depending on the size of your library, it make take a while. It is highly recommend to wait until the scanner to finish before proceeding.</string>
+
+    <!--scanner additional settings-->
+    <string name="scanner_settings_title">Additional scanner settings</string>
+    <string name="scanner_strict_file_name_title">Strict file names</string>
+    <string name="scanner_strict_file_name_description">When enabled, file names will NOT be ignored. Ex. "Song.ogg" will be a different song from "Song.flac". Scanner sensitivity preference will still apply</string>
+    <string name="scanner_sensitivity_title">Configure scanner sensitivity</string>
+    <string name="scanner_sensitivity_L1">Match title</string>
+    <string name="scanner_sensitivity_L2">Match title and artists</string>
+    <string name="scanner_sensitivity_L3">Match title, artists, albums</string>
+
+    <string name="scanner_type_title">Metadata extractor</string>
+    <string name="scanner_type_mediastore">MediaStore (Android\'s system scanner, possibly inaccurate)</string>
+    <string name="scanner_type_mediastore_ffprobe">Hybrid (MediaStore extractor, but FFProbe for artist extraction)</string>
+    <string name="scanner_type_ffprobe">FFProbe (Prioritize FFmpeg extraction over MediaStore)</string>
+
+    <string name="scanner_variant_rescan">Rescan the entire library and reload all songs\' metadata</string>
+    <string name="scanner_online_artist_linking">Try to link local files\' artists with ones on YouTube Music</string>
+
+    <!--Folders-->
+    <string name="flat_subfolders_title">Flatten subfolders</string>
+    <string name="flat_subfolders_description">Disable to preserve the file structure as on disk</string>
+
+    <!--Lyrics-->
+    <string name="lyrics_multiline_title">Read multiline lyrics</string>
+    <string name="lyrics_multiline_description">Treat all the lines between sync points as one lyric text</string>
+    <string name="lyrics_trim_title">Remove spaces around lyrics</string>
+    <string name="new_version_available">New version available</string>
     <string name="betafun">Beta Features</string>
+    <string name="changelog">Changelog</string>
+    <string name="clear_translation_models">Clear translation models</string>
+    <string name="translation_models">Translation Models</string>
+    <string name="explore">explore</string>
+    <string name="forgotten_favorites">favotites</string>
+    <string name="similar_to">similar to</string>
+    <string name="keep_listening">keep listening</string>
     <string name="Donate">Donate</string>
     <string name="BetaDescription">In this new version, when activating the switch, the new API will be used.                             Also note that it will be disabled when you exit the application</string>
     <string name="Telegramchanel">Official Channel</string>
     <string name="TelegramDescription">You can join the official channel to report bugs or stay up to date with updates</string>
     <string name="your_likes">your likes</string>
-    <string name="select">select</string>
-    <string name="like_all">like all</string>
+    <string name="Privacy">Privacy Policy ❯</string>
     <string name="privacy_policy">Privacy Policy</string>
     <string name="license">License</string>
     <string name="license_text">GNU GENERAL PUBLIC LICENSE  ❯</string>
@@ -299,28 +356,24 @@
     <string name="bugs_text">Bugs or Problems? Report them here ❯</string>
     <string name="help">Help</string>
     <string name="help_text">Contact Dev ❯</string>
-    <string name="Privacy">Privacy Policy ❯</string>
     <string name="contributors">Contributors</string>
     <string name="contribution">contribution ?</string>
     <string name="contribution_text">If you want to contribute, click here</string>
+    <string name="sort_by_last_updated">sort by last updated</string>
+    <string name="default_lib_chips">default lib chips</string>
+    <string name="set_quick_picks">set quick picks</string>
+    <string name="last_song_listened">last song listened</string>
+    <string name="IAFeatures">AI Features</string>
+    <string name="TextIAFeatures">playlist generation</string>
     <string name="liked">liked</string>
     <string name="offline">offline</string>
     <string name="your_ytb_playlists">your YT playlist</string>
     <string name="my_top">my top</string>
-    <string name="sort_by_last_updated">sort by last updated</string>
-    <string name="proxy" translatable="false">proxy</string>
-    <string name="default_lib_chips">default lib chips</string>
-    <string name="set_quick_picks">set quick picks</string>
-    <string name="last_song_listened">last song listened</string>
     <string name="already_in_playlist">already in playlist</string>
     <string name="enable_lrclib">enable lrclib</string>
     <string name="BetaFeatures">Beta Features</string>
-    <string name="IAFeatures">AI Features</string>
-    <string name="TextIAFeatures">playlist generation</string>
-    <string name="APIFeatures">API Features</string>
-    <string name="TextAPIFeatures">New features built into the API</string>
-    <string name="mytop">My Top</string>
-    <string name="player_background_style">player background style</string>
-    <string name="follow_theme">follow theme</string>
-    <string name="gradient">gradient</string>
+    <string name="APIFeatures">AI Features</string>
+    <string name="TextAPIFeatures">playlist generation</string>
+    <string name="add_to_library">add to library</string>
+    <string name="remove_from_library">remove from library</string>
 </resources>

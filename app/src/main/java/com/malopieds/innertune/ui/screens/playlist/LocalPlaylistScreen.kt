@@ -1,7 +1,5 @@
 package com.malopieds.innertune.ui.screens.playlist
 
-import android.icu.text.Transliterator
-import android.os.Build
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -10,7 +8,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -19,7 +16,6 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -28,7 +24,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -63,7 +58,6 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -151,9 +145,6 @@ fun LocalPlaylistScreen(
     val (sortDescending, onSortDescendingChange) = rememberPreference(PlaylistSongSortDescendingKey, true)
     var locked by rememberPreference(PlaylistEditLockKey, defaultValue = false)
     val wrappedSongs = songs.map { item -> ItemWrapper(item) }.toMutableList()
-    var searchQuery by remember {
-        mutableStateOf(TextFieldValue(""))
-    }
     var selection by remember {
         mutableStateOf(false)
     }
@@ -178,8 +169,8 @@ fun LocalPlaylistScreen(
                     Download.STATE_COMPLETED
                 } else if (songs.all {
                         downloads[it.song.id]?.state == Download.STATE_QUEUED ||
-                                downloads[it.song.id]?.state == Download.STATE_DOWNLOADING ||
-                                downloads[it.song.id]?.state == Download.STATE_COMPLETED
+                            downloads[it.song.id]?.state == Download.STATE_DOWNLOADING ||
+                            downloads[it.song.id]?.state == Download.STATE_COMPLETED
                     }
                 ) {
                     Download.STATE_DOWNLOADING
@@ -306,16 +297,16 @@ fun LocalPlaylistScreen(
                                         contentDescription = null,
                                         contentScale = ContentScale.Crop,
                                         modifier =
-                                        Modifier
-                                            .size(AlbumThumbnailSize)
-                                            .clip(RoundedCornerShape(ThumbnailCornerRadius)),
+                                            Modifier
+                                                .size(AlbumThumbnailSize)
+                                                .clip(RoundedCornerShape(ThumbnailCornerRadius)),
                                     )
                                 } else if (playlist.thumbnails.size > 1) {
                                     Box(
                                         modifier =
-                                        Modifier
-                                            .size(AlbumThumbnailSize)
-                                            .clip(RoundedCornerShape(ThumbnailCornerRadius)),
+                                            Modifier
+                                                .size(AlbumThumbnailSize)
+                                                .clip(RoundedCornerShape(ThumbnailCornerRadius)),
                                     ) {
                                         listOf(
                                             Alignment.TopStart,
@@ -328,9 +319,9 @@ fun LocalPlaylistScreen(
                                                 contentDescription = null,
                                                 contentScale = ContentScale.Crop,
                                                 modifier =
-                                                Modifier
-                                                    .align(alignment)
-                                                    .size(AlbumThumbnailSize / 2),
+                                                    Modifier
+                                                        .align(alignment)
+                                                        .size(AlbumThumbnailSize / 2),
                                             )
                                         }
                                     }
@@ -522,26 +513,6 @@ fun LocalPlaylistScreen(
                                     Text(stringResource(R.string.shuffle))
                                 }
                             }
-                            Spacer(Modifier.size(12.dp))
-                            OutlinedTextField(
-                                value = searchQuery,
-                                onValueChange = { searchQuery = it },
-                                label = { Text(context.getString(R.string.search)) },
-                                singleLine = true,
-                                modifier = Modifier
-                                    .clip(RoundedCornerShape(29.dp))
-                                    .fillMaxWidth()
-                                    .padding(bottom = 16.dp),
-
-                                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Search),
-                                shape = MaterialTheme.shapes.large,
-                                leadingIcon = {
-                                    Icon(
-                                        painterResource(R.drawable.search),
-                                        contentDescription = null
-                                    )
-                                }
-                            )
                         }
                     }
 
@@ -564,15 +535,15 @@ fun LocalPlaylistScreen(
                                 ) {
                                     Icon(
                                         painter =
-                                        painterResource(
-                                            if (count ==
-                                                wrappedSongs.size
-                                            ) {
-                                                R.drawable.deselect
-                                            } else {
-                                                R.drawable.select_all
-                                            },
-                                        ),
+                                            painterResource(
+                                                if (count ==
+                                                    wrappedSongs.size
+                                                ) {
+                                                    R.drawable.deselect
+                                                } else {
+                                                    R.drawable.select_all
+                                                },
+                                            ),
                                         contentDescription = null,
                                     )
                                 }
@@ -658,18 +629,10 @@ fun LocalPlaylistScreen(
                     }
                 }
             }
-            val searchQueryStr = textNoAccentsOrPunctMark(searchQuery.text.trim())
-            val filteredSongs = if (searchQueryStr.isEmpty())
-            { mutableSongs }
-            else{
-                mutableSongs.filter {
-                    textNoAccentsOrPunctMark(it.song.song.title).contains(searchQueryStr, ignoreCase = true) or
-                            textNoAccentsOrPunctMark(it.song.artists.joinToString("").trim()).contains(searchQueryStr, ignoreCase = true)
-                }
-            }
+
             if (!selection) {
                 itemsIndexed(
-                    items = filteredSongs,
+                    items = mutableSongs,
                     key = { _, song -> song.map.id },
                 ) { index, song ->
                     ReorderableItem(
@@ -700,10 +663,10 @@ fun LocalPlaylistScreen(
                                                 val snackbarResult =
                                                     snackbarHostState.showSnackbar(
                                                         message =
-                                                        context.getString(
-                                                            R.string.removed_song_from_playlist,
-                                                            currentItem.song.song.title,
-                                                        ),
+                                                            context.getString(
+                                                                R.string.removed_song_from_playlist,
+                                                                currentItem.song.song.title,
+                                                            ),
                                                         actionLabel = context.getString(R.string.undo),
                                                         duration = SnackbarDuration.Short,
                                                     )
@@ -760,32 +723,32 @@ fun LocalPlaylistScreen(
                                     }
                                 },
                                 modifier =
-                                Modifier
-                                    .fillMaxWidth()
-                                    .combinedClickable(
-                                        onClick = {
-                                            if (song.song.id == mediaMetadata?.id) {
-                                                playerConnection.player.togglePlayPause()
-                                            } else {
-                                                playerConnection.playQueue(
-                                                    ListQueue(
-                                                        title = playlist!!.playlist.name,
-                                                        items = songs.map { it.song.toMediaItem() },
-                                                        startIndex = index,
-                                                    ),
-                                                )
-                                            }
-                                        },
-                                        onLongClick = {
-                                            menuState.show {
-                                                SongMenu(
-                                                    originalSong = song.song,
-                                                    navController = navController,
-                                                    onDismiss = menuState::dismiss,
-                                                )
-                                            }
-                                        },
-                                    ),
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .combinedClickable(
+                                            onClick = {
+                                                if (song.song.id == mediaMetadata?.id) {
+                                                    playerConnection.player.togglePlayPause()
+                                                } else {
+                                                    playerConnection.playQueue(
+                                                        ListQueue(
+                                                            title = playlist!!.playlist.name,
+                                                            items = songs.map { it.song.toMediaItem() },
+                                                            startIndex = index,
+                                                        ),
+                                                    )
+                                                }
+                                            },
+                                            onLongClick = {
+                                                menuState.show {
+                                                    SongMenu(
+                                                        originalSong = song.song,
+                                                        navController = navController,
+                                                        onDismiss = menuState::dismiss,
+                                                    )
+                                                }
+                                            },
+                                        ),
                             )
                         }
 
@@ -834,10 +797,10 @@ fun LocalPlaylistScreen(
                                                 val snackbarResult =
                                                     snackbarHostState.showSnackbar(
                                                         message =
-                                                        context.getString(
-                                                            R.string.removed_song_from_playlist,
-                                                            currentItem.song.song.title,
-                                                        ),
+                                                            context.getString(
+                                                                R.string.removed_song_from_playlist,
+                                                                currentItem.song.song.title,
+                                                            ),
                                                         actionLabel = context.getString(R.string.undo),
                                                         duration = SnackbarDuration.Short,
                                                     )
@@ -895,37 +858,37 @@ fun LocalPlaylistScreen(
                                 },
                                 isSelected = songWrapper.isSelected && selection,
                                 modifier =
-                                Modifier
-                                    .fillMaxWidth()
-                                    .combinedClickable(
-                                        onClick = {
-                                            if (!selection) {
-                                                if (songWrapper.item.song.id == mediaMetadata?.id) {
-                                                    playerConnection.player.togglePlayPause()
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .combinedClickable(
+                                            onClick = {
+                                                if (!selection) {
+                                                    if (songWrapper.item.song.id == mediaMetadata?.id) {
+                                                        playerConnection.player.togglePlayPause()
+                                                    } else {
+                                                        playerConnection.playQueue(
+                                                            ListQueue(
+                                                                title = playlist!!.playlist.name,
+                                                                items = songs.map { it.song.toMediaItem() },
+                                                                startIndex = index,
+                                                            ),
+                                                        )
+                                                    }
                                                 } else {
-                                                    playerConnection.playQueue(
-                                                        ListQueue(
-                                                            title = playlist!!.playlist.name,
-                                                            items = songs.map { it.song.toMediaItem() },
-                                                            startIndex = index,
-                                                        ),
+                                                    songWrapper.isSelected = !songWrapper.isSelected
+                                                }
+                                            },
+                                            onLongClick = {
+                                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                                menuState.show {
+                                                    SongMenu(
+                                                        originalSong = songWrapper.item.song,
+                                                        navController = navController,
+                                                        onDismiss = menuState::dismiss,
                                                     )
                                                 }
-                                            } else {
-                                                songWrapper.isSelected = !songWrapper.isSelected
-                                            }
-                                        },
-                                        onLongClick = {
-                                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                            menuState.show {
-                                                SongMenu(
-                                                    originalSong = songWrapper.item.song,
-                                                    navController = navController,
-                                                    onDismiss = menuState::dismiss,
-                                                )
-                                            }
-                                        },
-                                    ),
+                                            },
+                                        ),
                             )
                         }
 
@@ -945,20 +908,7 @@ fun LocalPlaylistScreen(
         }
 
         TopAppBar(
-            title = {
-                Row(
-                    modifier = Modifier.fillMaxHeight(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    if (showTopBarTitle) AutoResizeText(
-                        text = playlist?.playlist?.name.orEmpty(),
-                        fontWeight = FontWeight.Bold,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        fontSizeRange = FontSizeRange(16.sp, 22.sp)
-                    )
-                }
-            },
+            title = { if (showTopBarTitle) Text(playlist?.playlist?.name.orEmpty()) },
             navigationIcon = {
                 IconButton(
                     onClick = navController::navigateUp,
@@ -970,44 +920,14 @@ fun LocalPlaylistScreen(
                     )
                 }
             },
-            scrollBehavior = scrollBehavior,
         )
 
         SnackbarHost(
             hostState = snackbarHostState,
             modifier =
-            Modifier
-                .windowInsetsPadding(LocalPlayerAwareWindowInsets.current)
-                .align(Alignment.BottomCenter),
+                Modifier
+                    .windowInsetsPadding(LocalPlayerAwareWindowInsets.current)
+                    .align(Alignment.BottomCenter),
         )
     }
-}
-
-fun textNoAccentsOrPunctMark(text: String): String {
-    var temp: String = text
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-        val transliterator = Transliterator.getInstance("Russian-Latin/BGN")
-        temp = transliterator
-            .transliterate(text)
-    }
-    return temp
-        .lowercase()
-        .replace("á", "a")
-        .replace("à", "a")
-        .replace("ä", "a")
-        .replace("é", "e")
-        .replace("è", "e")
-        .replace("ê", "e")
-        .replace("ë", "e")
-        .replace("í", "i")
-        .replace("î", "i")
-        .replace("ï", "i")
-        .replace("ó", "o")
-        .replace("ô", "o")
-        .replace("ö", "o")
-        .replace("ú", "u")
-        .replace("û", "u")
-        .replace("ü", "u")
-        .replace("ç", "c")
-        .replace("[\\s\\p{P}]".toRegex(), "")
 }

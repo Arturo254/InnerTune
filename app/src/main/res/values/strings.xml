@@ -323,4 +323,6 @@
     <string name="player_background_style">player background style</string>
     <string name="follow_theme">follow theme</string>
     <string name="gradient">gradient</string>
+    <string name="other_versions">other versions</string>
+    <string name="enable_squiggly_slider">enable squiggly slider</string>
 </resources>

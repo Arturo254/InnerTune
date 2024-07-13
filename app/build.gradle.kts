@@ -18,8 +18,8 @@ android {
         applicationId = "com.Arturo254.innertune"
         minSdk = 24
         targetSdk = 34
-        versionCode = 24
-        versionName = "0.7.2"
+        versionCode = 25
+        versionName = "0.7.3"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -116,6 +116,7 @@ dependencies {
     implementation(libs.media3)
     implementation(libs.media3.session)
     implementation(libs.media3.okhttp)
+    implementation(libs.squigglyslider)
 
     implementation(libs.room.runtime)
     annotationProcessor(libs.room.compiler)

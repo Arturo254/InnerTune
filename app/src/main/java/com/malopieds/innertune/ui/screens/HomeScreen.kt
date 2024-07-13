@@ -200,6 +200,7 @@ fun HomeScreen(
                         onClick = { navController.navigate("auto_playlist/liked") },
                         modifier = Modifier.weight(1f),
                     )
+
                     if (isLoggedIn) {
                         NavigationTile(
                             title = stringResource(R.string.account),

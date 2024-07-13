@@ -29,6 +29,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -80,8 +81,6 @@ fun SettingsScreen(
         R.drawable.cardbgi,
         R.drawable.cardbgk,
         R.drawable.cardbgm,
-        R.drawable.cardbgk
-
 
 
 
@@ -89,7 +88,7 @@ fun SettingsScreen(
 
         )
 
-    var currentImageIndex by remember { mutableStateOf((0..backgroundImages.lastIndex).random()) }
+    var currentImageIndex by remember { mutableIntStateOf((0..backgroundImages.lastIndex).random()) }
 
 
 
@@ -101,10 +100,9 @@ fun SettingsScreen(
     }
 
     Column(
-        modifier =
-            Modifier
-                .windowInsetsPadding(LocalPlayerAwareWindowInsets.current)
-                .verticalScroll(rememberScrollState()),
+        modifier = Modifier
+            .windowInsetsPadding(LocalPlayerAwareWindowInsets.current)
+            .verticalScroll(rememberScrollState())
     ) {
         Spacer(Modifier.height(20.dp))
         Box(
@@ -112,13 +110,13 @@ fun SettingsScreen(
                 .height(220.dp)
                 .clip(RoundedCornerShape(20.dp))
                 .background(color = Color.Transparent)
-                .clickable { changeBackgroundImage() }
+                .clickable { changeBackgroundImage() } // Cambiar a la siguiente imagen al hacer clic
 
 
         ) {
             Image(
                 painter = painterResource(id = backgroundImages[currentImageIndex]),
-                contentDescription = "background image",
+                contentDescription = "Imagen de fondo",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxSize()
@@ -152,37 +150,37 @@ fun SettingsScreen(
         PreferenceEntry(
             title = { Text(stringResource(R.string.appearance)) },
             icon = { Icon(painterResource(R.drawable.palette), null) },
-            onClick = { navController.navigate("settings/appearance") },
+            onClick = { navController.navigate("settings/appearance") }
         )
         PreferenceEntry(
             title = { Text(stringResource(R.string.content)) },
             icon = { Icon(painterResource(R.drawable.language), null) },
-            onClick = { navController.navigate("settings/content") },
+            onClick = { navController.navigate("settings/content") }
         )
         PreferenceEntry(
             title = { Text(stringResource(R.string.player_and_audio)) },
             icon = { Icon(painterResource(R.drawable.play), null) },
-            onClick = { navController.navigate("settings/player") },
+            onClick = { navController.navigate("settings/player") }
         )
         PreferenceEntry(
             title = { Text(stringResource(R.string.storage)) },
             icon = { Icon(painterResource(R.drawable.storage), null) },
-            onClick = { navController.navigate("settings/storage") },
+            onClick = { navController.navigate("settings/storage") }
         )
         PreferenceEntry(
             title = { Text(stringResource(R.string.privacy)) },
             icon = { Icon(painterResource(R.drawable.security), null) },
-            onClick = { navController.navigate("settings/privacy") },
+            onClick = { navController.navigate("settings/privacy") }
         )
         PreferenceEntry(
             title = { Text(stringResource(R.string.backup_restore)) },
             icon = { Icon(painterResource(R.drawable.restore), null) },
-            onClick = { navController.navigate("settings/backup_restore") },
+            onClick = { navController.navigate("settings/backup_restore") }
         )
         PreferenceEntry(
             title = { Text(stringResource(R.string.about)) },
             icon = { Icon(painterResource(R.drawable.info), null) },
-            onClick = { navController.navigate("settings/about") },
+            onClick = { navController.navigate("settings/about") }
         )
         PreferenceEntry(
             title = { Text(stringResource(R.string.Donate)) },
@@ -205,7 +203,6 @@ fun SettingsScreen(
 
             },
             onClick = {
-                navController.navigate("settings/BetaFeatures")
 
 
             }
@@ -255,7 +252,7 @@ fun SettingsScreen(
 
                 Spacer(Modifier.height(3.dp))
                 Text(
-                    text = "\uD835\uDE85\uD835\uDE8E\uD835\uDE9B\uD835\uDE9C\uD835\uDE92\uD835\uDE98\uD835\uDE97 : 0.7.2 \n" +
+                    text = "\uD835\uDE85\uD835\uDE8E\uD835\uDE9B\uD835\uDE9C\uD835\uDE92\uD835\uDE98\uD835\uDE97 : ${BuildConfig.VERSION_NAME} \n" +
                             "(\uD835\uDE24\uD835\uDE2D\uD835\uDE2A\uD835\uDE24\uD835\uDE2C \uD835\uDE35\uD835\uDE30 \uD835\uDE36\uD835\uDE31\uD835\uDE25\uD835\uDE22\uD835\uDE35\uD835\uDE26)",
                     style = MaterialTheme.typography.bodyLarge.copy(fontSize = 17.sp),
                     color = MaterialTheme.colorScheme.secondary,
@@ -299,13 +296,14 @@ fun SettingsScreen(
         navigationIcon = {
             IconButton(
                 onClick = navController::navigateUp,
-                onLongClick = navController::backToMain,
+                onLongClick = navController::backToMain
             ) {
                 Icon(
                     painterResource(R.drawable.arrow_back),
-                    contentDescription = null,
+                    contentDescription = null
                 )
             }
         },
+        scrollBehavior = scrollBehavior
     )
 }

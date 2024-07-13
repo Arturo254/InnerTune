@@ -39,6 +39,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -61,12 +62,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -95,6 +98,7 @@ import com.malopieds.innertune.LocalDatabase
 import com.malopieds.innertune.LocalDownloadUtil
 import com.malopieds.innertune.LocalPlayerConnection
 import com.malopieds.innertune.R
+import com.malopieds.innertune.constants.EnableSquigglySlider
 import com.malopieds.innertune.constants.ListThumbnailSize
 import com.malopieds.innertune.constants.PlayerBackgroundStyle
 import com.malopieds.innertune.constants.PlayerBackgroundStyleKey
@@ -124,10 +128,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
+import me.saket.squiggles.SquigglySlider
 import java.time.LocalDateTime
 import kotlin.math.roundToInt
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun BottomSheetPlayer(
     state: BottomSheetState,
@@ -153,6 +158,8 @@ fun BottomSheetPlayer(
     var showLyrics by rememberPreference(ShowLyricsKey, defaultValue = false)
     val playerBackground by rememberEnumPreference(key = PlayerBackgroundStyleKey, defaultValue = PlayerBackgroundStyle.DEFAULT)
 
+    val enableSquigglySlider by rememberPreference(EnableSquigglySlider, defaultValue = true)
+
     var position by rememberSaveable(playbackState) {
         mutableLongStateOf(playerConnection.player.currentPosition)
     }
@@ -176,15 +183,15 @@ fun BottomSheetPlayer(
             withContext(Dispatchers.IO) {
                 val result =
                     (
-                        ImageLoader(context)
-                            .execute(
-                                ImageRequest
-                                    .Builder(context)
-                                    .data(mediaMetadata?.thumbnailUrl)
-                                    .allowHardware(false)
-                                    .build(),
-                            ).drawable as? BitmapDrawable
-                    )?.bitmap?.extractGradientColors()
+                            ImageLoader(context)
+                                .execute(
+                                    ImageRequest
+                                        .Builder(context)
+                                        .data(mediaMetadata?.thumbnailUrl)
+                                        .allowHardware(false)
+                                        .build(),
+                                ).drawable as? BitmapDrawable
+                            )?.bitmap?.extractGradientColors()
 
                 result?.let {
                     gradientColors = it
@@ -344,8 +351,8 @@ fun BottomSheetPlayer(
                         )
                     },
                     modifier =
-                        Modifier
-                            .clickable { showErrorPlaylistAddDialog = false },
+                    Modifier
+                        .clickable { showErrorPlaylistAddDialog = false },
                 )
             }
 
@@ -361,17 +368,17 @@ fun BottomSheetPlayer(
                                 model = song.thumbnailUrl,
                                 contentDescription = null,
                                 modifier =
-                                    Modifier
-                                        .fillMaxSize()
-                                        .clip(RoundedCornerShape(ThumbnailCornerRadius)),
+                                Modifier
+                                    .fillMaxSize()
+                                    .clip(RoundedCornerShape(ThumbnailCornerRadius)),
                             )
                         }
                     },
                     subtitle =
-                        joinByBullet(
-                            song.artists.joinToString { it.name },
-                            makeTimeString(song.duration * 1000L),
-                        ),
+                    joinByBullet(
+                        song.artists.joinToString { it.name },
+                        makeTimeString(song.duration * 1000L),
+                    ),
                 )
             }
         }
@@ -413,9 +420,9 @@ fun BottomSheetPlayer(
             text = {
                 Column(
                     modifier =
-                        Modifier
-                            .sizeIn(minWidth = 280.dp, maxWidth = 560.dp)
-                            .verticalScroll(rememberScrollState()),
+                    Modifier
+                        .sizeIn(minWidth = 280.dp, maxWidth = 560.dp)
+                        .verticalScroll(rememberScrollState()),
                 ) {
                     listOf(
                         stringResource(R.string.song_title) to mediaMetadata?.title,
@@ -429,7 +436,7 @@ fun BottomSheetPlayer(
                         stringResource(R.string.loudness) to currentFormat?.loudnessDb?.let { "$it dB" },
                         stringResource(R.string.volume) to "${(playerConnection.player.volume * 100).toInt()}%",
                         stringResource(R.string.file_size) to
-                            currentFormat?.contentLength?.let { Formatter.formatShortFileSize(context, it) },
+                                currentFormat?.contentLength?.let { Formatter.formatShortFileSize(context, it) },
                     ).forEach { (label, text) ->
                         val displayText = text ?: stringResource(R.string.unknown)
                         Text(
@@ -440,14 +447,14 @@ fun BottomSheetPlayer(
                             text = displayText,
                             style = MaterialTheme.typography.titleMedium,
                             modifier =
-                                Modifier.clickable(
-                                    interactionSource = remember { MutableInteractionSource() },
-                                    indication = null,
-                                    onClick = {
-                                        clipboardManager.setText(AnnotatedString(displayText))
-                                        Toast.makeText(context, R.string.copied, Toast.LENGTH_SHORT).show()
-                                    },
-                                ),
+                            Modifier.clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null,
+                                onClick = {
+                                    clipboardManager.setText(AnnotatedString(displayText))
+                                    Toast.makeText(context, R.string.copied, Toast.LENGTH_SHORT).show()
+                                },
+                            ),
                         )
                         Spacer(Modifier.height(8.dp))
                     }
@@ -466,23 +473,23 @@ fun BottomSheetPlayer(
         state = state,
         modifier = modifier,
         brushBackgroundColor =
-            if (gradientColors.size >=
-                2 &&
-                state.value > state.expandedBound / 3
-            ) {
-                Brush.verticalGradient(gradientColors)
-            } else {
-                Brush.verticalGradient(
-                    listOf(
-                        MaterialTheme.colorScheme.surfaceColorAtElevation(
-                            NavigationBarDefaults.Elevation,
-                        ),
-                        MaterialTheme.colorScheme.surfaceColorAtElevation(
-                            NavigationBarDefaults.Elevation,
-                        ),
+        if (gradientColors.size >=
+            2 &&
+            state.value > state.expandedBound / 3
+        ) {
+            Brush.verticalGradient(gradientColors)
+        } else {
+            Brush.verticalGradient(
+                listOf(
+                    MaterialTheme.colorScheme.surfaceColorAtElevation(
+                        NavigationBarDefaults.Elevation,
                     ),
-                )
-            },
+                    MaterialTheme.colorScheme.surfaceColorAtElevation(
+                        NavigationBarDefaults.Elevation,
+                    ),
+                ),
+            )
+        },
         onDismiss = {
             playerConnection.player.stop()
             playerConnection.player.clearMediaItems()
@@ -504,9 +511,9 @@ fun BottomSheetPlayer(
             Row(
                 horizontalArrangement = Arrangement.Start,
                 modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = PlayerHorizontalPadding),
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = PlayerHorizontalPadding),
             ) {
                 Text(
                     text = mediaMetadata.title,
@@ -516,12 +523,12 @@ fun BottomSheetPlayer(
                     overflow = TextOverflow.Ellipsis,
                     color = onBackgroundColor,
                     modifier =
-                        Modifier
-                            .basicMarquee()
-                            .clickable(enabled = mediaMetadata.album != null) {
-                                navController.navigate("album/${mediaMetadata.album!!.id}")
-                                state.collapseSoft()
-                            },
+                    Modifier
+                        .basicMarquee()
+                        .clickable(enabled = mediaMetadata.album != null) {
+                            navController.navigate("album/${mediaMetadata.album!!.id}")
+                            state.collapseSoft()
+                        },
                 )
             }
 
@@ -530,9 +537,9 @@ fun BottomSheetPlayer(
             Row(
                 horizontalArrangement = Arrangement.Start,
                 modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = PlayerHorizontalPadding),
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = PlayerHorizontalPadding),
             ) {
                 mediaMetadata.artists.fastForEachIndexed { index, artist ->
                     Text(
@@ -541,10 +548,10 @@ fun BottomSheetPlayer(
                         color = onBackgroundColor,
                         maxLines = 1,
                         modifier =
-                            Modifier.clickable(enabled = artist.id != null) {
-                                navController.navigate("artist/${artist.id}")
-                                state.collapseSoft()
-                            },
+                        Modifier.clickable(enabled = artist.id != null) {
+                            navController.navigate("artist/${artist.id}")
+                            state.collapseSoft()
+                        },
                     )
 
                     if (index != mediaMetadata.artists.lastIndex) {
@@ -563,28 +570,28 @@ fun BottomSheetPlayer(
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically,
                 modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = PlayerHorizontalPadding),
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = PlayerHorizontalPadding),
             ) {
                 Box(
                     modifier =
-                        Modifier
-                            .size(42.dp)
-                            .clip(RoundedCornerShape(24.dp))
-                            .background(MaterialTheme.colorScheme.primary)
-                            .clickable {
-                                playerConnection.service.startRadioSeamlessly()
-                            },
+                    Modifier
+                        .size(42.dp)
+                        .clip(RoundedCornerShape(24.dp))
+                        .background(MaterialTheme.colorScheme.primary)
+                        .clickable {
+                            playerConnection.service.startRadioSeamlessly()
+                        },
                 ) {
                     Image(
                         painter = painterResource(R.drawable.radio),
                         contentDescription = null,
                         colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimary),
                         modifier =
-                            Modifier
-                                .align(Alignment.Center)
-                                .size(24.dp),
+                        Modifier
+                            .align(Alignment.Center)
+                            .size(24.dp),
                     )
                 }
 
@@ -592,54 +599,54 @@ fun BottomSheetPlayer(
 
                 Box(
                     modifier =
-                        Modifier
-                            .size(42.dp)
-                            .clip(RoundedCornerShape(24.dp))
-                            .background(MaterialTheme.colorScheme.primary)
-                            .clickable {
-                                if (download?.state == Download.STATE_COMPLETED) {
-                                    DownloadService.sendRemoveDownload(
-                                        context,
-                                        ExoDownloadService::class.java,
-                                        mediaMetadata.id,
-                                        false,
-                                    )
-                                } else {
-                                    database.transaction {
-                                        insert(mediaMetadata)
-                                    }
-                                    val downloadRequest =
-                                        DownloadRequest
-                                            .Builder(mediaMetadata.id, mediaMetadata.id.toUri())
-                                            .setCustomCacheKey(mediaMetadata.id)
-                                            .setData(mediaMetadata.title.toByteArray())
-                                            .build()
-                                    DownloadService.sendAddDownload(
-                                        context,
-                                        ExoDownloadService::class.java,
-                                        downloadRequest,
-                                        false,
-                                    )
+                    Modifier
+                        .size(42.dp)
+                        .clip(RoundedCornerShape(24.dp))
+                        .background(MaterialTheme.colorScheme.primary)
+                        .clickable {
+                            if (download?.state == Download.STATE_COMPLETED) {
+                                DownloadService.sendRemoveDownload(
+                                    context,
+                                    ExoDownloadService::class.java,
+                                    mediaMetadata.id,
+                                    false,
+                                )
+                            } else {
+                                database.transaction {
+                                    insert(mediaMetadata)
                                 }
-                            },
+                                val downloadRequest =
+                                    DownloadRequest
+                                        .Builder(mediaMetadata.id, mediaMetadata.id.toUri())
+                                        .setCustomCacheKey(mediaMetadata.id)
+                                        .setData(mediaMetadata.title.toByteArray())
+                                        .build()
+                                DownloadService.sendAddDownload(
+                                    context,
+                                    ExoDownloadService::class.java,
+                                    downloadRequest,
+                                    false,
+                                )
+                            }
+                        },
                 ) {
                     Image(
                         painter =
-                            painterResource(
-                                if (download?.state ==
-                                    Download.STATE_COMPLETED
-                                ) {
-                                    R.drawable.offline
-                                } else {
-                                    R.drawable.download
-                                },
-                            ),
+                        painterResource(
+                            if (download?.state ==
+                                Download.STATE_COMPLETED
+                            ) {
+                                R.drawable.offline
+                            } else {
+                                R.drawable.download
+                            },
+                        ),
                         contentDescription = null,
                         colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimary),
                         modifier =
-                            Modifier
-                                .align(Alignment.Center)
-                                .size(24.dp),
+                        Modifier
+                            .align(Alignment.Center)
+                            .size(24.dp),
                     )
                 }
 
@@ -647,22 +654,22 @@ fun BottomSheetPlayer(
 
                 Box(
                     modifier =
-                        Modifier
-                            .size(42.dp)
-                            .clip(RoundedCornerShape(24.dp))
-                            .background(MaterialTheme.colorScheme.primary)
-                            .clickable {
-                                showChoosePlaylistDialog = true
-                            },
+                    Modifier
+                        .size(42.dp)
+                        .clip(RoundedCornerShape(24.dp))
+                        .background(MaterialTheme.colorScheme.primary)
+                        .clickable {
+                            showChoosePlaylistDialog = true
+                        },
                 ) {
                     Image(
                         painter = painterResource(R.drawable.playlist_add),
                         contentDescription = null,
                         colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimary),
                         modifier =
-                            Modifier
-                                .align(Alignment.Center)
-                                .size(24.dp),
+                        Modifier
+                            .align(Alignment.Center)
+                            .size(24.dp),
                     )
                 }
 
@@ -671,22 +678,22 @@ fun BottomSheetPlayer(
                 Box(
                     contentAlignment = Alignment.Center,
                     modifier =
-                        Modifier
-                            .size(42.dp)
-                            .clip(RoundedCornerShape(24.dp))
-                            .background(MaterialTheme.colorScheme.primary)
-                            .clickable {
-                                val intent =
-                                    Intent().apply {
-                                        action = Intent.ACTION_SEND
-                                        type = "text/plain"
-                                        putExtra(
-                                            Intent.EXTRA_TEXT,
-                                            "https://music.youtube.com/watch?v=${mediaMetadata.id}",
-                                        )
-                                    }
-                                context.startActivity(Intent.createChooser(intent, null))
-                            },
+                    Modifier
+                        .size(42.dp)
+                        .clip(RoundedCornerShape(24.dp))
+                        .background(MaterialTheme.colorScheme.primary)
+                        .clickable {
+                            val intent =
+                                Intent().apply {
+                                    action = Intent.ACTION_SEND
+                                    type = "text/plain"
+                                    putExtra(
+                                        Intent.EXTRA_TEXT,
+                                        "https://music.youtube.com/watch?v=${mediaMetadata.id}",
+                                    )
+                                }
+                            context.startActivity(Intent.createChooser(intent, null))
+                        },
                 ) {
                     AnimatedContent(
                         label = "sleepTimer",
@@ -698,16 +705,29 @@ fun BottomSheetPlayer(
                                 style = MaterialTheme.typography.labelLarge,
                                 color = onBackgroundColor,
                                 modifier =
-                                    Modifier
-                                        .clip(RoundedCornerShape(50))
-                                        .clickable(onClick = playerConnection.service.sleepTimer::clear),
+                                Modifier
+                                    .clip(RoundedCornerShape(50))
+                                    .clickable(onClick = playerConnection.service.sleepTimer::clear),
                             )
                         } else {
-                            IconButton(onClick = { showSleepTimerDialog = true }) {
+                            Box(
+                                modifier =
+                                Modifier
+                                    .size(42.dp)
+                                    .clip(RoundedCornerShape(24.dp))
+                                    .background(MaterialTheme.colorScheme.primary)
+                                    .clickable {
+                                        showSleepTimerDialog = true
+                                    },
+                            ) {
                                 Image(
                                     painter = painterResource(R.drawable.bedtime),
                                     colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimary),
                                     contentDescription = null,
+                                    modifier =
+                                    Modifier
+                                        .align(Alignment.Center)
+                                        .size(24.dp),
                                 )
                             }
                         }
@@ -719,21 +739,21 @@ fun BottomSheetPlayer(
                 Box(
                     contentAlignment = Alignment.Center,
                     modifier =
-                        Modifier
-                            .size(42.dp)
-                            .clip(RoundedCornerShape(24.dp))
-                            .background(MaterialTheme.colorScheme.primary)
-                            .clickable {
-                                menuState.show {
-                                    PlayerMenu(
-                                        mediaMetadata = mediaMetadata,
-                                        navController = navController,
-                                        playerBottomSheetState = state,
-                                        onShowDetailsDialog = { showDetailsDialog = true },
-                                        onDismiss = menuState::dismiss,
-                                    )
-                                }
-                            },
+                    Modifier
+                        .size(42.dp)
+                        .clip(RoundedCornerShape(24.dp))
+                        .background(MaterialTheme.colorScheme.primary)
+                        .clickable {
+                            menuState.show {
+                                PlayerMenu(
+                                    mediaMetadata = mediaMetadata,
+                                    navController = navController,
+                                    playerBottomSheetState = state,
+                                    onShowDetailsDialog = { showDetailsDialog = true },
+                                    onDismiss = menuState::dismiss,
+                                )
+                            }
+                        },
                 ) {
                     Image(
                         painter = painterResource(R.drawable.more_horiz),
@@ -745,29 +765,52 @@ fun BottomSheetPlayer(
 
             Spacer(Modifier.height(6.dp))
 
-            Slider(
-                value = (sliderPosition ?: position).toFloat(),
-                valueRange = 0f..(if (duration == C.TIME_UNSET) 0f else duration.toFloat()),
-                onValueChange = {
-                    sliderPosition = it.toLong()
-                },
-                onValueChangeFinished = {
-                    sliderPosition?.let {
-                        playerConnection.player.seekTo(it)
-                        position = it
-                    }
-                    sliderPosition = null
-                },
-                modifier = Modifier.padding(horizontal = PlayerHorizontalPadding),
-            )
+            if (enableSquigglySlider) {
+                SquigglySlider(
+                    value = (sliderPosition ?: position).toFloat(),
+                    valueRange = 0f..(if (duration == C.TIME_UNSET) 0f else duration.toFloat()),
+                    onValueChange = {
+                        sliderPosition = it.toLong()
+                    },
+                    onValueChangeFinished = {
+                        sliderPosition?.let {
+                            playerConnection.player.seekTo(it)
+                            position = it
+                        }
+                        sliderPosition = null
+                    },
+                    modifier = Modifier.padding(horizontal = PlayerHorizontalPadding),
+                    squigglesSpec =
+                    SquigglySlider.SquigglesSpec(
+                        amplitude = if (isPlaying) (2.dp).coerceAtLeast(2.dp) else 0.dp,
+                        strokeWidth = 3.dp,
+                    ),
+                )
+            } else {
+                Slider(
+                    value = (sliderPosition ?: position).toFloat(),
+                    valueRange = 0f..(if (duration == C.TIME_UNSET) 0f else duration.toFloat()),
+                    onValueChange = {
+                        sliderPosition = it.toLong()
+                    },
+                    onValueChangeFinished = {
+                        sliderPosition?.let {
+                            playerConnection.player.seekTo(it)
+                            position = it
+                        }
+                        sliderPosition = null
+                    },
+                    modifier = Modifier.padding(horizontal = PlayerHorizontalPadding),
+                )
+            }
 
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
                 modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = PlayerHorizontalPadding + 4.dp),
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = PlayerHorizontalPadding + 4.dp),
             ) {
                 Text(
                     text = makeTimeString(sliderPosition ?: position),
@@ -791,19 +834,19 @@ fun BottomSheetPlayer(
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = PlayerHorizontalPadding),
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = PlayerHorizontalPadding),
             ) {
                 Box(modifier = Modifier.weight(1f)) {
                     ResizableIconButton(
                         icon = if (currentSong?.song?.liked == true) R.drawable.favorite else R.drawable.favorite_border,
                         color = if (currentSong?.song?.liked == true) MaterialTheme.colorScheme.error else onBackgroundColor,
                         modifier =
-                            Modifier
-                                .size(32.dp)
-                                .padding(4.dp)
-                                .align(Alignment.Center),
+                        Modifier
+                            .size(32.dp)
+                            .padding(4.dp)
+                            .align(Alignment.Center),
                         onClick = playerConnection::toggleLike,
                     )
                 }
@@ -814,9 +857,9 @@ fun BottomSheetPlayer(
                         enabled = canSkipPrevious,
                         color = onBackgroundColor,
                         modifier =
-                            Modifier
-                                .size(32.dp)
-                                .align(Alignment.Center),
+                        Modifier
+                            .size(32.dp)
+                            .align(Alignment.Center),
                         onClick = playerConnection.player::seekToPrevious,
                     )
                 }
@@ -825,38 +868,38 @@ fun BottomSheetPlayer(
 
                 Box(
                     modifier =
-                        Modifier
-                            .size(72.dp)
-                            .clip(RoundedCornerShape(playPauseRoundness))
-                            .background(MaterialTheme.colorScheme.primary)
-                            .clickable {
-                                if (playbackState == STATE_ENDED) {
-                                    playerConnection.player.seekTo(0, 0)
-                                    playerConnection.player.playWhenReady = true
-                                } else {
-                                    playerConnection.player.togglePlayPause()
-                                }
-                            },
+                    Modifier
+                        .size(72.dp)
+                        .clip(RoundedCornerShape(playPauseRoundness))
+                        .background(MaterialTheme.colorScheme.primary)
+                        .clickable {
+                            if (playbackState == STATE_ENDED) {
+                                playerConnection.player.seekTo(0, 0)
+                                playerConnection.player.playWhenReady = true
+                            } else {
+                                playerConnection.player.togglePlayPause()
+                            }
+                        },
                 ) {
                     Image(
                         painter =
-                            painterResource(
-                                if (playbackState ==
-                                    STATE_ENDED
-                                ) {
-                                    R.drawable.replay
-                                } else if (isPlaying) {
-                                    R.drawable.pause
-                                } else {
-                                    R.drawable.play
-                                },
-                            ),
+                        painterResource(
+                            if (playbackState ==
+                                STATE_ENDED
+                            ) {
+                                R.drawable.replay
+                            } else if (isPlaying) {
+                                R.drawable.pause
+                            } else {
+                                R.drawable.play
+                            },
+                        ),
                         contentDescription = null,
                         colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimary),
                         modifier =
-                            Modifier
-                                .align(Alignment.Center)
-                                .size(36.dp),
+                        Modifier
+                            .align(Alignment.Center)
+                            .size(36.dp),
                     )
                 }
 
@@ -868,9 +911,9 @@ fun BottomSheetPlayer(
                         enabled = canSkipNext,
                         color = onBackgroundColor,
                         modifier =
-                            Modifier
-                                .size(32.dp)
-                                .align(Alignment.Center),
+                        Modifier
+                            .size(32.dp)
+                            .align(Alignment.Center),
                         onClick = playerConnection.player::seekToNext,
                     )
                 }
@@ -882,8 +925,8 @@ fun BottomSheetPlayer(
                             contentDescription = null,
                             colorFilter = ColorFilter.tint(onBackgroundColor),
                             modifier =
-                                Modifier
-                                    .alpha(if (showLyrics) 1f else 0.5f),
+                            Modifier
+                                .alpha(if (showLyrics) 1f else 0.5f),
                         )
                     }
                 }
@@ -891,11 +934,13 @@ fun BottomSheetPlayer(
         }
 
         if (gradientColors.size >= 2 && state.isExpanded) {
-            Box(
-                modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .background(Brush.verticalGradient(gradientColors)),
+            AsyncImage(
+                model = mediaMetadata?.thumbnailUrl,
+                contentDescription = null,
+                contentScale = ContentScale.FillBounds,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .blur(200.dp)
             )
         }
 
@@ -903,9 +948,9 @@ fun BottomSheetPlayer(
             Configuration.ORIENTATION_LANDSCAPE -> {
                 Row(
                     modifier =
-                        Modifier
-                            .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Horizontal))
-                            .padding(bottom = queueSheetState.collapsedBound),
+                    Modifier
+                        .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Horizontal))
+                        .padding(bottom = queueSheetState.collapsedBound),
                 ) {
                     Box(
                         contentAlignment = Alignment.Center,
@@ -921,9 +966,9 @@ fun BottomSheetPlayer(
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier =
-                            Modifier
-                                .weight(1f)
-                                .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Top)),
+                        Modifier
+                            .weight(1f)
+                            .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Top)),
                     ) {
                         Spacer(Modifier.weight(1f))
 
@@ -940,9 +985,9 @@ fun BottomSheetPlayer(
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier =
-                        Modifier
-                            .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Horizontal))
-                            .padding(bottom = queueSheetState.collapsedBound),
+                    Modifier
+                        .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Horizontal))
+                        .padding(bottom = queueSheetState.collapsedBound),
                 ) {
                     Box(
                         contentAlignment = Alignment.Center,

@@ -570,9 +570,6 @@ class MainActivity : ComponentActivity() {
                             composable("settings/about") {
                                 AboutScreen(navController, scrollBehavior)
                             }
-                            composable("settings/BetaFeatures") {
-                                BetaFeatures(navController, scrollBehavior)
-                            }
                             composable("login") {
                                 LoginScreen(navController)
                             }
@@ -741,7 +738,7 @@ class MainActivity : ComponentActivity() {
 
                         NavigationBar(
                             modifier = Modifier
-                                .clip(RoundedCornerShape(16.dp))
+                                .clip(RoundedCornerShape(20.dp))
                                 .align(Alignment.BottomCenter)
                                 .offset {
                                     if (navigationBarHeight == 0.dp) {

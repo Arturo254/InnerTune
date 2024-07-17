@@ -9,7 +9,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -20,6 +22,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -27,6 +30,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -51,6 +55,8 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
@@ -109,6 +115,9 @@ fun OnlinePlaylistScreen(
     val songs by viewModel.playlistSongs.collectAsState()
 
     val wrappedSongs = songs.map { item -> ItemWrapper(item) }.toMutableList()
+    var searchQuery by remember {
+        mutableStateOf(TextFieldValue(""))
+    }
     var selection by remember {
         mutableStateOf(false)
     }
@@ -288,6 +297,23 @@ fun OnlinePlaylistScreen(
                                     }
                                 }
                             }
+                            OutlinedTextField(
+                                value = searchQuery,
+                                onValueChange = { searchQuery = it },
+                                label = { Text(context.getString(R.string.search)) },
+                                singleLine = true,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(bottom = 16.dp),
+                                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Search),
+                                shape = MaterialTheme.shapes.large,
+                                leadingIcon = {
+                                    Icon(
+                                        painterResource(R.drawable.search),
+                                        contentDescription = null
+                                    )
+                                }
+                            )
                         }
                     }
                     item {
@@ -357,9 +383,17 @@ fun OnlinePlaylistScreen(
                             }
                         }
                     }
-
+                    val searchQueryStr = textNoAccentsOrPunctMark(searchQuery.text.trim())
+                    val filteredSongs = if (searchQuery.text.isEmpty())
+                    { wrappedSongs }
+                    else{
+                        wrappedSongs.filter {
+                            textNoAccentsOrPunctMark(it.item.title).contains(searchQueryStr, ignoreCase = true) or
+                                    textNoAccentsOrPunctMark(it.item.artists.joinToString("")).contains(searchQueryStr, ignoreCase = true)
+                        }
+                    }
                     items(
-                        items = wrappedSongs,
+                        items = filteredSongs,
                     ) { song ->
                         YouTubeListItem(
                             item = song.item,
@@ -462,7 +496,20 @@ fun OnlinePlaylistScreen(
         }
 
         TopAppBar(
-            title = { if (showTopBarTitle) Text(playlist?.title.orEmpty()) },
+            title = {
+                Row(
+                    modifier = Modifier.fillMaxHeight(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    if (showTopBarTitle) AutoResizeText(
+                        text = playlist?.title.orEmpty(),
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        fontSizeRange = FontSizeRange(16.sp, 22.sp)
+                    )
+                }
+            },
             navigationIcon = {
                 IconButton(
                     onClick = navController::navigateUp,

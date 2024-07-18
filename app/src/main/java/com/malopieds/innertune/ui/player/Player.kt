@@ -488,6 +488,7 @@ fun BottomSheetPlayer(
                         NavigationBarDefaults.Elevation,
                     ),
                 ),
+
             )
         },
         onDismiss = {
@@ -941,8 +942,12 @@ fun BottomSheetPlayer(
                 modifier = Modifier
                     .fillMaxSize()
                     .blur(200.dp)
+
             )
         }
+
+
+
 
         when (LocalConfiguration.current.orientation) {
             Configuration.ORIENTATION_LANDSCAPE -> {

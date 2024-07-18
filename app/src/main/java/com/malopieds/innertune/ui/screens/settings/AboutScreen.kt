@@ -87,11 +87,12 @@ fun AboutScreen(
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(top = 8.dp, bottom = 4.dp)
             )
+
         }
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
-                text = "0.7.2",
+                text = " ${BuildConfig.VERSION_NAME } ",
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.secondary
             )
@@ -384,7 +385,7 @@ fun AboutScreen(
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurface
                 )
-                Spacer(modifier = Modifier.height(4.dp))  // Espacio entre el nombre y otros elementos
+                Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
                     text = "   \uD835\uDE47\uD835\uDE5A\uD835\uDE56\uD835\uDE59 \uD835\uDE3F\uD835\uDE5A\uD835\uDE6B\uD835\uDE5A\uD835\uDE61\uD835\uDE64\uD835\uDE65\uD835\uDE5A\uD835\uDE67",
@@ -398,58 +399,7 @@ fun AboutScreen(
 
         }
 
-//        // Tom Bulled
-//
-//        Spacer(Modifier.height(20.dp))
-//        Card(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .height(100.dp),
-//            colors = CardDefaults.cardColors(
-//                containerColor = MaterialTheme.colorScheme.surface,
-//            ),
-//            border = BorderStroke(1.dp, Color.Gray),
-//            onClick = { uriHandler.openUri("https://github.com/tombulled") }
-//        ) {
-//            Row(
-//                modifier = Modifier.padding(26.dp),
-//                verticalAlignment = Alignment.CenterVertically
-//            ) {
-//                Image(
-//                    painter = rememberAsyncImagePainter(
-//                        model = "https://avatars.githubusercontent.com/u/26026015?v=4",
-//
-//                        ),
-//                    contentDescription = null,
-//                    modifier = Modifier
-//                        .clip(CircleShape)
-//                        .background(
-//                            MaterialTheme.colorScheme.surfaceColorAtElevation(
-//                                NavigationBarDefaults.Elevation
-//                            )
-//                        )
-//                        .clickable { }
-//                )
-//
-//                Text(
-//                    text = "  \uD835\uDE1B\uD835\uDE30\uD835\uDE2E \uD835\uDE09\uD835\uDE36\uD835\uDE2D\uD835\uDE2D\uD835\uDE26\uD835\uDE25:",
-//                    textAlign = TextAlign.Center,
-//                    style = MaterialTheme.typography.bodyLarge,
-//                    color = MaterialTheme.colorScheme.onSurface
-//                )
-//                Spacer(modifier = Modifier.height(4.dp))  // Espacio entre el nombre y otros elementos
-//
-//                Text(
-//                    text = " \uD835\uDE3C\uD835\uDE4B\uD835\uDE44 \uD835\uDE54\uD835\uDE64\uD835\uDE6A\uD835\uDE69\uD835\uDE6A\uD835\uDE57\uD835\uDE5A \uD835\uDE48\uD835\uDE6A\uD835\uDE68\uD835\uDE5E\uD835\uDE58",
-//                    style = MaterialTheme.typography.bodyMedium,
-//                    color = MaterialTheme.colorScheme.onSurface
-//                )
-//
-//
-//            }
-//
-//
-//        }
+
         Spacer(Modifier.height(20.dp))
         Card(
             modifier = Modifier
@@ -540,7 +490,7 @@ fun AboutScreen(
     }
 
     TopAppBar(
-        title = { Text(stringResource(R.string.appearance)) },
+        title = { Text(stringResource(R.string.about)) },
         navigationIcon = {
             IconButton(
                 onClick = navController::navigateUp,

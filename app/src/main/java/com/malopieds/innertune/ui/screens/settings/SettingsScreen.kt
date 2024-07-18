@@ -16,8 +16,6 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Badge
-import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -40,6 +38,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -70,7 +69,7 @@ fun SettingsScreen(
         R.drawable.cardbg7,
         R.drawable.cardbg8,
         R.drawable.cardbg9,
-        R.drawable.cardbgb,
+        R.drawable.cardbg10,
         R.drawable.cardbgc,
         R.drawable.cardbgd,
         R.drawable.cardbge,
@@ -83,16 +82,9 @@ fun SettingsScreen(
         R.drawable.cardbgm,
 
 
-
-
-
         )
 
     var currentImageIndex by remember { mutableIntStateOf((0..backgroundImages.lastIndex).random()) }
-
-
-
-
 
 
     fun changeBackgroundImage() {
@@ -108,26 +100,26 @@ fun SettingsScreen(
         Box(
             modifier = Modifier
                 .height(220.dp)
-                .clip(RoundedCornerShape(20.dp))
+                .clip(RoundedCornerShape(28.dp))
                 .background(color = Color.Transparent)
-                .clickable { changeBackgroundImage() } // Cambiar a la siguiente imagen al hacer clic
+                .clickable { changeBackgroundImage() } // change background image on click
 
 
         ) {
             Image(
                 painter = painterResource(id = backgroundImages[currentImageIndex]),
-                contentDescription = "Imagen de fondo",
+                contentDescription = "background",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxSize()
-                // Aplica un efecto de desenfoque al fondo : .blur( 1.dp)
+//                .blur( 9.dp)
 
             )
             Icon(
                 painter = painterResource(R.drawable.launcher_monochrome),
                 contentDescription = null,
                 tint = Color.White,
-                modifier = Modifier.padding( 1.dp, 20.dp, 12.dp),
+                modifier = Modifier.padding(1.dp, 20.dp, 12.dp),
 
                 )
 
@@ -139,8 +131,6 @@ fun SettingsScreen(
                 style = MaterialTheme.typography.titleSmall,
 
                 )
-
-
 
 
         }
@@ -246,16 +236,20 @@ fun SettingsScreen(
 
         ) {
             Column(
-                modifier = Modifier.padding(17.dp),
+                modifier = Modifier.padding(25.dp),
                 verticalArrangement = Arrangement.Center
             ) {
 
                 Spacer(Modifier.height(3.dp))
                 Text(
-                    text = "\uD835\uDE85\uD835\uDE8E\uD835\uDE9B\uD835\uDE9C\uD835\uDE92\uD835\uDE98\uD835\uDE97 : ${BuildConfig.VERSION_NAME} \n" +
-                            "(\uD835\uDE24\uD835\uDE2D\uD835\uDE2A\uD835\uDE24\uD835\uDE2C \uD835\uDE35\uD835\uDE30 \uD835\uDE36\uD835\uDE31\uD835\uDE25\uD835\uDE22\uD835\uDE35\uD835\uDE26)",
-                    style = MaterialTheme.typography.bodyLarge.copy(fontSize = 17.sp),
+                    text = " Version : ${BuildConfig.VERSION_NAME } \n  "  ,
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        fontSize = 17.sp,
+                        fontFamily = FontFamily.SansSerif
+                    ),
                     color = MaterialTheme.colorScheme.secondary,
+                    modifier = Modifier
+
                 )
 
             }
@@ -264,7 +258,7 @@ fun SettingsScreen(
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(126.dp),
+                .height(136.dp),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surface,
             ),
@@ -278,15 +272,13 @@ fun SettingsScreen(
                 Icon(contentDescription = null, painter = painterResource(R.drawable.telegram))
                 Text(stringResource(R.string.Telegramchanel))
                 Spacer(Modifier.height(4.dp))
-                Text(stringResource(R.string.TelegramDescription)
-                    , color = MaterialTheme.colorScheme.error,)
+                Text(
+                    stringResource(R.string.TelegramDescription),
+                    color = MaterialTheme.colorScheme.error,
+                )
 
             }
         }
-
-
-
-
 
 
     }

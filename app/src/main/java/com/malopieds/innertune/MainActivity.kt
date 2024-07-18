@@ -110,6 +110,7 @@ import java.net.URLDecoder
 import java.net.URLEncoder
 import javax.inject.Inject
 import androidx.compose.runtime.mutableStateOf as mutableStateOf1
+import coil.compose.AsyncImage
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -567,12 +568,15 @@ class MainActivity : ComponentActivity() {
                             composable("settings/backup_restore") {
                                 BackupAndRestore(navController, scrollBehavior)
                             }
+
                             composable("settings/about") {
                                 AboutScreen(navController, scrollBehavior)
                             }
                             composable("login") {
                                 LoginScreen(navController)
                             }
+
+
                         }
 
                         AnimatedVisibility(
@@ -737,6 +741,7 @@ class MainActivity : ComponentActivity() {
                         )
 
                         NavigationBar(
+
                             modifier = Modifier
                                 .clip(RoundedCornerShape(20.dp))
                                 .align(Alignment.BottomCenter)
@@ -760,7 +765,10 @@ class MainActivity : ComponentActivity() {
                                         )
                                     }
                                 }
-                        ) {
+
+                        )
+
+                        {
                             navigationItems.fastForEach { screen ->
                                 NavigationBarItem(
                                     selected = navBackStackEntry?.destination?.hierarchy?.any { it.route == screen.route } == true,
@@ -833,6 +841,7 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
 
 
 

@@ -146,8 +146,11 @@ fun HomeScreen(
         indicatorPadding = LocalPlayerAwareWindowInsets.current.asPaddingValues(),
     ) {
         BoxWithConstraints(
+
             modifier = Modifier.fillMaxWidth(),
-        ) {
+        )
+
+        {
             val horizontalLazyGridItemWidthFactor = if (maxWidth * 0.475f >= 320.dp) 0.475f else 0.9f
             val horizontalLazyGridItemWidth = maxWidth * horizontalLazyGridItemWidthFactor
             val snapLayoutInfoProviderQuickPicks =
@@ -174,13 +177,16 @@ fun HomeScreen(
                     ),
                 )
 
+
                 Row(
                     modifier =
                         Modifier
                             .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Horizontal))
                             .padding(horizontal = 12.dp, vertical = 6.dp)
                             .fillMaxWidth(),
-                ) {
+                )
+
+                {
                     NavigationTile(
                         title = stringResource(R.string.history),
                         icon = R.drawable.history,
@@ -216,6 +222,7 @@ fun HomeScreen(
                 NavigationTitle(
                     title = stringResource(R.string.quick_picks),
                 )
+
 
                 quickPicks?.let { quickPicks ->
                     if (quickPicks.isEmpty()) {

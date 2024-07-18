@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -17,7 +16,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -27,7 +25,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -50,8 +47,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -116,10 +111,6 @@ fun TopPlaylistScreen(
         }
 
     val wrappedSongs = songs?.map { item -> ItemWrapper(item) }?.toMutableList()
-    var searchQuery by remember {
-        mutableStateOf(TextFieldValue(""))
-    }
-
     var selection by remember {
         mutableStateOf(false)
     }
@@ -383,23 +374,6 @@ fun TopPlaylistScreen(
                                     Text(stringResource(R.string.shuffle))
                                 }
                             }
-                            OutlinedTextField(
-                                value = searchQuery,
-                                onValueChange = { searchQuery = it },
-                                label = { Text(context.getString(R.string.search)) },
-                                singleLine = true,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(bottom = 16.dp),
-                                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Search),
-                                shape = MaterialTheme.shapes.large,
-                                leadingIcon = {
-                                    Icon(
-                                        painterResource(R.drawable.search),
-                                        contentDescription = null
-                                    )
-                                }
-                            )
                         }
                     }
                 }
@@ -494,19 +468,10 @@ fun TopPlaylistScreen(
                         }
                     }
                 }
-                val searchQueryStr = textNoAccentsOrPunctMark(searchQuery.text.trim())
-                val filteredSongs = if (searchQueryStr.isEmpty())
-                { wrappedSongs }
-                else{
-                    wrappedSongs?.filter {
-                        textNoAccentsOrPunctMark(it.item.song.title).contains(searchQueryStr, ignoreCase = true) or
-                                textNoAccentsOrPunctMark(it.item.artists.joinToString("").trim()).contains(searchQueryStr, ignoreCase = true)
-                    }
-                }
 
-                if (filteredSongs != null) {
+                if (wrappedSongs != null) {
                     itemsIndexed(
-                        items = filteredSongs,
+                        items = wrappedSongs,
                         key = { _, song -> song.item.id },
                     ) { index, songWrapper ->
                         SongListItem(
@@ -573,20 +538,7 @@ fun TopPlaylistScreen(
         }
 
         TopAppBar(
-            title = {
-                Row(
-                    modifier = Modifier.fillMaxHeight(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    AutoResizeText(
-                        text = "My Top",
-                        fontWeight = FontWeight.Bold,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        fontSizeRange = FontSizeRange(16.sp, 22.sp)
-                    )
-                }
-            },
+            title = { "My Top" },
             navigationIcon = {
                 IconButton(
                     onClick = navController::navigateUp,

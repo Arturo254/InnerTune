@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -60,26 +61,28 @@ fun SettingsScreen(
     var isBetaFunEnabled by remember { mutableStateOf(false) }
     val backgroundImages = listOf(
 
-        R.drawable.cardbg1,
+        R.drawable.cardbg,
         R.drawable.cardbg2,
         R.drawable.cardbg3,
         R.drawable.cardbg4,
-        R.drawable.cardbg5,
         R.drawable.cardbg6,
         R.drawable.cardbg7,
         R.drawable.cardbg8,
         R.drawable.cardbg9,
-        R.drawable.cardbg10,
-        R.drawable.cardbgc,
-        R.drawable.cardbgd,
-        R.drawable.cardbge,
-        R.drawable.cardbgf,
-        R.drawable.cardbgg,
-        R.drawable.cardbgh,
-        R.drawable.cardbgj,
-        R.drawable.cardbgi,
-        R.drawable.cardbgk,
-        R.drawable.cardbgm,
+        R.drawable.cardbg11,
+        R.drawable.cardbg12,
+        R.drawable.cardbg13,
+        R.drawable.cardbg14,
+        R.drawable.cardbg15,
+        R.drawable.cardbg16,
+        R.drawable.cardbg17,
+        R.drawable.cardbg18,
+        R.drawable.cardbg19,
+        R.drawable.cardbg20,
+        R.drawable.cardbg22,
+        R.drawable.cardbg23,
+        R.drawable.cardbg24,
+        R.drawable.cardbg25,
 
 
         )
@@ -202,7 +205,7 @@ fun SettingsScreen(
             modifier = Modifier
 
                 .fillMaxWidth()
-                .height(160.dp),
+                .height(120.dp),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.background,
             ),
@@ -222,8 +225,10 @@ fun SettingsScreen(
 
 
         Spacer(Modifier.height(25.dp))
-        Card(
-
+        ElevatedCard(
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 6.dp
+            ),
             modifier = Modifier
                 .fillMaxWidth()
                 .height(90.dp),
@@ -231,13 +236,15 @@ fun SettingsScreen(
                 containerColor = MaterialTheme.colorScheme.surface,
 
                 ),
-            border = BorderStroke(1.dp, Color.Gray),
             onClick = { uriHandler.openUri("https://github.com/Arturo254/InnerTune/releases/latest") }
 
         ) {
             Column(
-                modifier = Modifier.padding(25.dp),
+                modifier = Modifier
+                    .clip(RoundedCornerShape(38.dp))
+                    .padding(20.dp),
                 verticalArrangement = Arrangement.Center
+
             ) {
 
                 Spacer(Modifier.height(3.dp))
@@ -245,7 +252,7 @@ fun SettingsScreen(
                     text = " Version : ${BuildConfig.VERSION_NAME } \n  "  ,
                     style = MaterialTheme.typography.bodyLarge.copy(
                         fontSize = 17.sp,
-                        fontFamily = FontFamily.SansSerif
+                        fontFamily = FontFamily.Monospace
                     ),
                     color = MaterialTheme.colorScheme.secondary,
                     modifier = Modifier
@@ -258,7 +265,7 @@ fun SettingsScreen(
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(136.dp),
+                .height(146.dp),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surface,
             ),

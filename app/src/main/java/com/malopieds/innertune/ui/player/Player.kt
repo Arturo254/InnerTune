@@ -941,7 +941,7 @@ fun BottomSheetPlayer(
                 contentScale = ContentScale.FillBounds,
                 modifier = Modifier
                     .fillMaxSize()
-                    .blur(200.dp)
+                    .blur(300.dp)
 
             )
         }

@@ -190,8 +190,9 @@ fun Queue(
 
     BottomSheet(
         state = state,
-        brushBackgroundColor = Brush.verticalGradient(listOf(backgroundColor, backgroundColor)),
+        brushBackgroundColor = Brush.horizontalGradient(listOf(backgroundColor, backgroundColor)),
         modifier = modifier,
+
         collapsedContent = {
             Row(
                 horizontalArrangement = Arrangement.Center,
@@ -200,7 +201,7 @@ fun Queue(
                     Modifier
                         .fillMaxSize()
                         .background(
-                            Brush.verticalGradient(
+                            Brush.horizontalGradient(
                                 listOf(
                                     Color.White.copy(alpha = 0f),
                                     Color.White.copy(alpha = 0f),
@@ -215,10 +216,15 @@ fun Queue(
                     Icon(
                         painter = painterResource(R.drawable.expand_less),
                         contentDescription = null,
+
                     )
+
                 }
+
             }
+
         },
+
     ) {
         val queueTitle by playerConnection.queueTitle.collectAsState()
         val queueWindows by playerConnection.queueWindows.collectAsState()

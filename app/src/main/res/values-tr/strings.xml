@@ -35,7 +35,7 @@
 
     <!-- Arama -->
     <string name="search">Ara</string>
-    <string name="search_yt_music">YouTube Music'te Ara…</string>
+    <string name="search_yt_music">YouTube Music\'te Ara…</string>
     <string name="search_library">Kütüphanede Ara…</string>
     <string name="filter_library">Kütüphane</string>
     <string name="filter_liked">Beğenilenler</string>
@@ -226,9 +226,9 @@
     <string name="content_language">Varsayılan içerik dili</string>
     <string name="content_country">Varsayılan içerik ülkesi</string>
     <string name="system_default">Sistem varsayılanı</string>
-    <string name="enable_proxy">Proxy'yi etkinleştir</string>
+    <string name="enable_proxy">Proxy\'yi etkinleştir</string>
     <string name="proxy_type">Proxy türü</string>
-    <string name="proxy_url">Proxy URL'si</string>
+    <string name="proxy_url">Proxy URL\'si</string>
     <string name="restart_to_take_effect">Etkili olması için yeniden başlatın</string>
 
     <string name="player_and_audio">Çalar ve ses</string>
@@ -321,7 +321,7 @@
     <string name="your_ytb_playlists">YT çalma listeniz</string>
     <string name="my_top">en iyilerim</string>
     <string name="already_in_playlist">zaten çalma listesinde</string>
-    <string name="enable_lrclib">lrclib'i etkinleştir</string>
+    <string name="enable_lrclib">lrclib\'i etkinleştir</string>
     <string name="BetaFeatures">Beta Özellikler</string>
     <string name="APIFeatures">AI Özellikleri</string>
     <string name="TextAPIFeatures">çalma listesi oluşturma</string>

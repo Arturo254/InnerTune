@@ -682,6 +682,7 @@ class MusicService :
                                         AudioQuality.AUTO -> if (connectivityManager.isActiveNetworkMetered) -1 else 1
                                         AudioQuality.HIGH -> 1
                                         AudioQuality.LOW -> -1
+                                        AudioQuality.HIGH_QUALITY_320KBPS -> 2
                                     } + (if (it.mimeType.startsWith("audio/webm")) 10240 else 0) // prefer opus stream
                         }
                 } ?: throw PlaybackException(getString(R.string.error_no_stream), null, ERROR_CODE_NO_STREAM)

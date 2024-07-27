@@ -31,13 +31,16 @@
             android:action="com.zionhuang.music.action.ALBUMS" />
     </shortcut>
     <shortcut
-        android:shortcutId="playlists"
+        android:shortcutId="albums"
         android:enabled="true"
-        android:icon="@drawable/shortcut_playlists"
-        android:shortcutShortLabel="@string/playlists">
+        android:icon="@drawable/shortcut_albums"
+        android:shortcutShortLabel="@string/albums">
         <intent
-            android:targetClass="com.malopieds.innertune.MainActivity"
+            android:action="android.intent.action.VIEW"
             android:targetPackage="com.malopieds.innertune.debug"
-            android:action="com.zionhuang.music.action.PLAYLISTS" />
+            android:targetClass="com.malopieds.innertune.MainActivity">
+
+            <extra android:name="content_key" android:value="Msg from shortcut" />
+        </intent>
     </shortcut>
 </shortcuts>

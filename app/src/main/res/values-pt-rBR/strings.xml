@@ -318,7 +318,7 @@
     <string name="BetaFeatures">Recursos beta</string>
     <string name="APIFeatures">Recursos da API</string>
     <string name="TextAPIFeatures">Novos recursos integrados à API</string>
-    <string name="gradient">Gradiente (desfoque)</string>
+    <string name="gradient">Gradiente</string>
     <string name="enable_squiggly_slider">Ativar barra de reprodução ondulada</string>
     <string name="lyrics_multiline_description">Trate todas as linhas entre os pontos de sincronização como um texto de letra</string>
     <string name="lyrics_trim_title">Remova espaços ao redor das letras</string>
@@ -331,4 +331,7 @@
     <string name="top_length">duração máxima</string>
     <string name="proxy">proxy</string>
     <string name="follow_theme">seguir o tema</string>
+    <string name="blur">borrão</string>
+    <string name="audio_quality_high_quality_320kbps">(320 Kbps) [beta)</string>
+    <string name="audio_descriptionbeta">A qualidade de áudio de 320 Kbps é experimental e pode causar falhas</string>
 </resources>

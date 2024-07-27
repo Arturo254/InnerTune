@@ -318,7 +318,7 @@
     <string name="BetaFeatures">Funciones beta</string>
     <string name="APIFeatures">Características de la API</string>
     <string name="TextAPIFeatures">Nuevas funciones integradas en la API</string>
-    <string name="gradient">gradiente (blur)</string>
+    <string name="gradient">gradiente</string>
     <string name="enable_squiggly_slider">habilitar slider ondulada</string>
     <string name="library">Biblioteca</string>
     <string name="recent_activity">Actividad reciente</string>
@@ -344,4 +344,7 @@
     <string name="top_length">lo mejor</string>
     <string name="proxy">proxy</string>
     <string name="follow_theme">seguir tema</string>
+    <string name="blur">"desenfoque "</string>
+    <string name="audio_quality_high_quality_320kbps">(320 Kbps) [beta]</string>
+    <string name="audio_descriptionbeta">la calidad de audio de 320 Kbps esta en funcion experimental y puede causar fallos</string>
 </resources>

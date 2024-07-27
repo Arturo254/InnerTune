@@ -1,11 +1,19 @@
 package com.malopieds.innertune.ui.screens.settings
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarScrollBehavior
@@ -13,6 +21,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.malopieds.innertune.LocalPlayerAwareWindowInsets
 import com.malopieds.innertune.R
@@ -54,6 +66,7 @@ fun PlayerSettings(
                     AudioQuality.AUTO -> stringResource(R.string.audio_quality_auto)
                     AudioQuality.HIGH -> stringResource(R.string.audio_quality_high)
                     AudioQuality.LOW -> stringResource(R.string.audio_quality_low)
+                    AudioQuality.HIGH_QUALITY_320KBPS -> stringResource(R.string.audio_quality_high_quality_320kbps)
                 }
             },
         )
@@ -75,7 +88,53 @@ fun PlayerSettings(
             checked = audioNormalization,
             onCheckedChange = onAudioNormalizationChange,
         )
+
+
+        Spacer(Modifier.height(25.dp))
+        ElevatedCard(
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 6.dp
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(160.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface,
+
+                ),
+
+            ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.Center
+            ) {
+                Icon(contentDescription = null, painter = painterResource(R.drawable.funbeta))
+                Spacer(Modifier.height(5.dp))
+                Text(
+                    text = (stringResource(R.string.APIFeatures)),
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        fontSize = 17.sp,
+                        fontFamily = FontFamily.Monospace
+                    ),
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Spacer(Modifier.height(5.dp))
+                Text(
+                    text = (stringResource(R.string.audio_descriptionbeta)),
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        fontSize = 14.sp,
+                        fontFamily = FontFamily.Monospace
+                    ),
+                    color = MaterialTheme.colorScheme.onSurface
+
+                )
+
+            }
+        }
     }
+
+
 
     TopAppBar(
         title = { Text(stringResource(R.string.player_and_audio)) },

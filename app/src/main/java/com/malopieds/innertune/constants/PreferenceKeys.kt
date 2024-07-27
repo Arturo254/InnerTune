@@ -25,6 +25,7 @@ enum class AudioQuality {
     AUTO,
     HIGH,
     LOW,
+    HIGH_QUALITY_320KBPS
 }
 
 val PersistentQueueKey = booleanPreferencesKey("persistentQueue")
@@ -197,6 +198,8 @@ enum class PreferredLyricsProvider {
 enum class PlayerBackgroundStyle {
     DEFAULT,
     GRADIENT,
+    BLUR,
+
 }
 
 val EnableSquigglySlider = booleanPreferencesKey("enableSquigglySlider")

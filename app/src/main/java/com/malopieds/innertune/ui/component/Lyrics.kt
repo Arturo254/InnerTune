@@ -47,12 +47,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.malopieds.innertune.BuildConfig
 import com.malopieds.innertune.LocalPlayerConnection
 import com.malopieds.innertune.R
 import com.malopieds.innertune.constants.LyricsTextPositionKey
 import com.malopieds.innertune.constants.PlayerBackgroundStyle
 import com.malopieds.innertune.constants.PlayerBackgroundStyleKey
+import com.malopieds.innertune.constants.ShowLyricsKey
 import com.malopieds.innertune.constants.TranslateLyricsKey
 import com.malopieds.innertune.db.entities.LyricsEntity.Companion.LYRICS_NOT_FOUND
 import com.malopieds.innertune.lyrics.LyricsEntry
@@ -111,7 +111,7 @@ fun Lyrics(
         }
 
     var currentLineIndex by remember {
-        mutableStateOf(-1)
+        mutableIntStateOf(-1)
     }
     // Because LaunchedEffect has delay, which leads to inconsistent with current line color and scroll animation,
     // we use deferredCurrentLineIndex when user is scrolling
@@ -190,42 +190,42 @@ fun Lyrics(
     BoxWithConstraints(
         contentAlignment = Alignment.Center,
         modifier =
-            modifier
-                .fillMaxSize()
-                .padding(bottom = 12.dp),
+        modifier
+            .fillMaxSize()
+            .padding(bottom = 12.dp),
     ) {
         LazyColumn(
             state = lazyListState,
             contentPadding =
-                WindowInsets.systemBars
-                    .only(WindowInsetsSides.Top)
-                    .add(WindowInsets(top = maxHeight / 2, bottom = maxHeight / 2))
-                    .asPaddingValues(),
+            WindowInsets.systemBars
+                .only(WindowInsetsSides.Top)
+                .add(WindowInsets(top = maxHeight / 2, bottom = maxHeight / 2))
+                .asPaddingValues(),
             modifier =
-                Modifier
-                    .fadingEdge(vertical = 64.dp)
-                    .nestedScroll(
-                        remember {
-                            object : NestedScrollConnection {
-                                override fun onPostScroll(
-                                    consumed: Offset,
-                                    available: Offset,
-                                    source: NestedScrollSource,
-                                ): Offset {
-                                    lastPreviewTime = System.currentTimeMillis()
-                                    return super.onPostScroll(consumed, available, source)
-                                }
-
-                                override suspend fun onPostFling(
-                                    consumed: Velocity,
-                                    available: Velocity,
-                                ): Velocity {
-                                    lastPreviewTime = System.currentTimeMillis()
-                                    return super.onPostFling(consumed, available)
-                                }
+            Modifier
+                .fadingEdge(vertical = 64.dp)
+                .nestedScroll(
+                    remember {
+                        object : NestedScrollConnection {
+                            override fun onPostScroll(
+                                consumed: Offset,
+                                available: Offset,
+                                source: NestedScrollSource,
+                            ): Offset {
+                                lastPreviewTime = System.currentTimeMillis()
+                                return super.onPostScroll(consumed, available, source)
                             }
-                        },
-                    ),
+
+                            override suspend fun onPostFling(
+                                consumed: Velocity,
+                                available: Velocity,
+                            ): Velocity {
+                                lastPreviewTime = System.currentTimeMillis()
+                                return super.onPostFling(consumed, available)
+                            }
+                        }
+                    },
+                ),
         ) {
             val displayedCurrentLineIndex = if (isSeeking) deferredCurrentLineIndex else currentLineIndex
 
@@ -235,15 +235,15 @@ fun Lyrics(
                         repeat(10) {
                             Box(
                                 contentAlignment =
-                                    when (lyricsTextPosition) {
-                                        LyricsPosition.LEFT -> Alignment.CenterStart
-                                        LyricsPosition.CENTER -> Alignment.Center
-                                        LyricsPosition.RIGHT -> Alignment.CenterEnd
-                                    },
+                                when (lyricsTextPosition) {
+                                    LyricsPosition.LEFT -> Alignment.CenterStart
+                                    LyricsPosition.CENTER -> Alignment.Center
+                                    LyricsPosition.RIGHT -> Alignment.CenterEnd
+                                },
                                 modifier =
-                                    Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 24.dp, vertical = 4.dp),
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 24.dp, vertical = 4.dp),
                             ) {
                                 TextPlaceholder()
                             }
@@ -258,30 +258,30 @@ fun Lyrics(
                         text = item.text,
                         fontSize = 20.sp,
                         color =
-                            if (index ==
-                                displayedCurrentLineIndex
-                            ) {
-                                currentLine
+                        if (index ==
+                            displayedCurrentLineIndex
+                        ) {
+                            currentLine
 //                                MaterialTheme.colorScheme.primary
-                            } else {
+                        } else {
 //                                MaterialTheme.colorScheme.secondary
-                                outLines
-                            },
+                            outLines
+                        },
                         textAlign =
-                            when (lyricsTextPosition) {
-                                LyricsPosition.LEFT -> TextAlign.Left
-                                LyricsPosition.CENTER -> TextAlign.Center
-                                LyricsPosition.RIGHT -> TextAlign.Right
-                            },
+                        when (lyricsTextPosition) {
+                            LyricsPosition.LEFT -> TextAlign.Left
+                            LyricsPosition.CENTER -> TextAlign.Center
+                            LyricsPosition.RIGHT -> TextAlign.Right
+                        },
                         fontWeight = FontWeight.Bold,
                         modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .clickable(enabled = isSynced) {
-                                    playerConnection.player.seekTo(item.time)
-                                    lastPreviewTime = 0L
-                                }.padding(horizontal = 24.dp, vertical = 8.dp)
-                                .alpha(if (!isSynced || index == displayedCurrentLineIndex) 1f else 0.5f),
+                        Modifier
+                            .fillMaxWidth()
+                            .clickable(enabled = isSynced) {
+                                playerConnection.player.seekTo(item.time)
+                                lastPreviewTime = 0L
+                            }.padding(horizontal = 24.dp, vertical = 8.dp)
+                            .alpha(if (!isSynced || index == displayedCurrentLineIndex) 1f else 0.5f),
                     )
                 }
             }
@@ -293,40 +293,57 @@ fun Lyrics(
                 fontSize = 20.sp,
                 color = MaterialTheme.colorScheme.secondary,
                 textAlign =
-                    when (lyricsTextPosition) {
-                        LyricsPosition.LEFT -> TextAlign.Left
-                        LyricsPosition.CENTER -> TextAlign.Center
-                        LyricsPosition.RIGHT -> TextAlign.Right
-                    },
+                when (lyricsTextPosition) {
+                    LyricsPosition.LEFT -> TextAlign.Left
+                    LyricsPosition.CENTER -> TextAlign.Center
+                    LyricsPosition.RIGHT -> TextAlign.Right
+                },
                 fontWeight = FontWeight.Bold,
                 modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 24.dp, vertical = 8.dp)
-                        .alpha(0.5f),
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp, vertical = 8.dp)
+                    .alpha(0.5f),
             )
         }
 
         mediaMetadata?.let { mediaMetadata ->
             Row(
                 modifier =
-                    Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(end = 12.dp),
+                Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(end = 12.dp),
             ) {
-                if (BuildConfig.FLAVOR != "foss") {
+                var showLyrics by rememberPreference(ShowLyricsKey, defaultValue = false)
                     IconButton(
-                        onClick = {
-                            translationEnabled = !translationEnabled
-                        },
+                        onClick = { showLyrics = !showLyrics },
                     ) {
                         Icon(
-                            painter = painterResource(id = R.drawable.translate),
+                            painter = painterResource(id = R.drawable.close),
                             contentDescription = null,
                             tint = LocalContentColor.current.copy(alpha = if (translationEnabled) 1f else 0.3f),
                         )
                     }
-                }
+
+//                if (showLyrics) {
+//                    Box(
+//                        modifier = Modifier
+//                            .align(Alignment.TopStart)
+//                            .padding(8.dp)
+//                            .size(32.dp)
+//                            .background(Color.Black.copy(alpha = 0.5f), shape = CircleShape)
+//                            .clickable { showLyrics = false }
+//                    ) {
+//                        Icon(
+//                            painter = painterResource(R.drawable.close),
+//                            contentDescription = "Close Lyrics",
+//                            tint = Color.White,
+//                            modifier = Modifier
+//                                .align(Alignment.Center)
+//                                .size(24.dp)
+//                        )
+//                    }
+//                }
 
                 IconButton(
                     onClick = {

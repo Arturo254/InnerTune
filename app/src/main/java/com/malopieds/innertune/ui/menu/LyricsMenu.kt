@@ -31,6 +31,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -186,7 +187,7 @@ fun LyricsMenu(
         val isLoading by viewModel.isLoading.collectAsState()
 
         var expandedItemIndex by rememberSaveable {
-            mutableStateOf(-1)
+            mutableIntStateOf(-1)
         }
 
         ListDialog(

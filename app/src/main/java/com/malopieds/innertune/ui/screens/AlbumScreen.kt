@@ -46,7 +46,6 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -388,7 +387,7 @@ fun AlbumScreen(
                 ) {
                     if (selection) {
                         val count = wrappedSongs?.count { it.isSelected } ?: 0
-                        Text(text = pluralStringResource(R.plurals.n_elements, count, count), modifier = Modifier.weight(1f))
+                        Text(text = "$count elements selected", modifier = Modifier.weight(1f))
                         IconButton(
                             onClick = {
                                 if (count == wrappedSongs?.size) {

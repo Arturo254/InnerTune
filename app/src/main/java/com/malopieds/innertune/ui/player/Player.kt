@@ -41,7 +41,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.OutlinedButton
@@ -85,6 +84,7 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.core.graphics.ColorUtils
 import androidx.core.net.toUri
 import androidx.media3.common.C
+import androidx.media3.common.Player
 import androidx.media3.common.Player.STATE_ENDED
 import androidx.media3.common.Player.STATE_READY
 import androidx.media3.exoplayer.offline.Download
@@ -104,10 +104,10 @@ import com.malopieds.innertune.constants.PlayerBackgroundStyle
 import com.malopieds.innertune.constants.PlayerBackgroundStyleKey
 import com.malopieds.innertune.constants.PlayerHorizontalPadding
 import com.malopieds.innertune.constants.QueuePeekHeight
-import com.malopieds.innertune.constants.ShowLyricsKey
 import com.malopieds.innertune.constants.ThumbnailCornerRadius
 import com.malopieds.innertune.db.entities.PlaylistSongMap
 import com.malopieds.innertune.extensions.togglePlayPause
+import com.malopieds.innertune.extensions.toggleRepeatMode
 import com.malopieds.innertune.models.MediaMetadata
 import com.malopieds.innertune.playback.ExoDownloadService
 import com.malopieds.innertune.ui.component.BottomSheet
@@ -155,10 +155,10 @@ fun BottomSheetPlayer(
     val canSkipPrevious by playerConnection.canSkipPrevious.collectAsState()
     val canSkipNext by playerConnection.canSkipNext.collectAsState()
 
-    var showLyrics by rememberPreference(ShowLyricsKey, defaultValue = false)
     val playerBackground by rememberEnumPreference(key = PlayerBackgroundStyleKey, defaultValue = PlayerBackgroundStyle.DEFAULT)
 
     val enableSquigglySlider by rememberPreference(EnableSquigglySlider, defaultValue = true)
+
 
     var position by rememberSaveable(playbackState) {
         mutableLongStateOf(playerConnection.player.currentPosition)
@@ -216,6 +216,22 @@ fun BottomSheetPlayer(
                     MaterialTheme.colorScheme.onSurface
                 }
         }
+
+    when (playerBackground) {
+        PlayerBackgroundStyle.BLUR -> MaterialTheme.colorScheme.onBackground
+        else ->
+            if (gradientColors.size >= 3 &&
+                ColorUtils.calculateContrast(gradientColors.first().toArgb(), Color.White.toArgb()) < 1.5f
+            ) {
+                changeColor = true
+                Color.Black
+            } else {
+                changeColor = false
+                MaterialTheme.colorScheme.onSurface
+            }
+    }
+
+
 
     val download by LocalDownloadUtil.current.getDownload(mediaMetadata?.id ?: "").collectAsState(initial = null)
 
@@ -348,6 +364,7 @@ fun BottomSheetPlayer(
                             contentDescription = null,
                             colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onBackground),
                             modifier = Modifier.size(ListThumbnailSize),
+
                         )
                     },
                     modifier =
@@ -446,6 +463,7 @@ fun BottomSheetPlayer(
                         Text(
                             text = displayText,
                             style = MaterialTheme.typography.titleMedium,
+
                             modifier =
                             Modifier.clickable(
                                 interactionSource = remember { MutableInteractionSource() },
@@ -488,7 +506,6 @@ fun BottomSheetPlayer(
                         NavigationBarDefaults.Elevation,
                     ),
                 ),
-
             )
         },
         onDismiss = {
@@ -526,6 +543,8 @@ fun BottomSheetPlayer(
                     modifier =
                     Modifier
                         .basicMarquee()
+//                        .clip(RoundedCornerShape(24.dp))
+//                        .background(MaterialTheme.colorScheme.primary)
                         .clickable(enabled = mediaMetadata.album != null) {
                             navController.navigate("album/${mediaMetadata.album!!.id}")
                             state.collapseSoft()
@@ -552,7 +571,9 @@ fun BottomSheetPlayer(
                         Modifier.clickable(enabled = artist.id != null) {
                             navController.navigate("artist/${artist.id}")
                             state.collapseSoft()
-                        },
+                        }
+//                            .clip(RoundedCornerShape(28.dp))
+//                            .background(MaterialTheme.colorScheme.primary),
                     )
 
                     if (index != mediaMetadata.artists.lastIndex) {
@@ -674,6 +695,8 @@ fun BottomSheetPlayer(
                     )
                 }
 
+
+
                 Spacer(modifier = Modifier.size(12.dp))
 
                 Box(
@@ -735,6 +758,7 @@ fun BottomSheetPlayer(
                     }
                 }
 
+
                 Spacer(modifier = Modifier.weight(1f))
 
                 Box(
@@ -761,6 +785,7 @@ fun BottomSheetPlayer(
                         contentDescription = null,
                         colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimary),
                     )
+
                 }
             }
 
@@ -919,35 +944,47 @@ fun BottomSheetPlayer(
                     )
                 }
 
+                val repeatMode by playerConnection.repeatMode.collectAsState()
                 Box(modifier = Modifier.weight(1f)) {
-                    IconButton(onClick = { showLyrics = !showLyrics }) {
-                        Image(
-                            painter = painterResource(R.drawable.lyrics),
-                            contentDescription = null,
-                            colorFilter = ColorFilter.tint(onBackgroundColor),
-                            modifier =
-                            Modifier
-                                .alpha(if (showLyrics) 1f else 0.5f),
-                        )
-                    }
+                    ResizableIconButton(
+                        icon = when (repeatMode) {
+                            Player.REPEAT_MODE_OFF, Player.REPEAT_MODE_ALL -> R.drawable.repeat
+                            Player.REPEAT_MODE_ONE -> R.drawable.repeat_one
+                            else -> throw IllegalStateException()
+                        },
+                        modifier = Modifier
+                            .size(32.dp)
+                            .padding(4.dp)
+                            .align(Alignment.Center)
+                            .alpha(if (repeatMode == Player.REPEAT_MODE_OFF) 0.5f else 1f),
+                        onClick = playerConnection.player::toggleRepeatMode,
+                        color = MaterialTheme.colorScheme.onPrimary,
+                    )
                 }
             }
         }
 
         if (gradientColors.size >= 2 && state.isExpanded) {
+            Box(
+                modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(Brush.verticalGradient(gradientColors)),
+            )
+
+        }
+        else if (playerBackground == PlayerBackgroundStyle.BLUR )  {
+            Brush.verticalGradient(gradientColors)
             AsyncImage(
                 model = mediaMetadata?.thumbnailUrl,
                 contentDescription = null,
-                contentScale = ContentScale.FillBounds,
+                contentScale = ContentScale.FillHeight,
                 modifier = Modifier
                     .fillMaxSize()
-                    .blur(300.dp)
-
+                    .blur(100.dp)
             )
+
         }
-
-
-
 
         when (LocalConfiguration.current.orientation) {
             Configuration.ORIENTATION_LANDSCAPE -> {

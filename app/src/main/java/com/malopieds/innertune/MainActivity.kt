@@ -12,18 +12,53 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
-import androidx.compose.animation.core.*
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.add
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.AlertDialogDefaults
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.contentColorFor
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -59,25 +94,48 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import coil.imageLoader
 import coil.request.ImageRequest
-import com.valentinilk.shimmer.LocalShimmerTheme
 import com.malopieds.innertube.YouTube
 import com.malopieds.innertube.models.SongItem
 import com.malopieds.innertube.models.WatchEndpoint
-import com.malopieds.innertune.constants.*
+import com.malopieds.innertune.constants.AppBarHeight
+import com.malopieds.innertune.constants.DarkModeKey
+import com.malopieds.innertune.constants.DefaultOpenTabKey
+import com.malopieds.innertune.constants.DynamicThemeKey
+import com.malopieds.innertune.constants.MiniPlayerHeight
+import com.malopieds.innertune.constants.NavigationBarAnimationSpec
+import com.malopieds.innertune.constants.NavigationBarHeight
+import com.malopieds.innertune.constants.PauseSearchHistoryKey
+import com.malopieds.innertune.constants.PureBlackKey
+import com.malopieds.innertune.constants.SearchSource
+import com.malopieds.innertune.constants.SearchSourceKey
 import com.malopieds.innertune.db.MusicDatabase
 import com.malopieds.innertune.db.entities.SearchHistory
-import com.malopieds.innertune.extensions.*
+import com.malopieds.innertune.extensions.toEnum
 import com.malopieds.innertune.models.toMediaMetadata
 import com.malopieds.innertune.playback.DownloadUtil
 import com.malopieds.innertune.playback.MusicService
 import com.malopieds.innertune.playback.MusicService.MusicBinder
 import com.malopieds.innertune.playback.PlayerConnection
 import com.malopieds.innertune.playback.queues.YouTubeQueue
-import com.malopieds.innertune.ui.component.*
+import com.malopieds.innertune.ui.component.BottomSheetMenu
+import com.malopieds.innertune.ui.component.IconButton
+import com.malopieds.innertune.ui.component.LocalMenuState
+import com.malopieds.innertune.ui.component.SearchBar
+import com.malopieds.innertune.ui.component.rememberBottomSheetState
 import com.malopieds.innertune.ui.component.shimmer.ShimmerTheme
 import com.malopieds.innertune.ui.menu.YouTubeSongMenu
 import com.malopieds.innertune.ui.player.BottomSheetPlayer
-import com.malopieds.innertune.ui.screens.*
+import com.malopieds.innertune.ui.screens.AccountScreen
+import com.malopieds.innertune.ui.screens.AlbumScreen
+import com.malopieds.innertune.ui.screens.ExploreScreen
+import com.malopieds.innertune.ui.screens.HistoryScreen
+import com.malopieds.innertune.ui.screens.HomeScreen
+import com.malopieds.innertune.ui.screens.LoginScreen
+import com.malopieds.innertune.ui.screens.MoodAndGenresScreen
+import com.malopieds.innertune.ui.screens.NewReleaseScreen
+import com.malopieds.innertune.ui.screens.Screens
+import com.malopieds.innertune.ui.screens.StatsScreen
+import com.malopieds.innertune.ui.screens.YouTubeBrowseScreen
 import com.malopieds.innertune.ui.screens.artist.ArtistItemsScreen
 import com.malopieds.innertune.ui.screens.artist.ArtistScreen
 import com.malopieds.innertune.ui.screens.artist.ArtistSongsScreen
@@ -89,8 +147,20 @@ import com.malopieds.innertune.ui.screens.playlist.TopPlaylistScreen
 import com.malopieds.innertune.ui.screens.search.LocalSearchScreen
 import com.malopieds.innertune.ui.screens.search.OnlineSearchResult
 import com.malopieds.innertune.ui.screens.search.OnlineSearchScreen
-import com.malopieds.innertune.ui.screens.settings.*
-import com.malopieds.innertune.ui.theme.*
+import com.malopieds.innertune.ui.screens.settings.AboutScreen
+import com.malopieds.innertune.ui.screens.settings.AppearanceSettings
+import com.malopieds.innertune.ui.screens.settings.BackupAndRestore
+import com.malopieds.innertune.ui.screens.settings.ContentSettings
+import com.malopieds.innertune.ui.screens.settings.DarkMode
+import com.malopieds.innertune.ui.screens.settings.NavigationTab
+import com.malopieds.innertune.ui.screens.settings.PlayerSettings
+import com.malopieds.innertune.ui.screens.settings.PrivacySettings
+import com.malopieds.innertune.ui.screens.settings.SettingsScreen
+import com.malopieds.innertune.ui.screens.settings.StorageSettings
+import com.malopieds.innertune.ui.theme.ColorSaver
+import com.malopieds.innertune.ui.theme.DefaultThemeColor
+import com.malopieds.innertune.ui.theme.InnerTuneTheme
+import com.malopieds.innertune.ui.theme.extractThemeColor
 import com.malopieds.innertune.ui.utils.appBarScrollBehavior
 import com.malopieds.innertune.ui.utils.backToMain
 import com.malopieds.innertune.ui.utils.canNavigateUp
@@ -101,6 +171,7 @@ import com.malopieds.innertune.utils.rememberEnumPreference
 import com.malopieds.innertune.utils.rememberPreference
 import com.malopieds.innertune.utils.reportException
 import com.malopieds.innertune.utils.setupRemoteConfig
+import com.valentinilk.shimmer.LocalShimmerTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
@@ -110,7 +181,6 @@ import java.net.URLDecoder
 import java.net.URLEncoder
 import javax.inject.Inject
 import androidx.compose.runtime.mutableStateOf as mutableStateOf1
-import coil.compose.AsyncImage
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -133,6 +203,7 @@ class MainActivity : ComponentActivity() {
             playerConnection = null
         }
     }
+    var latestVersion by mutableLongStateOf(BuildConfig.VERSION_CODE.toLong())
 
     override fun onStart() {
         super.onStart()
@@ -547,8 +618,7 @@ class MainActivity : ComponentActivity() {
 
                             }
                             composable("settings") {
-                                val latestVersion = 0
-                                SettingsScreen(latestVersion.toLong(), navController, scrollBehavior)
+                                SettingsScreen(latestVersion, navController, scrollBehavior)
                             }
                             composable("settings/appearance") {
                                 AppearanceSettings(navController, scrollBehavior)
@@ -674,7 +744,8 @@ class MainActivity : ComponentActivity() {
                                                 contentDescription = null
                                             )
                                         }
-                                    } else if (navBackStackEntry?.destination?.route in listOf(
+                                    } else if (navBackStackEntry?.destination?.route in
+                                        listOf(
                                             Screens.Home.route,
                                             Screens.Explore.route,
                                             Screens.Library.route,
@@ -682,19 +753,26 @@ class MainActivity : ComponentActivity() {
                                     ) {
                                         Box(
                                             contentAlignment = Alignment.Center,
-                                            modifier = Modifier
+                                            modifier =
+                                            Modifier
                                                 .size(48.dp)
                                                 .clip(CircleShape)
                                                 .clickable {
                                                     navController.navigate("settings")
-                                                }
+                                                },
                                         ) {
-
-
-                                            Icon(
-                                                painter = painterResource(R.drawable.settings),
-                                                contentDescription = null
-                                            )
+                                            BadgedBox(
+                                                badge = {
+                                                    if (latestVersion > BuildConfig.VERSION_CODE) {
+                                                        Badge()
+                                                    }
+                                                },
+                                            ) {
+                                                Icon(
+                                                    painter = painterResource(R.drawable.settings),
+                                                    contentDescription = null,
+                                                )
+                                            }
                                         }
                                     }
                                 },
@@ -737,7 +815,8 @@ class MainActivity : ComponentActivity() {
 
                         BottomSheetPlayer(
                             state = playerBottomSheetState,
-                            navController = navController
+                            navController = navController,
+
                         )
 
                         NavigationBar(

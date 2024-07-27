@@ -83,6 +83,7 @@ fun AppearanceSettings(
                 when (it) {
                     PlayerBackgroundStyle.DEFAULT -> stringResource(R.string.follow_theme)
                     PlayerBackgroundStyle.GRADIENT -> stringResource(R.string.gradient)
+                    PlayerBackgroundStyle.BLUR -> stringResource(R.string.blur)
                 }
             },
         )

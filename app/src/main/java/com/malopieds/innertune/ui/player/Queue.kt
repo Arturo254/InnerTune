@@ -121,6 +121,9 @@ fun Queue(
     val selectedSongs: MutableList<MediaMetadata> = mutableStateListOf()
     val selectedItems: MutableList<Timeline.Window> = mutableStateListOf()
 
+
+
+
     var showDetailsDialog by rememberSaveable {
         mutableStateOf(false)
     }
@@ -188,44 +191,43 @@ fun Queue(
         )
     }
 
+
+
+
     BottomSheet(
         state = state,
-        brushBackgroundColor = Brush.horizontalGradient(listOf(backgroundColor, backgroundColor)),
+        brushBackgroundColor = Brush.verticalGradient(listOf(backgroundColor, backgroundColor)),
         modifier = modifier,
-
         collapsedContent = {
             Row(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically,
                 modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .background(
-                            Brush.horizontalGradient(
-                                listOf(
-                                    Color.White.copy(alpha = 0f),
-                                    Color.White.copy(alpha = 0f),
-                                ),
+                Modifier
+                    .fillMaxSize()
+                    .background(
+                        Brush.verticalGradient(
+                            listOf(
+                                Color.White.copy(alpha = 0f),
+                                Color.White.copy(alpha = 0f),
                             ),
-                        ).windowInsetsPadding(
-                            WindowInsets.systemBars
-                                .only(WindowInsetsSides.Bottom + WindowInsetsSides.Horizontal),
                         ),
+                    ).windowInsetsPadding(
+                        WindowInsets.systemBars
+                            .only(WindowInsetsSides.Bottom + WindowInsetsSides.Horizontal),
+                    ),
             ) {
                 IconButton(onClick = { state.expandSoft() }) {
                     Icon(
                         painter = painterResource(R.drawable.expand_less),
                         contentDescription = null,
-
                     )
-
                 }
-
             }
-
         },
 
-    ) {
+    )
+    {
         val queueTitle by playerConnection.queueTitle.collectAsState()
         val queueWindows by playerConnection.queueWindows.collectAsState()
         val mutableQueueWindows = remember { mutableStateListOf<Timeline.Window>() }
@@ -422,6 +424,7 @@ fun Queue(
                             .only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal),
                     ),
         ) {
+
             Row(
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
                 verticalAlignment = Alignment.CenterVertically,

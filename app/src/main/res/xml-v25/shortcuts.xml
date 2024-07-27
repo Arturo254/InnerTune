@@ -8,7 +8,7 @@
         <intent
             android:targetClass="com.malopieds.innertune.MainActivity"
             android:targetPackage="com.malopieds.innertune"
-            android:action="com.zionhuang.music.action.SEARCH" />
+            android:action="com.malopieds.innertune.action.SEARCH" />
     </shortcut>
     <shortcut
         android:shortcutId="songs"
@@ -18,26 +18,20 @@
         <intent
             android:targetClass="com.malopieds.innertune.MainActivity"
             android:targetPackage="com.malopieds.innertune"
-            android:action="com.zionhuang.music.action.SONGS" />
-    </shortcut>
+            android:action="com.malopieds.innertune.action.SONGS" />
+    </shortcut>  -->
     <shortcut
         android:shortcutId="albums"
         android:enabled="true"
         android:icon="@drawable/shortcut_albums"
         android:shortcutShortLabel="@string/albums">
         <intent
-            android:targetClass="com.malopieds.innertune.MainActivity"
+            android:action="android.intent.action.VIEW"
             android:targetPackage="com.malopieds.innertune"
-            android:action="com.zionhuang.music.action.ALBUMS" />
+            android:targetClass="com.malopieds.innertune.MainActivity">
+
+            <extra android:name="content_key" android:value="Msg from shortcut" />
+        </intent>
     </shortcut>
-    <shortcut
-        android:shortcutId="playlists"
-        android:enabled="true"
-        android:icon="@drawable/shortcut_playlists"
-        android:shortcutShortLabel="@string/playlists">
-        <intent
-            android:targetClass="com.malopieds.innertune.MainActivity"
-            android:targetPackage="com.malopieds.innertune"
-            android:action="com.zionhuang.music.action.PLAYLISTS" />
-    </shortcut>
+
 </shortcuts>

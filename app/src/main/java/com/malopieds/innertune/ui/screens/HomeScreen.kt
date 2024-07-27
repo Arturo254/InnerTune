@@ -26,6 +26,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -38,6 +39,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
@@ -179,42 +181,24 @@ fun HomeScreen(
 
 
                 Row(
-                    modifier =
-                        Modifier
-                            .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Horizontal))
-                            .padding(horizontal = 12.dp, vertical = 6.dp)
-                            .fillMaxWidth(),
-                )
+                    modifier = Modifier
+                        .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Horizontal))
+                        .padding(horizontal = 12.dp, vertical = 6.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .fillMaxWidth(),
+                ) {
+                    val navigationItems = listOf(
+                        Triple(R.string.history, R.drawable.history, "history"),
+                        Triple(R.string.stats, R.drawable.trending_up, "stats"),
+                        Triple(R.string.liked_songs, R.drawable.corcircu, "auto_playlist/liked")
+                    ) + if (isLoggedIn) listOf(Triple(R.string.account, R.drawable.person, "account")) else emptyList()
 
-                {
-                    NavigationTile(
-                        title = stringResource(R.string.history),
-                        icon = R.drawable.history,
-                        onClick = { navController.navigate("history") },
-                        modifier = Modifier.weight(1f),
-                    )
-
-                    NavigationTile(
-                        title = stringResource(R.string.stats),
-                        icon = R.drawable.trending_up,
-                        onClick = { navController.navigate("stats") },
-                        modifier = Modifier.weight(1f),
-                    )
-                    NavigationTile(
-                        title = stringResource(R.string.liked_songs),
-                        icon = R.drawable.corcircu,
-                        onClick = { navController.navigate("auto_playlist/liked") },
-                        modifier = Modifier.weight(1f),
-                    )
-
-                    if (isLoggedIn) {
+                    navigationItems.forEach { (titleRes, iconRes, route) ->
                         NavigationTile(
-                            title = stringResource(R.string.account),
-                            icon = R.drawable.person,
-                            onClick = {
-                                navController.navigate("account")
-                            },
-                            modifier = Modifier.weight(1f),
+                            title = stringResource(titleRes),
+                            icon = iconRes,
+                            onClick = { navController.navigate(route) },
+                            modifier = Modifier.weight(1f)
                         )
                     }
                 }
@@ -1220,3 +1204,5 @@ fun HomeScreen(
         }
     }
 }
+
+

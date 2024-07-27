@@ -338,6 +338,9 @@
     <string name="follow_theme">flow theme</string>
     <string name="enable_squiggly_slider">enable squiggly slider</string>
     <string name="gradient">gradient</string>
+    <string name="blur">Blur</string>
+    <string name="audio_quality_high_quality_320kbps">" (320Kbps) [beta)"</string>
+    <string name="audio_descriptionbeta">320 Kbps audio quality is experimental and may cause glitches</string>
     <plurals name="numberOfSongsAvailable">
         <item quantity="one">One song available.</item>
         <item quantity="other">%d songs available.</item>

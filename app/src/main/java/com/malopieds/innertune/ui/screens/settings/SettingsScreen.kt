@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
@@ -58,7 +60,19 @@ fun SettingsScreen(
     scrollBehavior: TopAppBarScrollBehavior,
 ) {
     val uriHandler = LocalUriHandler.current
+
     var isBetaFunEnabled by remember { mutableStateOf(false) }
+
+
+
+
+
+
+
+
+
+
+
     val backgroundImages = listOf(
 
         R.drawable.cardbg,
@@ -190,8 +204,7 @@ fun SettingsScreen(
                 Switch(
                     checked = isBetaFunEnabled,
                     onCheckedChange = { isBetaFunEnabled = it },
-
-                    modifier = Modifier.padding(end = 16.dp)
+                    modifier = Modifier.padding(end = 8.dp)
                 )
 
             },
@@ -201,11 +214,32 @@ fun SettingsScreen(
             }
         )
 
+        if (latestVersion > BuildConfig.VERSION_CODE) {
+            PreferenceEntry(
+                title = {
+                    Text(
+                        text = stringResource(R.string.new_version_available),
+                    )
+                },
+                icon = {
+                    BadgedBox(
+                        badge = { Badge() },
+                    ) {
+                        Icon(painterResource(R.drawable.update), null)
+                    }
+                },
+                onClick = {
+                    uriHandler.openUri("https://github.com/Arturo254/InnerTune/releases/latest")
+                },
+            )
+        }
+
+
         Card(
             modifier = Modifier
 
                 .fillMaxWidth()
-                .height(120.dp),
+                .height(130.dp),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.background,
             ),
@@ -249,7 +283,7 @@ fun SettingsScreen(
 
                 Spacer(Modifier.height(3.dp))
                 Text(
-                    text = " Version : ${BuildConfig.VERSION_NAME } \n  "  ,
+                    text = " Version : ${BuildConfig.VERSION_NAME} \n  "  ,
                     style = MaterialTheme.typography.bodyLarge.copy(
                         fontSize = 17.sp,
                         fontFamily = FontFamily.Monospace
@@ -265,7 +299,7 @@ fun SettingsScreen(
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(146.dp),
+                .height(160.dp),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surface,
             ),
@@ -291,6 +325,7 @@ fun SettingsScreen(
     }
 
     TopAppBar(
+
         title = { Text(stringResource(R.string.settings)) },
         navigationIcon = {
             IconButton(

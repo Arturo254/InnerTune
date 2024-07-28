@@ -37,8 +37,8 @@
         android:shortcutShortLabel="@string/albums">
         <intent
             android:action="android.intent.action.VIEW"
-            android:targetPackage="com.malopieds.innertune.debug"
-            android:targetClass="com.malopieds.innertune.MainActivity">
+            android:targetPackage="com.Arturo254.innertune"
+            android:targetClass="com.malopieds.innertune.ui.screens.HomeScreenKt">
 
             <extra android:name="content_key" android:value="Msg from shortcut" />
         </intent>

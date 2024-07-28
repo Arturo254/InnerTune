@@ -341,6 +341,9 @@
     <string name="blur">Blur</string>
     <string name="audio_quality_high_quality_320kbps">" (320Kbps) [beta)"</string>
     <string name="audio_descriptionbeta">320 Kbps audio quality is experimental and may cause glitches</string>
+    <string name="Hi">Hello Again</string>
+    <string name="playlistIA">AI Playlist</string>
+    <string name="IAPlaylistdes">The AI ​​playlist feature is in experimental mode</string>
     <plurals name="numberOfSongsAvailable">
         <item quantity="one">One song available.</item>
         <item quantity="other">%d songs available.</item>

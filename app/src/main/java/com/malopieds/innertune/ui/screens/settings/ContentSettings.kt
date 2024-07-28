@@ -1,11 +1,19 @@
 package com.malopieds.innertune.ui.screens.settings
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarScrollBehavior
@@ -15,6 +23,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.malopieds.innertube.utils.parseCookieString
 import com.malopieds.innertune.LocalPlayerAwareWindowInsets
@@ -36,6 +48,7 @@ import com.malopieds.innertune.constants.QuickPicks
 import com.malopieds.innertune.constants.QuickPicksKey
 import com.malopieds.innertune.constants.SYSTEM_DEFAULT
 import com.malopieds.innertune.constants.TopSize
+import com.malopieds.innertune.constants.playlistIAEnabled
 import com.malopieds.innertune.ui.component.EditTextPreference
 import com.malopieds.innertune.ui.component.IconButton
 import com.malopieds.innertune.ui.component.ListPreference
@@ -111,6 +124,61 @@ fun ContentSettings(
             },
             onValueSelected = onContentCountryChange,
         )
+// New preference for playlistIA : Enabled or Disabled
+        val (playlistIAEnabled, isPlaylistIAEnabled) = rememberPreference(key = playlistIAEnabled, defaultValue = true)
+
+        Column {
+            SwitchPreference(
+                title = { Text(stringResource(R.string.playlistIA)) },
+                checked = playlistIAEnabled,
+                onCheckedChange = isPlaylistIAEnabled,
+            )
+
+            if (playlistIAEnabled) {
+                Spacer(Modifier.height(25.dp))
+                ElevatedCard(
+                    elevation = CardDefaults.cardElevation(
+                        defaultElevation = 6.dp
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(160.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surface,
+                    )
+                ) {
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Icon(contentDescription = null, painter = painterResource(R.drawable.funbeta))
+                        Spacer(Modifier.height(5.dp))
+                        Text(
+                            text = (stringResource(R.string.APIFeatures)),
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.bodyLarge.copy(
+                                fontSize = 17.sp,
+                                fontFamily = FontFamily.Monospace
+                            ),
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Spacer(Modifier.height(5.dp))
+                        Text(
+                            text = (stringResource(R.string.IAPlaylistdes)),
+                            style = MaterialTheme.typography.bodyMedium.copy(
+                                fontSize = 14.sp,
+                                fontFamily = FontFamily.Monospace
+                            ),
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                }
+            }
+        }
+
+
+
+
 
         PreferenceGroupTitle(
             title = stringResource(R.string.proxy),

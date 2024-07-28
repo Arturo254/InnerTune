@@ -334,4 +334,5 @@
     <string name="blur">borrão</string>
     <string name="audio_quality_high_quality_320kbps">(320 Kbps) [beta)</string>
     <string name="audio_descriptionbeta">A qualidade de áudio de 320 Kbps é experimental e pode causar falhas</string>
+    <string name="Hi">Oi de novo</string>
 </resources>

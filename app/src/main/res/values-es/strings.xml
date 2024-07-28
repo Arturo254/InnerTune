@@ -347,4 +347,6 @@
     <string name="blur">"desenfoque "</string>
     <string name="audio_quality_high_quality_320kbps">(320 Kbps) [beta]</string>
     <string name="audio_descriptionbeta">la calidad de audio de 320 Kbps esta en funcion experimental y puede causar fallos</string>
+    <string name="Hi">Hola de Nuevo</string>
+    <string name="IAPlaylistdes">la funcion de AI playlist esta en funcion experimental</string>
 </resources>

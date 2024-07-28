@@ -35,6 +35,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -45,12 +46,16 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.malopieds.innertube.utils.parseCookieString
 import com.malopieds.innertune.BuildConfig
 import com.malopieds.innertune.LocalPlayerAwareWindowInsets
 import com.malopieds.innertune.R
+import com.malopieds.innertune.constants.AccountNameKey
+import com.malopieds.innertune.constants.InnerTubeCookieKey
 import com.malopieds.innertune.ui.component.IconButton
 import com.malopieds.innertune.ui.component.PreferenceEntry
 import com.malopieds.innertune.ui.utils.backToMain
+import com.malopieds.innertune.utils.rememberPreference
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -129,28 +134,61 @@ fun SettingsScreen(
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxSize()
-//                .blur( 9.dp)
+               .blur(0.5.dp)
 
             )
-            Icon(
-                painter = painterResource(R.drawable.launcher_monochrome),
-                contentDescription = null,
-                tint = Color.White,
-                modifier = Modifier.padding(1.dp, 20.dp, 12.dp),
 
-                )
+            val accountName by rememberPreference(AccountNameKey, "")
 
-            Text(
-                text = "InnerTune",
-                color = Color.White,
-                fontSize = 26.sp,
-                modifier = Modifier.padding(16.dp),
-                style = MaterialTheme.typography.titleSmall,
+            val innerTubeCookie by rememberPreference(InnerTubeCookieKey, "")
+            val isLoggedIn =
+                remember(innerTubeCookie) {
+                    "SAPISID" in parseCookieString(innerTubeCookie)
+                }
+            PreferenceEntry(
+                title = {
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                    ) {
+                        if (isLoggedIn) {
+                            Text(
+                                stringResource(R.string.Hi),
+                                color = Color.White,
+                                fontSize = 20.sp,
+                                style = MaterialTheme.typography.titleSmall,
+                                fontFamily = FontFamily.SansSerif
+                            )
+                            Spacer(modifier = Modifier.height(3.dp))
+                            Text(
+                                accountName.replace("@", ""),
+                                color = Color.White,
+                                fontSize = 20.sp,
+                                style = MaterialTheme.typography.titleSmall,
+                                fontFamily = FontFamily.Monospace
+                            )
+                        } else {
+                            Icon(
+                                painter = painterResource(R.drawable.launcher_monochrome),
+                                contentDescription = null,
+                                tint = Color.White,
 
-                )
+                                )
+                            Text(
+                                text = "InnerTune",
+                                color = Color.White,
+                                fontSize = 26.sp,
+                                style = MaterialTheme.typography.titleSmall,
+                                fontFamily = FontFamily.Monospace
 
+                                )
 
-        }
+                        }
+                    }
+                },
+                description = null,
+                onClick = { changeBackgroundImage() },
+            )
+            }
 
 
 

@@ -260,4 +260,6 @@
     <string name="clear_translation_models">Clear translation models</string>
     <string name="changelog">Changelog</string>
     <string name="betafun">Beta Features</string>
+    <string name="Hi">再一次問好</string>
+    <string name="IAPlaylistdes">AI播放清單功能處於實驗功能中</string>
 </resources>

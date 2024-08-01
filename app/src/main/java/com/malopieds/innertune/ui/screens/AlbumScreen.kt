@@ -453,6 +453,7 @@ fun AlbumScreen(
                                             navController = navController,
                                             onDismiss = menuState::dismiss,
                                         )
+
                                     }
                                 },
                             ) {
@@ -496,6 +497,7 @@ fun AlbumScreen(
                                     },
                                 ),
                     )
+
                 }
             }
 

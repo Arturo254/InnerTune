@@ -270,6 +270,7 @@ constructor(
                 HomeArtistRecommendation(
                     listItem = listItem.shuffled().take(9),
                     artistName = artist.artist.name,
+
                 )
         }
     }

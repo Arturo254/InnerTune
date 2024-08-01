@@ -69,15 +69,6 @@ fun SettingsScreen(
     var isBetaFunEnabled by remember { mutableStateOf(false) }
 
 
-
-
-
-
-
-
-
-
-
     val backgroundImages = listOf(
 
         R.drawable.cardbg,
@@ -229,7 +220,7 @@ fun SettingsScreen(
         )
         PreferenceEntry(
             title = { Text(stringResource(R.string.Donate)) },
-            icon = { Icon(painterResource(R.drawable.donatebuy), null) },
+            icon = { Icon(painterResource(R.drawable.donate), null) },
             onClick = { uriHandler.openUri("https://buymeacoffee.com/arturocervantes") }
         )
 

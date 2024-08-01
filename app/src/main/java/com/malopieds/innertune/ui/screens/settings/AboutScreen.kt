@@ -184,7 +184,7 @@ fun AboutScreen(
 
         Spacer(Modifier.height(20.dp))
         CardItem(
-            icon = R.drawable.secure,
+            icon = R.drawable.verified_user,
             title = stringResource(R.string.privacy_policy),
             subtitle = stringResource(R.string.Privacy),
             onClick = { uriHandler.openUri("https://innertunne.netlify.app/pdp") }
@@ -193,7 +193,7 @@ fun AboutScreen(
         Spacer(Modifier.height(20.dp))
 
         CardItem(
-            icon = R.drawable.licencia,
+            icon = R.drawable.license,
             title = stringResource(R.string.license),
             subtitle = stringResource(R.string.license_text),
             onClick = { uriHandler.openUri("https://raw.githubusercontent.com/Arturo254/InnerTune/master/LICENSE") }
@@ -211,7 +211,7 @@ fun AboutScreen(
         Spacer(Modifier.height(20.dp))
 
         CardItem(
-            icon = R.drawable.bug,
+            icon = R.drawable.bug_report,
             title = stringResource(R.string.bugs),
             subtitle = stringResource(R.string.bugs_text),
             onClick = { uriHandler.openUri("https://github.com/Arturo254/InnerTune/issues") }
@@ -220,7 +220,7 @@ fun AboutScreen(
         Spacer(Modifier.height(20.dp))
 
         CardItem(
-            icon = R.drawable.ayuda,
+            icon = R.drawable.help,
             title = stringResource(R.string.help),
             subtitle = stringResource(R.string.help_text),
             onClick = { uriHandler.openUri("https://wa.me/525576847925") }
@@ -229,12 +229,21 @@ fun AboutScreen(
         Row(
             verticalAlignment = Alignment.Top,
         ) {
-            Text(
-                text = (stringResource(R.string.contributors)),
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold,
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(top = 8.dp, bottom = 4.dp)
-            )
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.group),
+                    contentDescription = null
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = stringResource(R.string.contributors),
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold
+                )
+            }
 
 
         }

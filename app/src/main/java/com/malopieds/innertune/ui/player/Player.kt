@@ -958,7 +958,6 @@ fun BottomSheetPlayer(
                             .align(Alignment.Center)
                             .alpha(if (repeatMode == Player.REPEAT_MODE_OFF) 0.5f else 1f),
                         onClick = playerConnection.player::toggleRepeatMode,
-                        color = MaterialTheme.colorScheme.onPrimary,
                     )
                 }
             }

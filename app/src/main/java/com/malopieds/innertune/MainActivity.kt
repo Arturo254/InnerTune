@@ -769,7 +769,7 @@ class MainActivity : ComponentActivity() {
                                                 },
                                             ) {
                                                 Icon(
-                                                    painter = painterResource(R.drawable.settings),
+                                                    painter = painterResource(R.drawable.settingsv2),
                                                     contentDescription = null,
                                                 )
                                             }
@@ -890,7 +890,7 @@ class MainActivity : ComponentActivity() {
                                 ) {
                                     Surface(
                                         modifier = Modifier.padding(24.dp),
-                                        shape = RoundedCornerShape(16.dp),
+                                        shape = RoundedCornerShape(18.dp),
                                         color = AlertDialogDefaults.containerColor,
                                         tonalElevation = AlertDialogDefaults.TonalElevation
                                     ) {

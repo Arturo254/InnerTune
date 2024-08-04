@@ -21,7 +21,7 @@ android {
         versionCode = 25
         versionName = "0.8.3"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        versionNameSuffix = ".Beta"
+        versionNameSuffix = ".Stable"
     }
     buildTypes {
         release {

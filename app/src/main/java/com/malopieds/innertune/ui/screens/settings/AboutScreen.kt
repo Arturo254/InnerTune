@@ -38,7 +38,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.BlendMode
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
@@ -287,7 +286,7 @@ fun AboutScreen(
                 )
 
                 Text(
-                    text = " 亗 Arturo254:",
+                    text = " 亗 Arturo254 :",
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.bodyLarge,fontFamily = FontFamily.Monospace,
                     color = MaterialTheme.colorScheme.onSurface
@@ -337,7 +336,7 @@ fun AboutScreen(
                 )
 
                 Text(
-                    text = " ✦ Fabito02",
+                    text = " \uD81A\uDD10 Fabito02 : ",
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.bodyLarge,fontFamily = FontFamily.Monospace,
                     color = MaterialTheme.colorScheme.onSurface
@@ -357,59 +356,59 @@ fun AboutScreen(
 
         }
 
-        // Alessandro
-        Spacer(Modifier.height(20.dp))
-        ElevatedCard(
-            elevation = CardDefaults.cardElevation(
-                defaultElevation = 6.dp
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(100.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface,
-            ),
-            onClick = { uriHandler.openUri("https://github.com/AlessandroGalvan") }
-        ) {
-            Row(
-                modifier = Modifier.padding(26.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Image(
-                    painter = rememberAsyncImagePainter(
-                        model = "https://avatars.githubusercontent.com/u/40720048?v=4",
-
-                        ),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .clip(CircleShape)
-                        .background(
-                            MaterialTheme.colorScheme.surfaceColorAtElevation(
-                                NavigationBarDefaults.Elevation
-                            )
-                        )
-                        .clickable { }
-                )
-
-                Text(
-                    text = " ✦ AlessandroGalvan:",
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.bodyLarge,fontFamily = FontFamily.Monospace,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-
-                Text(
-                    text = "S.B Playlist",
-                    style = MaterialTheme.typography.bodyMedium,fontFamily = FontFamily.SansSerif,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-
-
-            }
-
-
-        }
+//        // Alessandro
+//        Spacer(Modifier.height(20.dp))
+//        ElevatedCard(
+//            elevation = CardDefaults.cardElevation(
+//                defaultElevation = 6.dp
+//            ),
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .height(100.dp),
+//            colors = CardDefaults.cardColors(
+//                containerColor = MaterialTheme.colorScheme.surface,
+//            ),
+//            onClick = { uriHandler.openUri("https://github.com/AlessandroGalvan") }
+//        ) {
+//            Row(
+//                modifier = Modifier.padding(26.dp),
+//                verticalAlignment = Alignment.CenterVertically
+//            ) {
+//                Image(
+//                    painter = rememberAsyncImagePainter(
+//                        model = "https://avatars.githubusercontent.com/u/40720048?v=4",
+//
+//                        ),
+//                    contentDescription = null,
+//                    modifier = Modifier
+//                        .clip(CircleShape)
+//                        .background(
+//                            MaterialTheme.colorScheme.surfaceColorAtElevation(
+//                                NavigationBarDefaults.Elevation
+//                            )
+//                        )
+//                        .clickable { }
+//                )
+//
+//                Text(
+//                    text = " 「★」 AlessandroGalvan : ",
+//                    textAlign = TextAlign.Center,
+//                    style = MaterialTheme.typography.bodyLarge,fontFamily = FontFamily.Monospace,
+//                    color = MaterialTheme.colorScheme.onSurface
+//                )
+//                Spacer(modifier = Modifier.height(4.dp))
+//
+//                Text(
+//                    text = "S.B.P",
+//                    style = MaterialTheme.typography.bodyMedium,fontFamily = FontFamily.SansSerif,
+//                    color = MaterialTheme.colorScheme.onSurface
+//                )
+//
+//
+//            }
+//
+//
+//        }
 
 
         // Contribution by:
@@ -422,7 +421,7 @@ fun AboutScreen(
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surface,
             ),
-            border = BorderStroke(1.dp, Color.Gray),
+            border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary),
             onClick = { uriHandler.openUri("https://github.com/Arturo254/InnerTune/new/master") }
         ) {
             Column(
@@ -435,7 +434,7 @@ fun AboutScreen(
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = MaterialTheme.colorScheme.primary
                 )
 
                 Text(

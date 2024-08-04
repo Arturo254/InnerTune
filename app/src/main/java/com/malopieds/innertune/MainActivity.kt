@@ -715,7 +715,7 @@ class MainActivity : ComponentActivity() {
                                                 navController.navigate("home") //
                                             }
                                     )
-                                    Spacer(modifier = Modifier.width(20.dp)) // Espacio horizontal entre los iconos
+                                    Spacer(modifier = Modifier.width(20.dp))
                                 },
                                 trailingIcon = {
                                     if (active) {

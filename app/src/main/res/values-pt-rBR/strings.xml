@@ -301,7 +301,7 @@
     <string name="help">Ajuda</string>
     <string name="help_text">Entre em contato com o desenvolvedor ❯</string>
     <string name="contributors">Contribuidores</string>
-    <string name="contribution">contribuir ?</string>
+    <string name="contribution">Contribuir ?</string>
     <string name="contribution_text">Se quiser contribuir, clique aqui</string>
     <string name="sort_by_last_updated">Classificar pela última atualização</string>
     <string name="default_lib_chips">Chips lib padrão</string>
@@ -335,4 +335,7 @@
     <string name="audio_quality_high_quality_320kbps">(320 Kbps) [beta)</string>
     <string name="audio_descriptionbeta">A qualidade de áudio de 320 Kbps é experimental e pode causar falhas</string>
     <string name="Hi">Oi de novo</string>
+    <string name="SearchHistory">Resultados da Pesquisa</string>
+    <string name="Sujestions">Sugestões</string>
+    <string name="SearchResutls">Histórico de Pesquisa</string>
 </resources>

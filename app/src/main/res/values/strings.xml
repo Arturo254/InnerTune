@@ -276,8 +276,6 @@
 
 
     <!--Folders-->
-    <string name="flat_subfolders_title">Flatten subfolders</string>
-    <string name="flat_subfolders_description">Disable to preserve the file structure as on disk</string>
 
     <!--Lyrics-->
     <string name="lyrics_multiline_title">Read multiline lyrics</string>
@@ -288,8 +286,8 @@
     <string name="changelog">Changelog</string>
     <string name="clear_translation_models">Clear translation models</string>
     <string name="translation_models">Translation Models</string>
-    <string name="explore">explore</string>
-    <string name="forgotten_favorites">favotites</string>
+    <string name="explore">Explore</string>
+    <string name="forgotten_favorites">Favotites</string>
     <string name="similar_to">similar to</string>
     <string name="keep_listening">keep listening</string>
     <string name="Donate">Donate</string>
@@ -308,7 +306,7 @@
     <string name="help">Help</string>
     <string name="help_text">Contact Dev ❯</string>
     <string name="contributors">Contributors</string>
-    <string name="contribution">contribution ?</string>
+    <string name="contribution">Contribution ?</string>
     <string name="contribution_text">If you want to contribute, click here</string>
     <string name="sort_by_last_updated">sort by last updated</string>
     <string name="default_lib_chips">default lib chips</string>
@@ -344,6 +342,9 @@
     <string name="Hi">Hello Again</string>
     <string name="playlistIA">AI Playlist</string>
     <string name="IAPlaylistdes">The AI ​​playlist feature is in experimental mode</string>
+    <string name="SearchHistory">Search History</string>
+    <string name="Sujestions">Suggestions</string>
+    <string name="SearchResutls">Search Results</string>
     <plurals name="numberOfSongsAvailable">
         <item quantity="one">One song available.</item>
         <item quantity="other">%d songs available.</item>

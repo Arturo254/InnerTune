@@ -16,15 +16,12 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Badge
-import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarScrollBehavior
@@ -224,67 +221,67 @@ fun SettingsScreen(
             onClick = { uriHandler.openUri("https://buymeacoffee.com/arturocervantes") }
         )
 
-        PreferenceEntry(
-            title = { Text(stringResource(R.string.betafun)) },
-            icon = { Icon(painterResource(R.drawable.funbeta), null) },
-
-            trailingContent = {
-
-                Switch(
-                    checked = isBetaFunEnabled,
-                    onCheckedChange = { isBetaFunEnabled = it },
-                    modifier = Modifier.padding(end = 8.dp)
-                )
-
-            },
-            onClick = {
-
-
-            }
-        )
-
-        if (latestVersion > BuildConfig.VERSION_CODE) {
-            PreferenceEntry(
-                title = {
-                    Text(
-                        text = stringResource(R.string.new_version_available),
-                    )
-                },
-                icon = {
-                    BadgedBox(
-                        badge = { Badge() },
-                    ) {
-                        Icon(painterResource(R.drawable.update), null)
-                    }
-                },
-                onClick = {
-                    uriHandler.openUri("https://github.com/Arturo254/InnerTune/releases/latest")
-                },
-            )
-        }
-
-
-        Card(
-            modifier = Modifier
-
-                .fillMaxWidth()
-                .height(130.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.background,
-            ),
-            border = BorderStroke(1.dp, Color.White),
-
-            ) {
-            Column(
-                modifier = Modifier.padding(17.dp),
-                verticalArrangement = Arrangement.Center
-            ) {
-
-                Spacer(Modifier.height(3.dp))
-                Text(stringResource(R.string.BetaDescription))
-            }
-
-        }
+//        PreferenceEntry(
+//            title = { Text(stringResource(R.string.betafun)) },
+//            icon = { Icon(painterResource(R.drawable.funbeta), null) },
+//
+//            trailingContent = {
+//
+//                Switch(
+//                    checked = isBetaFunEnabled,
+//                    onCheckedChange = { isBetaFunEnabled = it },
+//                    modifier = Modifier.padding(end = 8.dp)
+//                )
+//
+//            },
+//            onClick = {
+//
+//
+//            }
+//        )
+//
+//        if (latestVersion > BuildConfig.VERSION_CODE) {
+//            PreferenceEntry(
+//                title = {
+//                    Text(
+//                        text = stringResource(R.string.new_version_available),
+//                    )
+//                },
+//                icon = {
+//                    BadgedBox(
+//                        badge = { Badge() },
+//                    ) {
+//                        Icon(painterResource(R.drawable.update), null)
+//                    }
+//                },
+//                onClick = {
+//                    uriHandler.openUri("https://github.com/Arturo254/InnerTune/releases/latest")
+//                },
+//            )
+//        }
+//
+//
+//        Card(
+//            modifier = Modifier
+//
+//                .fillMaxWidth()
+//                .height(130.dp),
+//            colors = CardDefaults.cardColors(
+//                containerColor = MaterialTheme.colorScheme.background,
+//            ),
+//            border = BorderStroke(1.dp, Color.White),
+//
+//            ) {
+//            Column(
+//                modifier = Modifier.padding(17.dp),
+//                verticalArrangement = Arrangement.Center
+//            ) {
+//
+//                Spacer(Modifier.height(3.dp))
+//                Text(stringResource(R.string.BetaDescription))
+//            }
+//
+//        }
 
 
         Spacer(Modifier.height(25.dp))
@@ -310,6 +307,8 @@ fun SettingsScreen(
 
             ) {
 
+
+
                 Spacer(Modifier.height(3.dp))
                 Text(
                     text = " Version : ${BuildConfig.VERSION_NAME} \n  "  ,
@@ -321,6 +320,48 @@ fun SettingsScreen(
                     modifier = Modifier
 
                 )
+
+            }
+        }
+        Spacer(Modifier.height(25.dp))
+        ElevatedCard(
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 6.dp
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(120.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+
+
+                ),
+
+
+        ) {
+            Column(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(38.dp))
+                    .padding(20.dp),
+                verticalArrangement = Arrangement.Center
+
+            ) {
+
+
+
+                Spacer(Modifier.height(3.dp))
+                Text(
+                    text = " We're saying goodbye to beta features. Thanks for your feedback. 🫂👋"  ,
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        fontSize = 17.sp,
+                        fontFamily = FontFamily.Monospace
+                    ),
+                    color = MaterialTheme.colorScheme.secondary,
+                    modifier = Modifier
+
+
+                )
+
 
             }
         }

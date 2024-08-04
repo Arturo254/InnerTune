@@ -83,6 +83,7 @@ import com.malopieds.innertune.constants.ListItemHeight
 import com.malopieds.innertune.constants.ListThumbnailSize
 import com.malopieds.innertune.constants.SmallGridThumbnailHeight
 import com.malopieds.innertune.constants.ThumbnailCornerRadius
+import com.malopieds.innertune.constants.ThumbnailCornerRadiusVariant
 import com.malopieds.innertune.db.entities.Album
 import com.malopieds.innertune.db.entities.Artist
 import com.malopieds.innertune.db.entities.Playlist
@@ -723,7 +724,7 @@ fun AlbumListItem(
                     .size(ListThumbnailSize)
                     .background(
                         color = Color.Black.copy(alpha = 0.4f),
-                        shape = RoundedCornerShape(ThumbnailCornerRadius),
+                        shape = RoundedCornerShape(ThumbnailCornerRadiusVariant),
                     ),
         )
     },
@@ -897,7 +898,7 @@ fun AlbumGridItem(
             }
         }
     },
-    thumbnailShape = RoundedCornerShape(ThumbnailCornerRadius),
+    thumbnailShape = RoundedCornerShape(ThumbnailCornerRadiusVariant),
     fillMaxWidth = fillMaxWidth,
     modifier = modifier,
 )
@@ -924,6 +925,7 @@ fun AlbumSmallGridItem(
                 enter = fadeIn(tween(500)),
                 exit = fadeOut(tween(500)),
             ) {
+                val Libcarditem = 25.dp
                 Box(
                     contentAlignment = Alignment.Center,
                     modifier =
@@ -949,6 +951,7 @@ fun AlbumSmallGridItem(
                 }
             }
         },
+
         thumbnailShape = RoundedCornerShape(ThumbnailCornerRadius),
         modifier = modifier,
     )
@@ -971,7 +974,9 @@ fun PlaylistListItem(
             )
         }
     },
+
     thumbnailContent = {
+
         Box(
             modifier = Modifier
                 .size(ListThumbnailSize)
@@ -998,7 +1003,8 @@ fun PlaylistListItem(
                         model = playlist.thumbnails[0],
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier
+                            .fillMaxSize()
                     )
                 }
                 else -> {
@@ -1114,6 +1120,7 @@ fun MediaMetadataListItem(
             makeTimeString(mediaMetadata.duration * 1000L),
         ),
     thumbnailContent = {
+
         AsyncImage(
             model = mediaMetadata.thumbnailUrl,
             contentDescription = null,

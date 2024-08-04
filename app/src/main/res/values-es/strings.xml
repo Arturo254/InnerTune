@@ -301,7 +301,7 @@
     <string name="help">Ayuda</string>
     <string name="help_text">Contacto con el Dev ❯</string>
     <string name="contributors">Colaboradores</string>
-    <string name="contribution">contribuir ?</string>
+    <string name="contribution">Contribuir ?</string>
     <string name="contribution_text">Si quieres contribuir da click aqui</string>
     <string name="sort_by_last_updated">ordenar por última actualización</string>
     <string name="default_lib_chips">chips de biblioteca predeterminados</string>
@@ -330,8 +330,6 @@
     <string name="player_background_default">seguir tema</string>
     <string name="player_background_gradient">Gradiente</string>
     <string name="player_background_blur">Blur</string>
-    <string name="flat_subfolders_title">Aplanar subcarpetas</string>
-    <string name="flat_subfolders_description">Deshabilitar para preservar la estructura del archivo como en el disco</string>
     <string name="lyrics_multiline_title">Leer letras de varias líneas</string>
     <string name="lyrics_multiline_description">Trate todas las líneas entre puntos de sincronización como un texto de letra</string>
     <string name="lyrics_trim_title">Eliminar espacios alrededor de las letras</string>
@@ -349,4 +347,7 @@
     <string name="audio_descriptionbeta">la calidad de audio de 320 Kbps esta en funcion experimental y puede causar fallos</string>
     <string name="Hi">Hola de Nuevo</string>
     <string name="IAPlaylistdes">la funcion de AI playlist esta en funcion experimental</string>
+    <string name="SearchHistory">Resultados de la búsqueda</string>
+    <string name="Sujestions">"Sugerencias "</string>
+    <string name="SearchResutls">Historial de búsqueda</string>
 </resources>

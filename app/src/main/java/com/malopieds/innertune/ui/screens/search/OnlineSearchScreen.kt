@@ -34,6 +34,7 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
@@ -107,7 +108,7 @@ fun OnlineSearchScreen(
         ) {
             item {
                 Text(
-                    text = "Search History",
+                    text = (stringResource(R.string.SearchHistory)),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
@@ -145,7 +146,7 @@ fun OnlineSearchScreen(
             if (viewState.suggestions.isNotEmpty()) {
                 item {
                     Text(
-                        text = "Suggestions",
+                        text = (stringResource(R.string.Sujestions)),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
@@ -179,7 +180,7 @@ fun OnlineSearchScreen(
             if (viewState.items.isNotEmpty()) {
                 item {
                     Text(
-                        text = "Search Results",
+                        text = (stringResource(R.string.SearchResutls)),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
@@ -275,7 +276,7 @@ fun SuggestionItem(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 4.dp)
-            .clip(RoundedCornerShape(8.dp))
+            .clip(RoundedCornerShape(18.dp))
             .clickable(onClick = onClick),
         color = MaterialTheme.colorScheme.surfaceVariant
     ) {

@@ -1,66 +1,73 @@
-
-# InnerTune
+<div align="center">
+<h1>InnerTune</h1> 
+</div>
 
 <div align="center">
   <img src="https://raw.githubusercontent.com/z-huang/InnerTune/dev/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.webp" alt="InnerTune Logo" width="120" height="120">
-  <br>
-  <p>Un cliente de YouTube Music con Material Design 3 para Android</p>
-  <a href="https://github.com/Arturo254/InnerTune/releases">
-    <img src="https://img.shields.io/github/v/release/Arturo254/InnerTune?style=flat-square" alt="Latest Release">
-  </a>
-  <a href="https://github.com/z-huang/InnerTune/blob/main/LICENSE">
-    <img src="https://img.shields.io/github/license/Arturo254/InnerTune?style=flat-square" alt="License">
-  </a>
+  
+  #### Un cliente elegante de YouTube Music con Material Design 3 para Android
+
+  
+  [![Última versión](https://img.shields.io/github/v/release/Arturo254/InnerTune?style=for-the-badge&logo=github&color=blue)](https://github.com/Arturo254/InnerTune/releases)
+  [![Licencia](https://img.shields.io/github/license/Arturo254/InnerTune?style=for-the-badge&logo=gnu&color=green)](https://github.com/z-huang/InnerTune/blob/main/LICENSE)
 </div>
 
+![Mockup de InnerTune](https://github.com/user-attachments/assets/edcab771-a1ef-437a-81b1-f1c641b18bcf)
 
-![mock](https://github.com/Arturo254/InnerTune/assets/87346871/672d6022-fd69-4347-bc0f-4d78720a1f0f)
+## ✨ Características Destacadas
 
-## ✨ Características
-
-- 🎵 Reproduce canciones de YouTube y YouTube Music sin anuncios
+- 🎵 Reproduce música de YouTube y YouTube Music sin anuncios
 - 🔊 Reproducción en segundo plano
-- 🔍 Busque canciones, videos, álbumes y listas de reproducción de YouTube Music
-- 🔑 Soporte de inicio de sesión
-- 📚 Gestión de biblioteca
-- ⬇️ Almacenar en caché y descargar canciones para reproducirlas sin conexión
+- 🔍 Búsqueda avanzada de canciones, vídeos, álbumes y playlists
+- 🔑 Soporte para inicio de sesión
+- 📚 Gestión completa de tu biblioteca musical
+- ⬇️ Descarga y almacenamiento en caché para reproducción offline
 - 🗣️ Letras sincronizadas
 - 🌐 Traductor de letras (experimental)
-- ⏩ Saltar el silencio
+- ⏩ Omisión inteligente de silencios
 - 🔊 Normalización de audio
-- ⏱️ Ajustar el tempo/tono
+- ⏱️ Ajuste de tempo y tono
 - 🌗 Tema dinámico
-- 🌍 Localización
-- 🚗 Soporte para Android Auto
-- ⚡ Selecciones rápidas personalizadas
-- 💎 Material Design 3
+- 🌍 Soporte multiidioma
+- 🚗 Compatibilidad con Android Auto
+- ⚡ Accesos rápidos personalizables
+- 💎 Diseño Material 3
 
-## 📦 Cómo reconstruir la aplicación
+## 📦 Cómo Compilar la Aplicación
 
-*Para Compilar la aplicacion necesitas:*
+### Requisitos previos:
 - Gradle
 - Kotlin
 - Android Studio
 
-_Mediante CLI:_
-
+### Compilación por línea de comandos:
+#### Release :
+```bash
+./gradlew assembleRelease
+```
+#### Debug :
 ```bash
 ./gradlew assembleDebug
 ```
+#### Compilación completa :
+```bash
+./gradlew build
+
+```
 
 
+## 🌐 Contribuye con Traducciones
 
-## 🌐 Contribuyendo con traducciones
+Si quieres Traducir la aplicacion a tu idioma o deseas traducir a algun otro idioma contame por Gmail:
 
-Siga las [instrucciones](https://developer.android.com/guide/topics/resources/localization) y cree una solicitud de extracción. Si es posible, cree la aplicación de antemano y asegúrese de que no haya errores antes de crear una solicitud de extracción.
-
-## 💰 Donar
-
-Si te gusta InnerTune (fork), puedes enviar una donación. Las donaciones apoyarán el desarrollo, incluyendo correcciones de errores y nuevas funciones.
-
-© 2023 Open Source Projects, Dev: [Arturo Cervantes](https://www.paypal.com/paypalme/ArturoCervantes254)
+cervantesarturo254@gmail.com
 
 
-https://innertune.vercel.app (alternativa web)
+## 💖 Apoya el Proyecto
 
-### TAMBIEN PUEDEES CONVERTIRTE EN SPONSOR ❤️😊
+Si disfrutas usando InnerTune, considera hacer una donación. Tu apoyo nos ayudará a seguir mejorando la aplicación, corrigiendo errores y añadiendo nuevas funcionalidades.
+
+### ¡Conviértete en Sponsor! ❤️😊
+
+© 2023 Open Source Projects  
+Desarrollado por [Arturo Cervantes](https://www.paypal.com/paypalme/ArturoCervantes254)

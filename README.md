@@ -71,3 +71,6 @@ Si disfrutas usando InnerTune, considera hacer una donación. Tu apoyo nos ayuda
 
 © 2023 Open Source Projects  
 Desarrollado por [Arturo Cervantes](https://www.paypal.com/paypalme/ArturoCervantes254)
+
+
+###### agradecimiento total y creditos a @z-huang y a los 48 contribuidores mas por la idea de la aplicacion

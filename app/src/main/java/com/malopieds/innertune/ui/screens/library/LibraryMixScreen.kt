@@ -1,8 +1,5 @@
 package com.malopieds.innertune.ui.screens.library
 
-import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
@@ -67,7 +64,6 @@ import com.malopieds.innertune.ui.menu.PlaylistMenu
 import com.malopieds.innertune.utils.rememberEnumPreference
 import com.malopieds.innertune.utils.rememberPreference
 import com.malopieds.innertune.viewmodels.LibraryMixViewModel
-import java.io.File
 import java.text.Collator
 import java.time.LocalDateTime
 import java.util.Locale

@@ -70,11 +70,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
@@ -624,6 +627,8 @@ fun LocalPlaylistScreen(
                                     Text(stringResource(R.string.shuffle))
                                 }
                             }
+                            val focusRequester = remember { FocusRequester() }
+                            val focusManager = LocalFocusManager.current
                             OutlinedTextField(
                                 value = searchQuery,
                                 onValueChange = { searchQuery = it },
@@ -631,12 +636,14 @@ fun LocalPlaylistScreen(
                                 singleLine = true,
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(bottom = 16.dp),
+                                    .padding(bottom = 16.dp)
+                                    .focusRequester(focusRequester),  // Attach the FocusRequester to the TextField
                                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Search),
                                 keyboardActions = KeyboardActions(
                                     onSearch = {
                                         val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                                         imm.hideSoftInputFromWindow((context as Activity).currentFocus?.windowToken, 0)
+                                        focusManager.clearFocus()
                                     }
                                 ),
                                 shape = MaterialTheme.shapes.large,
@@ -651,6 +658,7 @@ fun LocalPlaylistScreen(
                                         searchQuery = TextFieldValue("")
                                         val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                                         imm.hideSoftInputFromWindow((context as Activity).currentFocus?.windowToken, 0)
+                                        focusManager.clearFocus()
                                     }) {
                                         Icon(
                                             painterResource(R.drawable.close),

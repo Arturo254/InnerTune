@@ -214,6 +214,7 @@ fun LibraryPlaylistsScreen(
                                     .clickable {
                                         navController.navigate("auto_playlist/liked")
                                     }.animateItemPlacement(),
+                            context = LocalContext.current
                         )
                     }
 
@@ -230,6 +231,7 @@ fun LibraryPlaylistsScreen(
                                     .clickable {
                                         navController.navigate("auto_playlist/downloaded")
                                     }.animateItemPlacement(),
+                            context = LocalContext.current
                         )
                     }
 
@@ -246,6 +248,7 @@ fun LibraryPlaylistsScreen(
                                     .clickable {
                                         navController.navigate("top_playlist/$topSize")
                                     }.animateItemPlacement(),
+                            context = LocalContext.current
                         )
                     }
 
@@ -292,6 +295,7 @@ fun LibraryPlaylistsScreen(
                                             }
                                         },
                                     ).animateItemPlacement(),
+                            context = LocalContext.current
                         )
                     }
                 }

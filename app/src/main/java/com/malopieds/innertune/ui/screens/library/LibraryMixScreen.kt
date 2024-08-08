@@ -231,6 +231,7 @@ fun LibraryMixScreen(
                                     .clickable {
                                         navController.navigate("auto_playlist/liked")
                                     }.animateItemPlacement(),
+                            context = LocalContext.current
                         )
                     }
 
@@ -247,6 +248,7 @@ fun LibraryMixScreen(
                                     .clickable {
                                         navController.navigate("auto_playlist/downloaded")
                                     }.animateItemPlacement(),
+                            context = LocalContext.current
                         )
                     }
 
@@ -263,6 +265,7 @@ fun LibraryMixScreen(
                                     .clickable {
                                         navController.navigate("top_playlist/$topSize")
                                     }.animateItemPlacement(),
+                            context = LocalContext.current
                         )
                     }
 
@@ -311,6 +314,7 @@ fun LibraryMixScreen(
                                                     }
                                                 },
                                             ).animateItemPlacement(),
+                                    context = LocalContext.current
                                 )
                             }
 

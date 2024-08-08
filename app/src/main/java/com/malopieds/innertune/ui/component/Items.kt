@@ -965,6 +965,7 @@ fun PlaylistListItem(
     modifier: Modifier = Modifier,
     trailingContent: @Composable RowScope.() -> Unit = {},
     autoPlaylist: Boolean = false,
+    context: Context // Aggiungi questo parametro per accedere al contesto
 ) = ListItem(
     title = playlist.playlist.name,
     subtitle = {
@@ -976,8 +977,9 @@ fun PlaylistListItem(
             )
         }
     },
-
     thumbnailContent = {
+
+        val customImageUri = loadImageUri(context, playlist.id)
 
         Box(
             modifier = Modifier
@@ -987,6 +989,14 @@ fun PlaylistListItem(
             contentAlignment = Alignment.Center
         ) {
             when {
+                customImageUri != null -> {
+                    AsyncImage(
+                        model = customImageUri,
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
                 playlist.thumbnails.isEmpty() -> {
                     val painter = when (playlist.playlist.name) {
                         stringResource(R.string.liked) -> R.drawable.thumb_up
@@ -1005,8 +1015,7 @@ fun PlaylistListItem(
                         model = playlist.thumbnails[0],
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .fillMaxSize()
+                        modifier = Modifier.fillMaxSize()
                     )
                 }
                 else -> {
@@ -1034,6 +1043,7 @@ fun PlaylistListItem(
     trailingContent = trailingContent,
     modifier = modifier
 )
+
 
 @Composable
 fun PlaylistGridItem(

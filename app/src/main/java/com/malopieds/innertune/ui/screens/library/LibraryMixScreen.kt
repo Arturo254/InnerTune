@@ -586,13 +586,3 @@ fun LibraryMixScreen(
         }
     }
 }
-fun loadImageFromPreferences(context: Context, playlistId: String): Bitmap? {
-    val sharedPreferences = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
-    val filePath = sharedPreferences.getString("image_file_path_$playlistId", null) ?: return null
-    val file = File(filePath)
-    return if (file.exists()) {
-        BitmapFactory.decodeFile(file.absolutePath)
-    } else {
-        null
-    }
-}

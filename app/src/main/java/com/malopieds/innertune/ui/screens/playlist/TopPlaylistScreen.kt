@@ -397,7 +397,6 @@ fun TopPlaylistScreen(
                                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Search),
                                 keyboardActions = KeyboardActions(
                                     onSearch = {
-                                        // Chiudi la tastiera
                                         val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                                         imm.hideSoftInputFromWindow((context as Activity).currentFocus?.windowToken, 0)
                                     }

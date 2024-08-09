@@ -65,9 +65,9 @@ fun AddToPlaylistDialog(
                         )
                     },
                     modifier =
-                        Modifier.clickable {
-                            showCreatePlaylistDialog = true
-                        },
+                    Modifier.clickable {
+                        showCreatePlaylistDialog = true
+                    },
                 )
             }
 
@@ -75,10 +75,10 @@ fun AddToPlaylistDialog(
                 PlaylistListItem(
                     playlist = playlist,
                     modifier =
-                        Modifier.clickable {
-                            onAdd(playlist)
-                            onDismiss()
-                        },
+                    Modifier.clickable {
+                        onAdd(playlist)
+                        onDismiss()
+                    },
                     context = LocalContext.current
                 )
             }

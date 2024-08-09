@@ -103,8 +103,8 @@ fun PlaylistMenu(
                     Download.STATE_COMPLETED
                 } else if (songs.all {
                         downloads[it.id]?.state == Download.STATE_QUEUED ||
-                            downloads[it.id]?.state == Download.STATE_DOWNLOADING ||
-                            downloads[it.id]?.state == Download.STATE_COMPLETED
+                                downloads[it.id]?.state == Download.STATE_DOWNLOADING ||
+                                downloads[it.id]?.state == Download.STATE_COMPLETED
                     }
                 ) {
                     Download.STATE_DOWNLOADING
@@ -124,10 +124,10 @@ fun PlaylistMenu(
             title = { Text(text = stringResource(R.string.edit_playlist)) },
             onDismiss = { showEditDialog = false },
             initialTextFieldValue =
-                TextFieldValue(
-                    playlist.playlist.name,
-                    TextRange(playlist.playlist.name.length),
-                ),
+            TextFieldValue(
+                playlist.playlist.name,
+                TextRange(playlist.playlist.name.length),
+            ),
             onDone = { name ->
                 onDismiss()
                 database.query {
@@ -235,12 +235,12 @@ fun PlaylistMenu(
 
     GridMenu(
         contentPadding =
-            PaddingValues(
-                start = 8.dp,
-                top = 8.dp,
-                end = 8.dp,
-                bottom = 8.dp + WindowInsets.systemBars.asPaddingValues().calculateBottomPadding(),
-            ),
+        PaddingValues(
+            start = 8.dp,
+            top = 8.dp,
+            end = 8.dp,
+            bottom = 8.dp + WindowInsets.systemBars.asPaddingValues().calculateBottomPadding(),
+        ),
     ) {
         GridMenuItem(
             icon = R.drawable.play,

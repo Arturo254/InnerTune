@@ -166,12 +166,12 @@ fun LibraryPlaylistsScreen(
             ) {
                 Icon(
                     painter =
-                        painterResource(
-                            when (viewType) {
-                                LibraryViewType.LIST -> R.drawable.list
-                                LibraryViewType.GRID -> R.drawable.grid_view
-                            },
-                        ),
+                    painterResource(
+                        when (viewType) {
+                            LibraryViewType.LIST -> R.drawable.list
+                            LibraryViewType.GRID -> R.drawable.grid_view
+                        },
+                    ),
                     contentDescription = null,
                 )
             }
@@ -209,11 +209,11 @@ fun LibraryPlaylistsScreen(
                             playlist = likedPlaylist,
                             autoPlaylist = true,
                             modifier =
-                                Modifier
-                                    .fillMaxWidth()
-                                    .clickable {
-                                        navController.navigate("auto_playlist/liked")
-                                    }.animateItemPlacement(),
+                            Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    navController.navigate("auto_playlist/liked")
+                                }.animateItemPlacement(),
                             context = LocalContext.current
                         )
                     }
@@ -226,11 +226,11 @@ fun LibraryPlaylistsScreen(
                             playlist = downloadPlaylist,
                             autoPlaylist = true,
                             modifier =
-                                Modifier
-                                    .fillMaxWidth()
-                                    .clickable {
-                                        navController.navigate("auto_playlist/downloaded")
-                                    }.animateItemPlacement(),
+                            Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    navController.navigate("auto_playlist/downloaded")
+                                }.animateItemPlacement(),
                             context = LocalContext.current
                         )
                     }
@@ -243,11 +243,11 @@ fun LibraryPlaylistsScreen(
                             playlist = topPlaylist,
                             autoPlaylist = true,
                             modifier =
-                                Modifier
-                                    .fillMaxWidth()
-                                    .clickable {
-                                        navController.navigate("top_playlist/$topSize")
-                                    }.animateItemPlacement(),
+                            Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    navController.navigate("top_playlist/$topSize")
+                                }.animateItemPlacement(),
                             context = LocalContext.current
                         )
                     }
@@ -278,23 +278,23 @@ fun LibraryPlaylistsScreen(
                                 }
                             },
                             modifier =
-                                Modifier
-                                    .fillMaxWidth()
-                                    .combinedClickable(
-                                        onClick = {
-                                            navController.navigate("local_playlist/${playlist.id}")
-                                        },
-                                        onLongClick = {
-                                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                            menuState.show {
-                                                PlaylistMenu(
-                                                    playlist = playlist,
-                                                    coroutineScope = coroutineScope,
-                                                    onDismiss = menuState::dismiss,
-                                                )
-                                            }
-                                        },
-                                    ).animateItemPlacement(),
+                            Modifier
+                                .fillMaxWidth()
+                                .combinedClickable(
+                                    onClick = {
+                                        navController.navigate("local_playlist/${playlist.id}")
+                                    },
+                                    onLongClick = {
+                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                        menuState.show {
+                                            PlaylistMenu(
+                                                playlist = playlist,
+                                                coroutineScope = coroutineScope,
+                                                onDismiss = menuState::dismiss,
+                                            )
+                                        }
+                                    },
+                                ).animateItemPlacement(),
                             context = LocalContext.current
                         )
                     }
@@ -340,13 +340,13 @@ fun LibraryPlaylistsScreen(
                             fillMaxWidth = true,
                             autoPlaylist = true,
                             modifier =
-                                Modifier
-                                    .fillMaxWidth()
-                                    .combinedClickable(
-                                        onClick = {
-                                            navController.navigate("auto_playlist/liked")
-                                        },
-                                    ).animateItemPlacement(),
+                            Modifier
+                                .fillMaxWidth()
+                                .combinedClickable(
+                                    onClick = {
+                                        navController.navigate("auto_playlist/liked")
+                                    },
+                                ).animateItemPlacement(),
                             context = null
                         )
                     }
@@ -360,13 +360,13 @@ fun LibraryPlaylistsScreen(
                             fillMaxWidth = true,
                             autoPlaylist = true,
                             modifier =
-                                Modifier
-                                    .fillMaxWidth()
-                                    .combinedClickable(
-                                        onClick = {
-                                            navController.navigate("auto_playlist/downloaded")
-                                        },
-                                    ).animateItemPlacement(),
+                            Modifier
+                                .fillMaxWidth()
+                                .combinedClickable(
+                                    onClick = {
+                                        navController.navigate("auto_playlist/downloaded")
+                                    },
+                                ).animateItemPlacement(),
                             context = null
                         )
                     }
@@ -380,13 +380,13 @@ fun LibraryPlaylistsScreen(
                             fillMaxWidth = true,
                             autoPlaylist = true,
                             modifier =
-                                Modifier
-                                    .fillMaxWidth()
-                                    .combinedClickable(
-                                        onClick = {
-                                            navController.navigate("top_playlist/$topSize")
-                                        },
-                                    ).animateItemPlacement(),
+                            Modifier
+                                .fillMaxWidth()
+                                .combinedClickable(
+                                    onClick = {
+                                        navController.navigate("top_playlist/$topSize")
+                                    },
+                                ).animateItemPlacement(),
                             context = null
                         )
                     }

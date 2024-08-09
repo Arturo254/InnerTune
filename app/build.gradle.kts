@@ -11,6 +11,7 @@ plugins {
     alias(libs.plugins.compose.compiler)
 }
 
+
 android {
     namespace = "com.malopieds.innertune"
     compileSdk = 34

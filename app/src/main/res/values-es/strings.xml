@@ -351,4 +351,5 @@
     <string name="Sujestions">"Sugerencias "</string>
     <string name="SearchResutls">Historial de búsqueda</string>
     <string name="Betatext">Nos despedimos de las funciones beta. Gracias por tus comentarios. 👋</string>
+    <string name="NewVersion">Nueva version disponible</string>
 </resources>

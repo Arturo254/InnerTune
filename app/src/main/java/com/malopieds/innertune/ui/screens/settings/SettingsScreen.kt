@@ -101,8 +101,8 @@ fun UpdateCard(uriHandler: UriHandler) {
             ) {
                 Spacer(Modifier.height(3.dp))
                 Text(
-                    text = "¡Nueva versión disponible: $latestVersion!",
-                    style = MaterialTheme.typography.bodyLarge.copy(
+                    text = "${stringResource(R.string.NewVersion)} $latestVersion",
+                            style = MaterialTheme.typography.bodyLarge.copy(
                         fontSize = 17.sp,
                         fontFamily = FontFamily.Monospace
                     ),

@@ -346,6 +346,7 @@
     <string name="Sujestions">Suggestions</string>
     <string name="SearchResutls">Search Results</string>
     <string name="Betatext">We\'re saying goodbye to beta features. Thanks for your feedback. 👋</string>
+    <string name="NewVersion">New version available</string>
     <plurals name="numberOfSongsAvailable">
         <item quantity="one">One song available.</item>
         <item quantity="other">%d songs available.</item>

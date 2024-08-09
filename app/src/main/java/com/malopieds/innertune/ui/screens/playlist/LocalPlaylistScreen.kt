@@ -1,12 +1,20 @@
 package com.malopieds.innertune.ui.screens.playlist
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.icu.text.Transliterator
+import android.net.Uri
 import android.os.Build
 import android.view.inputmethod.InputMethodManager
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.VectorConverter
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,6 +29,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -55,13 +64,20 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
@@ -82,6 +98,7 @@ import androidx.media3.exoplayer.offline.DownloadRequest
 import androidx.media3.exoplayer.offline.DownloadService
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.google.material.color.dynamiccolor.DynamicColor
 import com.malopieds.innertube.YouTube
 import com.malopieds.innertube.models.SongItem
 import com.malopieds.innertube.utils.completed
@@ -128,6 +145,8 @@ import org.burnoutcrew.reorderable.ReorderableItem
 import org.burnoutcrew.reorderable.detectReorder
 import org.burnoutcrew.reorderable.rememberReorderableLazyListState
 import org.burnoutcrew.reorderable.reorderable
+import java.io.File
+import java.io.FileOutputStream
 import java.time.LocalDateTime
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
@@ -278,9 +297,19 @@ fun LocalPlaylistScreen(
     }
 
     var dismissJob: Job? by remember { mutableStateOf(null) }
+    var isImageTouched by remember { mutableStateOf(false) }
 
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().
+        pointerInput (Unit) {
+            detectTapGestures(
+                onTap = {
+                    if (isImageTouched) {
+                        isImageTouched = false
+                    }
+                }
+            )
+        },
     ) {
         LazyColumn(
             state = reorderableState.listState,
@@ -305,39 +334,110 @@ fun LocalPlaylistScreen(
                                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
-                                if (playlist.thumbnails.size == 1) {
-                                    AsyncImage(
-                                        model = playlist.thumbnails[0],
-                                        contentDescription = null,
-                                        contentScale = ContentScale.Crop,
-                                        modifier =
-                                        Modifier
-                                            .size(AlbumThumbnailSize)
-                                            .clip(RoundedCornerShape(ThumbnailCornerRadius)),
-                                    )
-                                } else if (playlist.thumbnails.size > 1) {
-                                    Box(
-                                        modifier =
-                                        Modifier
-                                            .size(AlbumThumbnailSize)
-                                            .clip(RoundedCornerShape(ThumbnailCornerRadius)),
-                                    ) {
-                                        listOf(
-                                            Alignment.TopStart,
-                                            Alignment.TopEnd,
-                                            Alignment.BottomStart,
-                                            Alignment.BottomEnd,
-                                        ).fastForEachIndexed { index, alignment ->
+                                var selectedImageUri by rememberSaveable {
+                                    mutableStateOf(loadImageUri(context, playlist.playlist.id))
+                                }
+
+                                val imagePickerLauncher = rememberLauncherForActivityResult(
+                                    contract = ActivityResultContracts.GetContent()
+                                ) { uri: Uri? ->
+                                    uri?.let {
+                                        selectedImageUri = it
+                                        saveImageUri(context, it, playlist.playlist.id)
+                                        isImageTouched = false
+                                    }
+                                }
+
+                                val handleImageClick: () -> Unit = {
+                                    if (isImageTouched) {
+                                        if (selectedImageUri != null) {
+                                            selectedImageUri = null
+                                            saveImageUri(context, null, playlist.playlist.id)
+                                            isImageTouched = false
+                                        } else {
+                                            imagePickerLauncher.launch("image/*")
+                                        }
+                                    } else {
+                                        isImageTouched = true
+                                    }
+                                }
+                                Box(
+                                    modifier = Modifier
+                                        .size(AlbumThumbnailSize)
+                                        .clip(RoundedCornerShape(ThumbnailCornerRadius))
+                                        .clickable { handleImageClick() }
+                                ) {
+                                    when {
+                                        selectedImageUri != null -> {
+
                                             AsyncImage(
-                                                model = playlist.thumbnails.getOrNull(index),
+                                                model = selectedImageUri,
                                                 contentDescription = null,
                                                 contentScale = ContentScale.Crop,
-                                                modifier =
-                                                Modifier
-                                                    .align(alignment)
-                                                    .size(AlbumThumbnailSize / 2),
+                                                modifier = Modifier
+                                                    .fillMaxSize()
+                                                    .let { if (isImageTouched) it.alpha(0.7f) else it }
                                             )
                                         }
+                                        playlist.thumbnails.size == 1 -> {
+                                            AsyncImage(
+                                                model = playlist.thumbnails[0],
+                                                contentDescription = null,
+                                                contentScale = ContentScale.Crop,
+                                                modifier = Modifier
+                                                    .fillMaxSize()
+                                                    .let { if (isImageTouched) it.alpha(0.7f) else it }
+                                            )
+                                        }
+                                        playlist.thumbnails.size > 1 -> {
+                                            Box(
+                                                modifier = Modifier
+                                                    .fillMaxSize()
+                                                    .let { if (isImageTouched) it.alpha(0.7f) else it }
+                                            ) {
+                                                listOf(
+                                                    Alignment.TopStart,
+                                                    Alignment.TopEnd,
+                                                    Alignment.BottomStart,
+                                                    Alignment.BottomEnd,
+                                                ).fastForEachIndexed { index, alignment ->
+                                                    if (index < 4) {
+                                                        AsyncImage(
+                                                            model = playlist.thumbnails.getOrNull(index),
+                                                            contentDescription = null,
+                                                            contentScale = ContentScale.Crop,
+                                                            modifier = Modifier
+                                                                .align(alignment)
+                                                                .size(AlbumThumbnailSize / 2)
+                                                        )
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        else -> {
+                                            AsyncImage(
+                                                model = R.drawable.music_note,
+                                                contentDescription = null,
+                                                contentScale = ContentScale.Crop,
+                                                modifier = Modifier
+                                                    .fillMaxSize()
+                                                    .let { if (isImageTouched) it.alpha(0.7f) else it }
+                                            )
+                                        }
+                                    }
+
+                                    if (isImageTouched) {
+                                        Icon(
+                                            painter = painterResource(
+                                                id = if (selectedImageUri != null) R.drawable.delete else R.drawable.edit
+                                            ),
+                                            contentDescription = if (selectedImageUri != null) "Delete" else "Edit",
+                                            modifier = Modifier
+                                                .align(Alignment.Center)
+                                                .size(40.dp)
+                                                .background(MaterialTheme.colorScheme.background, shape = CircleShape)
+                                                .padding(8.dp)
+                                        )
                                     }
                                 }
 
@@ -527,6 +627,8 @@ fun LocalPlaylistScreen(
                                     Text(stringResource(R.string.shuffle))
                                 }
                             }
+                            val focusRequester = remember { FocusRequester() }
+                            val focusManager = LocalFocusManager.current
                             OutlinedTextField(
                                 value = searchQuery,
                                 onValueChange = { searchQuery = it },
@@ -534,12 +636,14 @@ fun LocalPlaylistScreen(
                                 singleLine = true,
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(bottom = 16.dp),
+                                    .padding(bottom = 16.dp)
+                                    .focusRequester(focusRequester),  // Attach the FocusRequester to the TextField
                                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Search),
                                 keyboardActions = KeyboardActions(
                                     onSearch = {
                                         val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                                         imm.hideSoftInputFromWindow((context as Activity).currentFocus?.windowToken, 0)
+                                        focusManager.clearFocus()
                                     }
                                 ),
                                 shape = MaterialTheme.shapes.large,
@@ -552,9 +656,9 @@ fun LocalPlaylistScreen(
                                 trailingIcon = {
                                     IconButton(onClick = {
                                         searchQuery = TextFieldValue("")
-                                        // Chiudi la tastiera
                                         val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                                         imm.hideSoftInputFromWindow((context as Activity).currentFocus?.windowToken, 0)
+                                        focusManager.clearFocus()
                                     }) {
                                         Icon(
                                             painterResource(R.drawable.close),
@@ -1029,4 +1133,31 @@ fun textNoAccentsOrPunctMark(text: String): String {
         .replace("ü", "u")
         .replace("ç", "c")
         .replace("[\\s\\p{P}]".toRegex(), "")
+}
+fun saveImageUri(context: Context, uri: Uri?, playlistId: String) {
+    val sharedPreferences = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+    val fileName = "playlist_image_$playlistId.jpg"
+    val file = File(context.filesDir, fileName)
+
+    uri?.let {
+        context.contentResolver.openInputStream(it)?.use { inputStream ->
+            FileOutputStream(file).use { outputStream ->
+                inputStream.copyTo(outputStream)
+            }
+        }
+        with(sharedPreferences.edit()) {
+            putString("image_file_path_$playlistId", file.absolutePath)
+            apply()
+        }
+    } ?: with(sharedPreferences.edit()) {
+        remove("image_file_path_$playlistId")
+        apply()
+    }
+}
+
+
+fun loadImageUri(context: Context, playlistId: String): Uri? {
+    val sharedPreferences = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+    val filePath = sharedPreferences.getString("image_file_path_$playlistId", null)
+    return filePath?.let { Uri.fromFile(File(it)) }
 }

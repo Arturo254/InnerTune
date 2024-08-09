@@ -241,6 +241,7 @@ fun LocalSearchScreen(
                                             onDismiss()
                                             navController.navigate("local_playlist/${item.id}")
                                         }.animateItemPlacement(),
+                                context = LocalContext.current
                             )
                     }
                 }

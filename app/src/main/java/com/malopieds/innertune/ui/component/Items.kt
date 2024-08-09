@@ -2,6 +2,7 @@
 
 package com.malopieds.innertune.ui.component
 
+import android.content.Context
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandIn
@@ -91,6 +92,7 @@ import com.malopieds.innertune.db.entities.Song
 import com.malopieds.innertune.extensions.toMediaItem
 import com.malopieds.innertune.models.MediaMetadata
 import com.malopieds.innertune.playback.queues.ListQueue
+import com.malopieds.innertune.ui.screens.playlist.loadImageUri
 import com.malopieds.innertune.ui.theme.extractThemeColor
 import com.malopieds.innertune.utils.joinByBullet
 import com.malopieds.innertune.utils.makeTimeString
@@ -963,6 +965,7 @@ fun PlaylistListItem(
     modifier: Modifier = Modifier,
     trailingContent: @Composable RowScope.() -> Unit = {},
     autoPlaylist: Boolean = false,
+    context: Context // Aggiungi questo parametro per accedere al contesto
 ) = ListItem(
     title = playlist.playlist.name,
     subtitle = {
@@ -974,8 +977,9 @@ fun PlaylistListItem(
             )
         }
     },
-
     thumbnailContent = {
+
+        val customImageUri = loadImageUri(context, playlist.id)
 
         Box(
             modifier = Modifier
@@ -985,6 +989,14 @@ fun PlaylistListItem(
             contentAlignment = Alignment.Center
         ) {
             when {
+                customImageUri != null -> {
+                    AsyncImage(
+                        model = customImageUri,
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
                 playlist.thumbnails.isEmpty() -> {
                     val painter = when (playlist.playlist.name) {
                         stringResource(R.string.liked) -> R.drawable.thumb_up
@@ -1003,8 +1015,7 @@ fun PlaylistListItem(
                         model = playlist.thumbnails[0],
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .fillMaxSize()
+                        modifier = Modifier.fillMaxSize()
                     )
                 }
                 else -> {
@@ -1033,6 +1044,7 @@ fun PlaylistListItem(
     modifier = modifier
 )
 
+
 @Composable
 fun PlaylistGridItem(
     playlist: Playlist,
@@ -1040,6 +1052,7 @@ fun PlaylistGridItem(
     badges: @Composable RowScope.() -> Unit = { },
     fillMaxWidth: Boolean = false,
     autoPlaylist: Boolean = false,
+    context: Context?
 ) = GridItem(
     title = playlist.playlist.name,
     subtitle = if (autoPlaylist) "" else pluralStringResource(R.plurals.n_song, playlist.songCount, playlist.songCount),
@@ -1047,6 +1060,9 @@ fun PlaylistGridItem(
     thumbnailContent = {
         val width = maxWidth
         val Libcarditem = 25.dp
+
+        val imageUri by remember { mutableStateOf(context?.let { loadImageUri(it, playlist.id) }) }
+
         Box(
             modifier = Modifier
                 .size(width)
@@ -1054,6 +1070,14 @@ fun PlaylistGridItem(
                 .background(MaterialTheme.colorScheme.secondaryContainer)
         ) {
             when {
+                imageUri != null -> {
+                    AsyncImage(
+                        model = imageUri,
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
                 playlist.thumbnails.isEmpty() -> {
                     val iconResId = when (playlist.playlist.name) {
                         stringResource(R.string.liked) -> R.drawable.thumb_up
@@ -1097,13 +1121,13 @@ fun PlaylistGridItem(
                     }
                 }
             }
-
         }
     },
     thumbnailShape = RoundedCornerShape(ThumbnailCornerRadius),
     fillMaxWidth = fillMaxWidth,
     modifier = modifier
 )
+
 
 @Composable
 fun MediaMetadataListItem(

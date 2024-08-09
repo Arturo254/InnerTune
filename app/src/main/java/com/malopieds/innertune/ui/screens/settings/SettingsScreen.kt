@@ -1,6 +1,5 @@
 package com.malopieds.innertune.ui.screens.settings
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -16,7 +15,8 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Card
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -26,17 +26,20 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.UriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
@@ -53,6 +56,90 @@ import com.malopieds.innertune.ui.component.IconButton
 import com.malopieds.innertune.ui.component.PreferenceEntry
 import com.malopieds.innertune.ui.utils.backToMain
 import com.malopieds.innertune.utils.rememberPreference
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import org.json.JSONObject
+import java.net.URL
+
+
+@Composable
+fun UpdateCard(uriHandler: UriHandler) {
+    var showUpdateCard by remember { mutableStateOf(false) }
+    var latestVersion by remember { mutableStateOf("") }
+
+    LaunchedEffect(Unit) {
+        val newVersion = checkForUpdates()
+        if (newVersion != null && isNewerVersion(newVersion, BuildConfig.VERSION_NAME)) {
+            showUpdateCard = true
+            latestVersion = newVersion
+        } else {
+            showUpdateCard = false
+        }
+    }
+
+    if (showUpdateCard) {
+        Spacer(Modifier.height(25.dp))
+        ElevatedCard(
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 6.dp
+            ),
+            modifier = Modifier
+                .clip(RoundedCornerShape(28.dp))
+                .fillMaxWidth()
+                .height(120.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+            ),
+            onClick = {
+                uriHandler.openUri("https://github.com/Arturo254/InnerTune/releases/latest")
+            }
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(20.dp),
+                verticalArrangement = Arrangement.Center
+            ) {
+                Spacer(Modifier.height(3.dp))
+                Text(
+                    text = "¡Nueva versión disponible: $latestVersion!",
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        fontSize = 17.sp,
+                        fontFamily = FontFamily.Monospace
+                    ),
+                    color = MaterialTheme.colorScheme.secondary,
+                )
+            }
+        }
+    }
+}
+
+suspend fun checkForUpdates(): String? = withContext(Dispatchers.IO) {
+    try {
+        val url = URL("https://api.github.com/repos/Arturo254/InnerTune/releases/latest")
+        val connection = url.openConnection()
+        connection.connect()
+        val json = connection.getInputStream().bufferedReader().use { it.readText() }
+        val jsonObject = JSONObject(json)
+        return@withContext jsonObject.getString("tag_name")
+    } catch (e: Exception) {
+        e.printStackTrace()
+        return@withContext null
+    }
+}
+
+fun isNewerVersion(remoteVersion: String, currentVersion: String): Boolean {
+    val remote = remoteVersion.removePrefix("v").split(".").map { it.toIntOrNull() ?: 0 }
+    val current = currentVersion.removePrefix("v").split(".").map { it.toIntOrNull() ?: 0 }
+
+    for (i in 0 until maxOf(remote.size, current.size)) {
+        val r = remote.getOrNull(i) ?: 0
+        val c = current.getOrNull(i) ?: 0
+        if (r > c) return true
+        if (r < c) return false
+    }
+    return false
+}
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -61,9 +148,11 @@ fun SettingsScreen(
     navController: NavController,
     scrollBehavior: TopAppBarScrollBehavior,
 ) {
+
+
     val uriHandler = LocalUriHandler.current
 
-    var isBetaFunEnabled by remember { mutableStateOf(false) }
+//    var isBetaFunEnabled by remember { mutableStateOf(false) }
 
 
     val backgroundImages = listOf(
@@ -90,6 +179,10 @@ fun SettingsScreen(
         R.drawable.cardbg23,
         R.drawable.cardbg24,
         R.drawable.cardbg25,
+        R.drawable.cardbg26,
+        R.drawable.cardbg27,
+        R.drawable.cardbg28,
+        R.drawable.cardbg29,
 
 
         )
@@ -178,7 +271,7 @@ fun SettingsScreen(
             )
             }
 
-
+        Spacer(Modifier.height(25.dp))
 
         PreferenceEntry(
             title = { Text(stringResource(R.string.appearance)) },
@@ -221,6 +314,12 @@ fun SettingsScreen(
             onClick = { uriHandler.openUri("https://buymeacoffee.com/arturocervantes") }
         )
 
+        PreferenceEntry(
+            title = { Text(stringResource(R.string.Telegramchanel)) },
+            icon = { Icon(painterResource(R.drawable.telegram), null) },
+            onClick = { uriHandler.openUri("https://t.me/+NZXjVj6lETxkYTNh") }
+        )
+
 //        PreferenceEntry(
 //            title = { Text(stringResource(R.string.betafun)) },
 //            icon = { Icon(painterResource(R.drawable.funbeta), null) },
@@ -240,27 +339,27 @@ fun SettingsScreen(
 //            }
 //        )
 //
-//        if (latestVersion > BuildConfig.VERSION_CODE) {
-//            PreferenceEntry(
-//                title = {
-//                    Text(
-//                        text = stringResource(R.string.new_version_available),
-//                    )
-//                },
-//                icon = {
-//                    BadgedBox(
-//                        badge = { Badge() },
-//                    ) {
-//                        Icon(painterResource(R.drawable.update), null)
-//                    }
-//                },
-//                onClick = {
-//                    uriHandler.openUri("https://github.com/Arturo254/InnerTune/releases/latest")
-//                },
-//            )
-//        }
-//
-//
+        if (latestVersion > BuildConfig.VERSION_CODE) {
+            PreferenceEntry(
+                title = {
+                    Text(
+                        text = stringResource(R.string.new_version_available),
+                    )
+                },
+                icon = {
+                    BadgedBox(
+                        badge = { Badge() },
+                    ) {
+                        Icon(painterResource(R.drawable.deployed_code_update), null)
+                    }
+                },
+                onClick = {
+                    uriHandler.openUri("https://github.com/Arturo254/InnerTune/releases/latest")
+                },
+            )
+        }
+
+
 //        Card(
 //            modifier = Modifier
 //
@@ -283,15 +382,17 @@ fun SettingsScreen(
 //
 //        }
 
-
+        UpdateCard(uriHandler)
         Spacer(Modifier.height(25.dp))
         ElevatedCard(
             elevation = CardDefaults.cardElevation(
                 defaultElevation = 6.dp
             ),
             modifier = Modifier
+                .clip(RoundedCornerShape(38.dp))
                 .fillMaxWidth()
-                .height(90.dp),
+                .height(85.dp),
+
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surface,
 
@@ -317,9 +418,9 @@ fun SettingsScreen(
                         fontFamily = FontFamily.Monospace
                     ),
                     color = MaterialTheme.colorScheme.secondary,
-                    modifier = Modifier
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
 
-                )
+                    )
 
             }
         }
@@ -329,6 +430,7 @@ fun SettingsScreen(
                 defaultElevation = 6.dp
             ),
             modifier = Modifier
+                .clip(RoundedCornerShape(28.dp))
                 .fillMaxWidth()
                 .height(120.dp),
             colors = CardDefaults.cardColors(
@@ -338,10 +440,10 @@ fun SettingsScreen(
                 ),
 
 
-        ) {
+            ) {
             Column(
                 modifier = Modifier
-                    .clip(RoundedCornerShape(38.dp))
+
                     .padding(20.dp),
                 verticalArrangement = Arrangement.Center
 
@@ -351,7 +453,7 @@ fun SettingsScreen(
 
                 Spacer(Modifier.height(3.dp))
                 Text(
-                    text = " We're saying goodbye to beta features. Thanks for your feedback. 🫂👋"  ,
+                    text = (stringResource(R.string.Betatext))  ,
                     style = MaterialTheme.typography.bodyLarge.copy(
                         fontSize = 17.sp,
                         fontFamily = FontFamily.Monospace
@@ -365,36 +467,12 @@ fun SettingsScreen(
 
             }
         }
-        Spacer(Modifier.height(20.dp))
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(160.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface,
-            ),
-            border = BorderStroke(1.dp, Color.Gray),
-            onClick = { uriHandler.openUri("https://t.me/+NZXjVj6lETxkYTNh") }
-        ) {
-            Column(
-                modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.Center
-            ) {
-                Icon(contentDescription = null, painter = painterResource(R.drawable.telegram))
-                Text(stringResource(R.string.Telegramchanel))
-                Spacer(Modifier.height(4.dp))
-                Text(
-                    stringResource(R.string.TelegramDescription),
-                    color = MaterialTheme.colorScheme.error,
-                )
-
-            }
-        }
 
 
     }
 
     TopAppBar(
+
 
         title = { Text(stringResource(R.string.settings)) },
         navigationIcon = {
@@ -409,5 +487,6 @@ fun SettingsScreen(
             }
         },
         scrollBehavior = scrollBehavior
+
     )
 }

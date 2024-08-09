@@ -927,7 +927,6 @@ fun AlbumSmallGridItem(
                 enter = fadeIn(tween(500)),
                 exit = fadeOut(tween(500)),
             ) {
-                val Libcarditem = 25.dp
                 Box(
                     contentAlignment = Alignment.Center,
                     modifier =

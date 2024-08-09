@@ -1,8 +1,5 @@
 package com.malopieds.innertune.ui.screens.playlist
 
-import android.app.Activity
-import android.content.Context
-import android.view.inputmethod.InputMethodManager
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -25,7 +22,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -51,11 +47,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -304,8 +297,6 @@ fun OnlinePlaylistScreen(
                                     }
                                 }
                             }
-                            val focusRequester = remember { FocusRequester() }
-                            val focusManager = LocalFocusManager.current
                             OutlinedTextField(
                                 value = searchQuery,
                                 onValueChange = { searchQuery = it },
@@ -313,35 +304,14 @@ fun OnlinePlaylistScreen(
                                 singleLine = true,
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(bottom = 16.dp)
-                                    .focusRequester(focusRequester),  // Attach the FocusRequester to the TextField
+                                    .padding(bottom = 16.dp),
                                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Search),
-                                keyboardActions = KeyboardActions(
-                                    onSearch = {
-                                        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                                        imm.hideSoftInputFromWindow((context as Activity).currentFocus?.windowToken, 0)
-                                        focusManager.clearFocus()
-                                    }
-                                ),
                                 shape = MaterialTheme.shapes.large,
                                 leadingIcon = {
                                     Icon(
                                         painterResource(R.drawable.search),
                                         contentDescription = null
                                     )
-                                },
-                                trailingIcon = {
-                                    IconButton(onClick = {
-                                        searchQuery = TextFieldValue("")
-                                        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                                        imm.hideSoftInputFromWindow((context as Activity).currentFocus?.windowToken, 0)
-                                        focusManager.clearFocus()
-                                    }) {
-                                        Icon(
-                                            painterResource(R.drawable.close),
-                                            contentDescription = null
-                                        )
-                                    }
                                 }
                             )
                         }

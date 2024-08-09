@@ -19,7 +19,7 @@ android {
         minSdk = 24
         targetSdk = 34
         versionCode = 25
-        versionName = "0.8.3"
+        versionName = "0.8.6"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         versionNameSuffix = ".Stable"
     }
@@ -108,6 +108,7 @@ dependencies {
     implementation(libs.palette)
     implementation(projects.materialColorUtilities)
 
+    // custom libraries
     implementation(libs.accompanist.swiperefresh)
 
     implementation(libs.coil)
@@ -132,7 +133,7 @@ dependencies {
     implementation(projects.innertube)
     implementation(projects.kugou)
     implementation(projects.lrclib)
-
+// custom libraries (end)
     coreLibraryDesugaring(libs.desugaring)
 
     implementation(libs.timber)

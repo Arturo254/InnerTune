@@ -36,7 +36,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalUriHandler
@@ -341,7 +340,7 @@ fun AboutScreen(
                     style = MaterialTheme.typography.bodyLarge,fontFamily = FontFamily.Monospace,
                     color = MaterialTheme.colorScheme.onSurface
                 )
-                Spacer(modifier = Modifier.height(4.dp))  // Espacio entre el nombre y otros elementos
+                Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
                     text = "  Traductor (PR_BR)",
@@ -355,8 +354,61 @@ fun AboutScreen(
 
 
         }
+        // Alessandro
+        Spacer(Modifier.height(20.dp))
+        ElevatedCard(
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 6.dp
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(100.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface,
+            ),
+            onClick = { uriHandler.openUri("https://github.com/AlessandroGalvan") }
+        ) {
+            Row(
+                modifier = Modifier.padding(26.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    painter = rememberAsyncImagePainter(
+                        model = "https://avatars.githubusercontent.com/u/40720048?v=4",
 
-//        // Alessandro
+                        ),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .background(
+                            MaterialTheme.colorScheme.surfaceColorAtElevation(
+                                NavigationBarDefaults.Elevation
+                            )
+                        )
+                        .clickable { }
+                )
+
+                Text(
+                    text = " ϟ AlessandroGalvan : ",
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodyLarge,fontFamily = FontFamily.Monospace,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Text(
+                    text = "S.B.P",
+                    style = MaterialTheme.typography.bodyMedium,fontFamily = FontFamily.SansSerif,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+
+
+            }
+
+
+        }
+
+//        // z-huang
 //        Spacer(Modifier.height(20.dp))
 //        ElevatedCard(
 //            elevation = CardDefaults.cardElevation(
@@ -368,7 +420,7 @@ fun AboutScreen(
 //            colors = CardDefaults.cardColors(
 //                containerColor = MaterialTheme.colorScheme.surface,
 //            ),
-//            onClick = { uriHandler.openUri("https://github.com/AlessandroGalvan") }
+//            onClick = { uriHandler.openUri("https://github.com/z-huang") }
 //        ) {
 //            Row(
 //                modifier = Modifier.padding(26.dp),
@@ -376,7 +428,7 @@ fun AboutScreen(
 //            ) {
 //                Image(
 //                    painter = rememberAsyncImagePainter(
-//                        model = "https://avatars.githubusercontent.com/u/40720048?v=4",
+//                        model = "https://avatars.githubusercontent.com/u/39427017?v=4",
 //
 //                        ),
 //                    contentDescription = null,
@@ -391,7 +443,7 @@ fun AboutScreen(
 //                )
 //
 //                Text(
-//                    text = " 「★」 AlessandroGalvan : ",
+//                    text = " 「★」 Zion Huang :",
 //                    textAlign = TextAlign.Center,
 //                    style = MaterialTheme.typography.bodyLarge,fontFamily = FontFamily.Monospace,
 //                    color = MaterialTheme.colorScheme.onSurface
@@ -399,7 +451,7 @@ fun AboutScreen(
 //                Spacer(modifier = Modifier.height(4.dp))
 //
 //                Text(
-//                    text = "S.B.P",
+//                    text = "   Fork",
 //                    style = MaterialTheme.typography.bodyMedium,fontFamily = FontFamily.SansSerif,
 //                    color = MaterialTheme.colorScheme.onSurface
 //                )
@@ -480,7 +532,7 @@ fun CardItem(
         modifier = Modifier
             .fillMaxWidth()
             .height(120.dp)
-            .shadow(8.dp, RoundedCornerShape(16.dp))
+//            .shadow(8.dp, RoundedCornerShape(16.dp))
             .padding(horizontal = 16.dp),
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(

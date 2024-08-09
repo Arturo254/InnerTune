@@ -337,7 +337,7 @@
     <string name="enable_squiggly_slider">enable squiggly slider</string>
     <string name="gradient">gradient</string>
     <string name="blur">Blur</string>
-    <string name="audio_quality_high_quality_320kbps">" (320Kbps) [beta)"</string>
+    <string name="audio_quality_high_quality_320kbps" translatable="false">320 Kbps</string>
     <string name="audio_descriptionbeta">320 Kbps audio quality is experimental and may cause glitches</string>
     <string name="Hi">Hello Again</string>
     <string name="playlistIA">AI Playlist</string>
@@ -345,6 +345,7 @@
     <string name="SearchHistory">Search History</string>
     <string name="Sujestions">Suggestions</string>
     <string name="SearchResutls">Search Results</string>
+    <string name="Betatext">We\'re saying goodbye to beta features. Thanks for your feedback. 👋</string>
     <plurals name="numberOfSongsAvailable">
         <item quantity="one">One song available.</item>
         <item quantity="other">%d songs available.</item>

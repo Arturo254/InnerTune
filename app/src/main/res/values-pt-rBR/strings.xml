@@ -20,12 +20,12 @@
     <string name="mood_and_genres">Humor e Gêneros</string>
     <string name="account">Conta</string>
     <string name="quick_picks">Escolhas Rápidas</string>
-    <string name="quick_picks_empty">Ouça músicas para gerar suas Escolhas Rápidas</string>
+    <string name="quick_picks_empty">Ouça músicas para gerar suas escolhas rápidas</string>
     <string name="new_release_albums">Novos álbuns lançados</string>
 
     <!-- History -->
-    <string name="forgotten_favorites">Reviva Seus Gostos</string>
-    <string name="similar_to">Parecido com</string>
+    <string name="forgotten_favorites">Favoritos Esquecidos</string>
+    <string name="similar_to">Igual a</string>
     <string name="keep_listening">Continue ouvindo</string>
     <string name="today">Hoje</string>
     <string name="yesterday">Ontem</string>
@@ -64,8 +64,8 @@
     <string name="playlist_is_empty">A playlist está vazia</string>
 
     <!-- Button -->
-    <string name="remove_download_playlist_confirm">Certeza que deseja remover seus downloads?</string>
-    <string name="delete_playlist_confirm">Certeza que deseja excluir a playlist?</string>
+    <string name="remove_download_playlist_confirm">remover lista de reprodução de download confirmar</string>
+    <string name="delete_playlist_confirm">excluir lista de reprodução confirmar</string>
     <string name="retry">Tentar novamente</string>
     <string name="radio">Rádio</string>
     <string name="shuffle">Aleatório</string>
@@ -74,14 +74,14 @@
     <!-- Menu -->
     <string name="details">Detalhes</string>
     <string name="edit">Editar</string>
-    <string name="start_radio">Iniciar Rádio</string>
+    <string name="start_radio">Iniciar rádio</string>
     <string name="play">Tocar</string>
     <string name="play_next">Tocar em seguida</string>
     <string name="add_to_queue">Adicionar à fila</string>
     <string name="add_to_library">Adicionar à biblioteca</string>
     <string name="remove_from_library">Remover da biblioteca</string>
-    <string name="download">Baixar</string>
-    <string name="downloading">Baixando</string>
+    <string name="download">Download</string>
+    <string name="downloading">Downloading</string>
     <string name="remove_download">Remover download</string>
     <string name="import_playlist">Importar playlist</string>
     <string name="add_to_playlist">Adicionar à playlist</string>
@@ -91,7 +91,7 @@
     <string name="share">Compartilhar</string>
     <string name="delete">Excluir</string>
     <string name="remove_from_history">Remover do histórico</string>
-    <string name="search_online">Pesquisar online</string>
+    <string name="search_online">Search online</string>
     <string name="sync">Sincronizar</string>
     <string name="advanced">Avançado</string>
 
@@ -243,7 +243,7 @@
     <string name="audio_quality_low">Baixa</string>
     <string name="persistent_queue">Fila persistente</string>
     <string name="skip_silence">Pular silêncio</string>
-    <string name="audio_normalization">Normalização do áudio</string>
+    <string name="audio_normalization">Normalização de áudio</string>
     <string name="equalizer">Equalizador</string>
 
     <string name="storage">Armazenamento</string>
@@ -256,7 +256,7 @@
     <string name="max_image_cache_size">Tamanho máximo do cache de imagens</string>
     <string name="clear_image_cache">Limpar cache de imagens</string>
     <string name="max_song_cache_size">Tamanho máximo do cache de músicas</string>
-    <string name="clear_song_cache">Limpar cache de músicas</string>
+    <string name="clear_song_cache">limpar cache de músicas</string>
     <string name="size_used">%s usados</string>
 
     <string name="privacy">Privacidade</string>
@@ -286,12 +286,12 @@
     <string name="betafun">Recursos beta</string>
     <string name="Donate">Doar</string>
     <string name="app_name">InnerTune</string>
-    <string name="BetaDescription">Nesta nova versão, ao ativar o switch, será utilizada a nova API. Observe também que ele será desativado ao sair do aplicativo</string>
+    <string name="BetaDescription">Nesta nova versão, ao ativar o switch, será utilizada a nova API. Observe também que ele será desativado quando você sair do aplicativo</string>
     <string name="Telegramchanel">Canal Oficial</string>
     <string name="TelegramDescription">Você pode entrar no canal oficial para relatar bugs ou manter-se atualizado com atualizações</string>
     <string name="your_likes">Músicas Curtidas</string>
     <string name="Privacy">Política de privacidade ❯</string>
-    <string name="privacy_policy">Segurança</string>
+    <string name="privacy_policy">segurança</string>
     <string name="license">Licença</string>
     <string name="license_text">LICENÇA PÚBLICA GERAL GNU ❯</string>
     <string name="code">Código fonte</string>
@@ -322,17 +322,17 @@
     <string name="enable_squiggly_slider">Ativar barra de reprodução ondulada</string>
     <string name="lyrics_multiline_description">Trate todas as linhas entre os pontos de sincronização como um texto de letra</string>
     <string name="lyrics_trim_title">Remova espaços ao redor das letras</string>
-    <string name="other_versions">Outras versões</string>
-    <string name="all_time">Todo o tempo</string>
-    <string name="past_24_hours">Últimas 24 horas</string>
-    <string name="past_week">Semana passada</string>
-    <string name="past_month">Mês passado</string>
-    <string name="past_year">Ano passado</string>
-    <string name="top_length">Duração máxima</string>
-    <string name="proxy">Proxy</string>
-    <string name="follow_theme">Seguir o tema</string>
-    <string name="blur">Blur</string>
-    <string name="audio_quality_high_quality_320kbps">320 Kbps</string>
+    <string name="other_versions">outras versões</string>
+    <string name="all_time">todo tempo</string>
+    <string name="past_24_hours">últimas 24 horas</string>
+    <string name="past_week">semana passada</string>
+    <string name="past_month">mês passado</string>
+    <string name="past_year">ano passado</string>
+    <string name="top_length">duração máxima</string>
+    <string name="proxy">proxy</string>
+    <string name="follow_theme">seguir o tema</string>
+    <string name="blur">borrão</string>
+    <string name="audio_quality_high_quality_320kbps">(320 Kbps) [beta)</string>
     <string name="audio_descriptionbeta">A qualidade de áudio de 320 Kbps é experimental e pode causar falhas</string>
     <string name="Hi">Oi de novo</string>
     <string name="SearchHistory">Resultados da Pesquisa</string>

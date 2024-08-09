@@ -1021,6 +1021,7 @@ fun HomeScreen(
                                         coroutineScope = coroutineScope,
                                         modifier =
                                             Modifier
+
                                                 .combinedClickable(
                                                     onClick = {
                                                         navController.navigate("online_playlist/${playlist.id}")

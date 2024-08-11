@@ -49,6 +49,8 @@ val SongSortTypeKey = stringPreferencesKey("songSortType")
 val SongSortDescendingKey = booleanPreferencesKey("songSortDescending")
 val PlaylistSongSortTypeKey = stringPreferencesKey("playlistSongSortType")
 val PlaylistSongSortDescendingKey = booleanPreferencesKey("playlistSongSortDescending")
+val AutoPlaylistSongSortTypeKey = stringPreferencesKey("autoPlaylistSongSortType")
+val AutoPlaylistSongSortDescendingKey = booleanPreferencesKey("autoPlaylistSongSortDescending")
 val ArtistSortTypeKey = stringPreferencesKey("artistSortType")
 val ArtistSortDescendingKey = booleanPreferencesKey("artistSortDescending")
 val AlbumSortTypeKey = stringPreferencesKey("albumSortType")
@@ -71,6 +73,7 @@ val PlaylistViewTypeKey = stringPreferencesKey("playlistViewType")
 val PlaylistEditLockKey = booleanPreferencesKey("playlistEditLock")
 val QuickPicksKey = stringPreferencesKey("discover")
 val PreferredLyricsProviderKey = stringPreferencesKey("lyricsProvider")
+val QueueEditLockKey = booleanPreferencesKey("queueEditLock")
 
 enum class LibraryViewType {
     LIST,
@@ -109,6 +112,13 @@ enum class SongSortType {
 
 enum class PlaylistSongSortType {
     CUSTOM,
+    CREATE_DATE,
+    NAME,
+    ARTIST,
+    PLAY_TIME,
+}
+
+enum class AutoPlaylistSongSortType {
     CREATE_DATE,
     NAME,
     ARTIST,
@@ -217,7 +227,10 @@ val TranslateLyricsKey = booleanPreferencesKey("translateLyrics")
 val PlayerVolumeKey = floatPreferencesKey("playerVolume")
 val RepeatModeKey = intPreferencesKey("repeatMode")
 
+
+
 val SearchSourceKey = stringPreferencesKey("searchSource")
+val SwipeThumbnailKey = booleanPreferencesKey("swipeThumbnail")
 
 enum class SearchSource {
     LOCAL,

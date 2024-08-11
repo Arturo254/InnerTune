@@ -15,6 +15,7 @@
 
     <!-- Home -->
     <string name="explore">Explorar</string>
+    <string name="library">Biblioteca</string>
     <string name="history">History</string>
     <string name="stats">Status</string>
     <string name="mood_and_genres">Humor e Gêneros</string>
@@ -339,4 +340,5 @@
     <string name="Sujestions">Sugestões</string>
     <string name="SearchResutls">Histórico de Pesquisa</string>
     <string name="NewVersion">Nova versão disponível</string>
+    <string name="enable_swipe_thumbnail">Habilitar deslizar na miniatura para mudar de música</string>
 </resources>

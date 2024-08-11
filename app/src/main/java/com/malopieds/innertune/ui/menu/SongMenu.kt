@@ -189,6 +189,7 @@ fun SongMenu(
                         modifier = Modifier.padding(8.dp),
                         contentAlignment = Alignment.Center,
                     ) {
+//                        val ListThumbnailSizeV3 = 68.dp
                         AsyncImage(
                             model = artist.thumbnailUrl,
                             contentDescription = null,

@@ -24,6 +24,7 @@ import com.malopieds.innertune.constants.LyricsTextPositionKey
 import com.malopieds.innertune.constants.PlayerBackgroundStyle
 import com.malopieds.innertune.constants.PlayerBackgroundStyleKey
 import com.malopieds.innertune.constants.PureBlackKey
+import com.malopieds.innertune.constants.SwipeThumbnailKey
 import com.malopieds.innertune.ui.component.EnumListPreference
 import com.malopieds.innertune.ui.component.IconButton
 import com.malopieds.innertune.ui.component.SwitchPreference
@@ -48,6 +49,7 @@ fun AppearanceSettings(
     val (defaultOpenTab, onDefaultOpenTabChange) = rememberEnumPreference(DefaultOpenTabKey, defaultValue = NavigationTab.HOME)
     val (lyricsPosition, onLyricsPositionChange) = rememberEnumPreference(LyricsTextPositionKey, defaultValue = LyricsPosition.CENTER)
     val (squigglySlider, onSquigglySliderChange) = rememberPreference(EnableSquigglySlider, defaultValue = true)
+    val (swipeThumbnail, onSwipeThumbnailChange) = rememberPreference(SwipeThumbnailKey, defaultValue = true)
 
     Column(
         Modifier
@@ -93,6 +95,13 @@ fun AppearanceSettings(
             icon = { Icon(painterResource(R.drawable.waves), null) },
             checked = squigglySlider,
             onCheckedChange = onSquigglySliderChange,
+        )
+
+        SwitchPreference(
+            title = { Text(stringResource(R.string.enable_swipe_thumbnail)) },
+            icon = { Icon(painterResource(R.drawable.swipe), null) },
+            checked = swipeThumbnail,
+            onCheckedChange = onSwipeThumbnailChange,
         )
 
         SwitchPreference(

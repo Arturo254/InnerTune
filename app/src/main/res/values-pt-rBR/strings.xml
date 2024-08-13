@@ -340,5 +340,5 @@
     <string name="Sujestions">Sugestões</string>
     <string name="SearchResutls">Histórico de Pesquisa</string>
     <string name="NewVersion">Nova versão disponível</string>
-    <string name="enable_swipe_thumbnail">Habilitar deslizar na capa para mudar de música</string>
+    <string name="enable_swipe_thumbnail">Deslize na capa para trocar a Música</string>
 </resources>

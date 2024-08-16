@@ -360,28 +360,6 @@ fun SettingsScreen(
         }
 
 
-//        Card(
-//            modifier = Modifier
-//
-//                .fillMaxWidth()
-//                .height(130.dp),
-//            colors = CardDefaults.cardColors(
-//                containerColor = MaterialTheme.colorScheme.background,
-//            ),
-//            border = BorderStroke(1.dp, Color.White),
-//
-//            ) {
-//            Column(
-//                modifier = Modifier.padding(17.dp),
-//                verticalArrangement = Arrangement.Center
-//            ) {
-//
-//                Spacer(Modifier.height(3.dp))
-//                Text(stringResource(R.string.BetaDescription))
-//            }
-//
-//        }
-
         UpdateCard(uriHandler)
         Spacer(Modifier.height(25.dp))
         ElevatedCard(

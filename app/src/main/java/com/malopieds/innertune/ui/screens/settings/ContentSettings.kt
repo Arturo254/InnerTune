@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -29,6 +30,7 @@ import com.malopieds.innertune.constants.CountryCodeToName
 import com.malopieds.innertune.constants.InnerTubeCookieKey
 import com.malopieds.innertune.constants.LanguageCodeToName
 import com.malopieds.innertune.constants.LibraryFilter
+import com.malopieds.innertune.constants.LyricTrimKey
 import com.malopieds.innertune.constants.ProxyEnabledKey
 import com.malopieds.innertune.constants.ProxyTypeKey
 import com.malopieds.innertune.constants.ProxyUrlKey
@@ -61,6 +63,8 @@ fun ContentSettings(
         remember(innerTubeCookie) {
             "SAPISID" in parseCookieString(innerTubeCookie)
         }
+
+    val (ytmSync, onYtmSyncChange) = rememberPreference(LyricTrimKey, defaultValue = true)
     val (contentLanguage, onContentLanguageChange) = rememberPreference(key = ContentLanguageKey, defaultValue = "system")
     val (contentCountry, onContentCountryChange) = rememberPreference(key = ContentCountryKey, defaultValue = "system")
     val (proxyEnabled, onProxyEnabledChange) = rememberPreference(key = ProxyEnabledKey, defaultValue = false)
@@ -87,6 +91,14 @@ fun ContentSettings(
             icon = { Icon(painterResource(R.drawable.person), null) },
             onClick = { navController.navigate("login") },
         )
+        SwitchPreference(
+            title = { Text(stringResource(R.string.ytm_sync)) },
+            icon = { Icon(painterResource(R.drawable.library_music), null) },
+            checked = ytmSync,
+            onCheckedChange = onYtmSyncChange,
+            isEnabled = isLoggedIn
+        )
+
         ListPreference(
             title = { Text(stringResource(R.string.content_language)) },
             icon = { Icon(painterResource(R.drawable.language), null) },

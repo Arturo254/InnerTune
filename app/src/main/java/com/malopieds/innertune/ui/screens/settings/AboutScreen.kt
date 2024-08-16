@@ -95,11 +95,11 @@ fun AboutScreen(
         }
 
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                text = "${BuildConfig.VERSION_NAME} ",
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.secondary
-            )
+//            Text(
+//                text = "${BuildConfig.VERSION_NAME} ",
+//                style = MaterialTheme.typography.titleMedium,
+//                color = MaterialTheme.colorScheme.secondary
+//            )
 
             Spacer(Modifier.width(4.dp))
 

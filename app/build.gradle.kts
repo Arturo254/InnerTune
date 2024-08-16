@@ -20,9 +20,8 @@ android {
         minSdk = 24
         targetSdk = 34
         versionCode = 25
-        versionName = "0.8.8"
+        versionName = "0.8.9"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        versionNameSuffix = ".Stable"
     }
     buildTypes {
         release {
@@ -130,6 +129,11 @@ dependencies {
 
     implementation(libs.hilt)
     kapt(libs.hilt.compiler)
+
+    implementation(libs.room.runtime)
+    ksp(libs.room.compiler)
+    implementation(libs.room.ktx)
+
 
     implementation(projects.innertube)
     implementation(projects.kugou)

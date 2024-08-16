@@ -348,6 +348,7 @@
     <string name="Betatext">We\'re saying goodbye to beta features. Thanks for your feedback. 👋</string>
     <string name="NewVersion">New version available</string>
     <string name="enable_swipe_thumbnail">Enable swipe on thumbnail to change song</string>
+    <string name="ytm_sync">Automatically sync with your YouTube Music account</string>
     <plurals name="numberOfSongsAvailable">
         <item quantity="one">One song available.</item>
         <item quantity="other">%d songs available.</item>

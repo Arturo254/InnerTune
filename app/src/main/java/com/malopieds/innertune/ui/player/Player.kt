@@ -978,10 +978,10 @@ fun BottomSheetPlayer(
             AsyncImage(
                 model = mediaMetadata?.thumbnailUrl,
                 contentDescription = null,
-                contentScale = ContentScale.FillHeight,
+                contentScale = ContentScale.FillBounds,
                 modifier = Modifier
                     .fillMaxSize()
-                    .blur(100.dp)
+                    .blur(200.dp)
             )
 
         }

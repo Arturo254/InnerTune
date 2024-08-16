@@ -240,6 +240,7 @@ enum class SearchSource {
 val VisitorDataKey = stringPreferencesKey("visitorData")
 val InnerTubeCookieKey = stringPreferencesKey("innerTubeCookie")
 val AccountNameKey = stringPreferencesKey("accountName")
+val LyricTrimKey = booleanPreferencesKey("lyricTrim")
 val AccountEmailKey = stringPreferencesKey("accountEmail")
 val AccountChannelHandleKey = stringPreferencesKey("accountChannelHandle")
 

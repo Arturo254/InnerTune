@@ -2,9 +2,13 @@
 <h1>OpenTune</h1> 
 </div>
 
-![ic_launcher](https://github.com/user-attachments/assets/04b72272-425b-4e85-bbd9-44804446c3fe)
 
 <div align="center">
+
+![ic_launcher](https://github.com/user-attachments/assets/61acb237-fc1f-434b-88d4-e6cb9f85bb23)
+
+
+</div>
  
 
   

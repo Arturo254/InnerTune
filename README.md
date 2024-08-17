@@ -1,9 +1,16 @@
 <div align="center">
-<h1>InnerTune</h1> 
+<h1>OpenTune</h1> 
 </div>
 
+
 <div align="center">
-  <img src="https://raw.githubusercontent.com/z-huang/InnerTune/dev/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.webp" alt="InnerTune Logo" width="120" height="120">
+
+![ic_launcher](https://github.com/user-attachments/assets/61acb237-fc1f-434b-88d4-e6cb9f85bb23)
+
+
+</div>
+ 
+
   
   #### Un cliente elegante de YouTube Music con Material Design 3 para Android
 

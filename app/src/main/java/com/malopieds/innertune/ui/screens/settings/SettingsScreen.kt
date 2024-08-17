@@ -1,5 +1,7 @@
 package com.malopieds.innertune.ui.screens.settings
 
+import android.content.Context
+import android.content.pm.PackageManager
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -39,6 +41,7 @@ import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.UriHandler
 import androidx.compose.ui.res.painterResource
@@ -62,7 +65,55 @@ import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import java.net.URL
 
+fun getAppVersion(context: Context): String {
+    return try {
+        val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+        packageInfo.versionName
+    } catch (e: PackageManager.NameNotFoundException) {
+        "Unknown"
+    }
+}
 
+@Composable
+fun VersionCard(uriHandler: UriHandler) {
+    val context = LocalContext.current
+    val appVersion = remember { getAppVersion(context) }
+
+    Spacer(Modifier.height(25.dp))
+    ElevatedCard(
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 6.dp
+        ),
+        modifier = Modifier
+            .clip(RoundedCornerShape(38.dp))
+            .fillMaxWidth()
+            .height(85.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+        ),
+        onClick = { uriHandler.openUri("https://github.com/Arturo254/InnerTune/releases/latest") }
+    ) {
+        Column(
+            modifier = Modifier
+                .clip(RoundedCornerShape(38.dp))
+                .padding(20.dp),
+            verticalArrangement = Arrangement.Center
+        ) {
+            Spacer(Modifier.height(3.dp))
+            Text(
+                text = " Version: $appVersion",
+                style = MaterialTheme.typography.bodyLarge.copy(
+                    fontSize = 17.sp,
+                    fontFamily = FontFamily.Monospace
+                ),
+                color = MaterialTheme.colorScheme.secondary,
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+
+
+            )
+        }
+    }
+}
 @Composable
 fun UpdateCard(uriHandler: UriHandler) {
     var showUpdateCard by remember { mutableStateOf(false) }
@@ -363,46 +414,51 @@ fun SettingsScreen(
 
         UpdateCard(uriHandler)
         Spacer(Modifier.height(25.dp))
-        ElevatedCard(
-            elevation = CardDefaults.cardElevation(
-                defaultElevation = 6.dp
-            ),
-            modifier = Modifier
-                .clip(RoundedCornerShape(38.dp))
-                .fillMaxWidth()
-                .height(85.dp),
+//        ElevatedCard(
+//            elevation = CardDefaults.cardElevation(
+//                defaultElevation = 6.dp
+//            ),
+//            modifier = Modifier
+//                .clip(RoundedCornerShape(38.dp))
+//                .fillMaxWidth()
+//                .height(85.dp),
+//
+//            colors = CardDefaults.cardColors(
+//                containerColor = MaterialTheme.colorScheme.surface,
+//
+//                ),
+//            onClick = { uriHandler.openUri("https://github.com/Arturo254/InnerTune/releases/latest") }
+//
+//        ) {
+//            Column(
+//                modifier = Modifier
+//                    .clip(RoundedCornerShape(38.dp))
+//                    .padding(20.dp),
+//                verticalArrangement = Arrangement.Center
+//
+//            ) {
+//
+//
+//
+//                Spacer(Modifier.height(3.dp))
+////                Text(
+////                    text = " Version : ${BuildConfig.VERSION_NAME} \n  "  ,
+////                    style = MaterialTheme.typography.bodyLarge.copy(
+////                        fontSize = 17.sp,
+////                        fontFamily = FontFamily.Monospace
+////                    ),
+////                    color = MaterialTheme.colorScheme.secondary,
+////                    modifier = Modifier.align(Alignment.CenterHorizontally),
+////
+////                    )
+//
+//            }
+//        }
 
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface,
-
-                ),
-            onClick = { uriHandler.openUri("https://github.com/Arturo254/InnerTune/releases/latest") }
-
-        ) {
-            Column(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(38.dp))
-                    .padding(20.dp),
-                verticalArrangement = Arrangement.Center
-
-            ) {
 
 
+                    VersionCard(uriHandler)
 
-                Spacer(Modifier.height(3.dp))
-                Text(
-                    text = " Version : ${BuildConfig.VERSION_NAME} \n  "  ,
-                    style = MaterialTheme.typography.bodyLarge.copy(
-                        fontSize = 17.sp,
-                        fontFamily = FontFamily.Monospace
-                    ),
-                    color = MaterialTheme.colorScheme.secondary,
-                    modifier = Modifier.align(Alignment.CenterHorizontally),
-
-                    )
-
-            }
-        }
         Spacer(Modifier.height(25.dp))
         ElevatedCard(
             elevation = CardDefaults.cardElevation(

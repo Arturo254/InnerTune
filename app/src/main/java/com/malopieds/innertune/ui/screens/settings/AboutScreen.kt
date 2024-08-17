@@ -409,58 +409,58 @@ fun AboutScreen(
         }
 
 //        // z-huang
-//        Spacer(Modifier.height(20.dp))
-//        ElevatedCard(
-//            elevation = CardDefaults.cardElevation(
-//                defaultElevation = 6.dp
-//            ),
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .height(100.dp),
-//            colors = CardDefaults.cardColors(
-//                containerColor = MaterialTheme.colorScheme.surface,
-//            ),
-//            onClick = { uriHandler.openUri("https://github.com/z-huang") }
-//        ) {
-//            Row(
-//                modifier = Modifier.padding(26.dp),
-//                verticalAlignment = Alignment.CenterVertically
-//            ) {
-//                Image(
-//                    painter = rememberAsyncImagePainter(
-//                        model = "https://avatars.githubusercontent.com/u/39427017?v=4",
-//
-//                        ),
-//                    contentDescription = null,
-//                    modifier = Modifier
-//                        .clip(CircleShape)
-//                        .background(
-//                            MaterialTheme.colorScheme.surfaceColorAtElevation(
-//                                NavigationBarDefaults.Elevation
-//                            )
-//                        )
-//                        .clickable { }
-//                )
-//
-//                Text(
-//                    text = " 「★」 Zion Huang :",
-//                    textAlign = TextAlign.Center,
-//                    style = MaterialTheme.typography.bodyLarge,fontFamily = FontFamily.Monospace,
-//                    color = MaterialTheme.colorScheme.onSurface
-//                )
-//                Spacer(modifier = Modifier.height(4.dp))
-//
-//                Text(
-//                    text = "   Fork",
-//                    style = MaterialTheme.typography.bodyMedium,fontFamily = FontFamily.SansSerif,
-//                    color = MaterialTheme.colorScheme.onSurface
-//                )
-//
-//
-//            }
-//
-//
-//        }
+        Spacer(Modifier.height(20.dp))
+        ElevatedCard(
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 6.dp
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(100.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface,
+            ),
+            onClick = { uriHandler.openUri("https://github.com/JPGuillemin") }
+        ) {
+            Row(
+                modifier = Modifier.padding(26.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    painter = rememberAsyncImagePainter(
+                        model = "https://avatars.githubusercontent.com/u/55490396?v=4",
+
+                        ),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .background(
+                            MaterialTheme.colorScheme.surfaceColorAtElevation(
+                                NavigationBarDefaults.Elevation
+                            )
+                        )
+                        .clickable { }
+                )
+
+                Text(
+                    text = " 「★」 JPGuillemin :",
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodyLarge,fontFamily = FontFamily.Monospace,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Text(
+                    text = "  Icon designer",
+                    style = MaterialTheme.typography.bodyMedium,fontFamily = FontFamily.SansSerif,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+
+
+            }
+
+
+        }
 
 
         // Contribution by:

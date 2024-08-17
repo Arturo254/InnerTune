@@ -1,8 +1,8 @@
 <div align="center">
 <h1>OpenTune</h1> 
 </div>
-![ic_launcher](https://github.com/user-attachments/assets/4eafcab3-e82f-4924-b0fc-7a01604b2111)
 
+![ic_launcher](https://github.com/user-attachments/assets/04b72272-425b-4e85-bbd9-44804446c3fe)
 
 <div align="center">
  

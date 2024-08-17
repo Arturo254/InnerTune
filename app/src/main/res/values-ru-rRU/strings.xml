@@ -287,6 +287,6 @@
     <string name="clear_translation_models">Очистить модели перевода</string>
     <string name="changelog">Changelog</string>
     <string name="betafun">Beta Features</string>
-    <string name="app_name">InnerTune</string>
+    <string name="app_name">OpenTune</string>
     <string name="IAPlaylistdes">A função de lista de reprodução AI está em função experimental</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.malopieds.innertune.ui.screens.settings
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -249,13 +250,13 @@ fun SettingsScreen(
                             )
                         } else {
                             Icon(
-                                painter = painterResource(R.drawable.launcher_monochrome),
+                                painter = painterResource(R.drawable.opentune_monochrome),
                                 contentDescription = null,
                                 tint = Color.White,
 
                                 )
                             Text(
-                                text = "InnerTune",
+                                text = "OpenTune",
                                 color = Color.White,
                                 fontSize = 26.sp,
                                 style = MaterialTheme.typography.titleSmall,
@@ -432,6 +433,53 @@ fun SettingsScreen(
                 Spacer(Modifier.height(3.dp))
                 Text(
                     text = (stringResource(R.string.Betatext))  ,
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        fontSize = 17.sp,
+                        fontFamily = FontFamily.Monospace
+                    ),
+                    color = MaterialTheme.colorScheme.secondary,
+                    modifier = Modifier
+
+
+                )
+
+
+            }
+        }
+
+
+        Spacer(Modifier.height(25.dp))
+        ElevatedCard(
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 6.dp
+
+            ),
+
+            modifier = Modifier
+                .clip(RoundedCornerShape(28.dp))
+                .fillMaxWidth()
+                .height(90.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainer,
+
+
+                ),
+
+
+            ) {
+            Column(
+                modifier = Modifier
+
+                    .padding(20.dp),
+                verticalArrangement = Arrangement.Center
+
+            ) {
+
+
+
+                Spacer(Modifier.height(3.dp))
+                Text(
+                    text = (stringResource(R.string.OpenTuneText))  ,
                     style = MaterialTheme.typography.bodyLarge.copy(
                         fontSize = 17.sp,
                         fontFamily = FontFamily.Monospace

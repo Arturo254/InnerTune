@@ -287,5 +287,5 @@
     <string name="clear_translation_models">Clear translation models</string>
     <string name="changelog">Changelog</string>
     <string name="betafun">Beta Features</string>
-    <string name="app_name">InnerTune</string>
+    <string name="app_name">OpenTune</string>
 </resources>

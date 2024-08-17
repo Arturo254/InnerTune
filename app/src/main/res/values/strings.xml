@@ -349,6 +349,8 @@
     <string name="NewVersion">New version available</string>
     <string name="enable_swipe_thumbnail">Enable swipe on thumbnail to change song</string>
     <string name="ytm_sync">Automatically sync with your YouTube Music account</string>
+    <string name="lyrics_click_change">Change lyrics on click</string>
+    <string name="OpenTuneText">InnerTune is now OpenTune</string>
     <plurals name="numberOfSongsAvailable">
         <item quantity="one">One song available.</item>
         <item quantity="other">%d songs available.</item>

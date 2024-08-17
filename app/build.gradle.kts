@@ -16,8 +16,8 @@ android {
     namespace = "com.malopieds.innertune"
     compileSdk = 34
     defaultConfig {
-        applicationId = "com.Arturo254.innertune"
-        minSdk = 24
+        applicationId = "com.Arturo254.opentune"
+        minSdk = 26
         targetSdk = 34
         versionCode = 25
         versionName = "0.8.9"

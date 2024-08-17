@@ -20,6 +20,7 @@ import com.malopieds.innertune.constants.DarkModeKey
 import com.malopieds.innertune.constants.DefaultOpenTabKey
 import com.malopieds.innertune.constants.DynamicThemeKey
 import com.malopieds.innertune.constants.EnableSquigglySlider
+import com.malopieds.innertune.constants.LyricsClickKey
 import com.malopieds.innertune.constants.LyricsTextPositionKey
 import com.malopieds.innertune.constants.PlayerBackgroundStyle
 import com.malopieds.innertune.constants.PlayerBackgroundStyleKey
@@ -45,6 +46,8 @@ fun AppearanceSettings(
             PlayerBackgroundStyleKey,
             defaultValue = PlayerBackgroundStyle.DEFAULT,
         )
+
+    val (lyricsClick, onLyricsClickChange) = rememberPreference(LyricsClickKey, defaultValue = true)
     val (pureBlack, onPureBlackChange) = rememberPreference(PureBlackKey, defaultValue = false)
     val (defaultOpenTab, onDefaultOpenTabChange) = rememberEnumPreference(DefaultOpenTabKey, defaultValue = NavigationTab.HOME)
     val (lyricsPosition, onLyricsPositionChange) = rememberEnumPreference(LyricsTextPositionKey, defaultValue = LyricsPosition.CENTER)
@@ -123,6 +126,16 @@ fun AppearanceSettings(
                 }
             },
         )
+
+
+
+        SwitchPreference(
+            title = { Text(stringResource(R.string.lyrics_click_change)) },
+            icon = { Icon(painterResource(R.drawable.lyrics), null) },
+            checked = lyricsClick,
+            onCheckedChange = onLyricsClickChange,
+        )
+
         EnumListPreference(
             title = { Text(stringResource(R.string.lyrics_text_position)) },
             icon = { Icon(painterResource(R.drawable.lyrics), null) },

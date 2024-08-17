@@ -1,5 +1,6 @@
 package com.malopieds.innertune.ui.component
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -70,6 +71,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlin.time.Duration.Companion.seconds
 
+@SuppressLint("SuspiciousIndentation")
 @Composable
 fun Lyrics(
     sliderPositionProvider: () -> Long?,

@@ -5,7 +5,9 @@
 
 <div align="center">
 
-![ic_launcher](https://github.com/user-attachments/assets/61acb237-fc1f-434b-88d4-e6cb9f85bb23)
+![icon-192](https://github.com/user-attachments/assets/137bef2a-8138-4ac6-b18b-7fc0ebd2f3c0)
+
+
 
 
 </div>

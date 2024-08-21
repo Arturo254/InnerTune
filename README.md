@@ -32,14 +32,12 @@
 - 📚 Gestión completa de tu biblioteca musical
 - ⬇️ Descarga y almacenamiento en caché para reproducción offline
 - 🗣️ Letras sincronizadas
-- 🌐 Traductor de letras (experimental)
 - ⏩ Omisión inteligente de silencios
 - 🔊 Normalización de audio
 - ⏱️ Ajuste de tempo y tono
 - 🌗 Tema dinámico
 - 🌍 Soporte multiidioma
 - 🚗 Compatibilidad con Android Auto
-- ⚡ Accesos rápidos personalizables
 - 💎 Diseño Material 3
 
 ## 📦 Cómo Compilar la Aplicación

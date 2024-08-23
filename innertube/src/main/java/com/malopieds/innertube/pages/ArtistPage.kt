@@ -13,6 +13,7 @@ import com.malopieds.innertube.models.PlaylistItem
 import com.malopieds.innertube.models.SectionListRenderer
 import com.malopieds.innertube.models.SongItem
 import com.malopieds.innertube.models.YTItem
+import com.malopieds.innertube.models.filterExplicit
 import com.malopieds.innertube.models.oddElements
 
 data class ArtistSection(
@@ -26,6 +27,25 @@ data class ArtistPage(
     val sections: List<ArtistSection>,
     val description: String?,
 ) {
+    fun filterExplicit(enabled: Boolean) =
+        if (enabled) {
+            copy(
+                sections =
+                    sections.mapNotNull {
+                        it.copy(
+                            items =
+                                it.items
+                                    .filterExplicit()
+                                    .ifEmpty {
+                                        return@mapNotNull null
+                                    },
+                        )
+                    },
+            )
+        } else {
+            this
+        }
+
     companion object {
         fun fromSectionListRendererContent(content: SectionListRenderer.Content): ArtistSection? =
             when {

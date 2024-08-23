@@ -23,6 +23,7 @@ class AlbumViewModel
         savedStateHandle: SavedStateHandle,
     ) : ViewModel() {
         val albumId = savedStateHandle.get<String>("albumId")!!
+        val playlistId = MutableStateFlow("")
         val albumWithSongs =
             database
                 .albumWithSongs(albumId)
@@ -35,12 +36,13 @@ class AlbumViewModel
                 YouTube
                     .album(albumId)
                     .onSuccess {
+                        playlistId.value = it.album.playlistId
                         otherVersions.value = it.album.otherVersions
                         database.transaction {
                             if (album == null) {
                                 insert(it)
                             } else {
-                                update(album.album, it)
+                                update(album.album, it, album.artists)
                             }
                         }
                     }.onFailure {

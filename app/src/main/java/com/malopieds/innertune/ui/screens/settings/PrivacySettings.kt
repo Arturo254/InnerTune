@@ -1,6 +1,9 @@
 package com.malopieds.innertune.ui.screens.settings
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
@@ -132,9 +135,11 @@ fun PrivacySettings(
 
     Column(
         Modifier
-            .windowInsetsPadding(LocalPlayerAwareWindowInsets.current)
+            .windowInsetsPadding(LocalPlayerAwareWindowInsets.current.only(WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom))
             .verticalScroll(rememberScrollState()),
     ) {
+        Spacer(Modifier.windowInsetsPadding(LocalPlayerAwareWindowInsets.current.only(WindowInsetsSides.Top)))
+
         SwitchPreference(
             title = { Text(stringResource(R.string.pause_listen_history)) },
             icon = { Icon(painterResource(R.drawable.history), null) },
@@ -143,12 +148,12 @@ fun PrivacySettings(
         )
         PreferenceEntry(
             title = { Text(stringResource(R.string.clear_listen_history)) },
-            icon = { Icon(painterResource(R.drawable.clear_all), null) },
+            icon = { Icon(painterResource(R.drawable.delete_history), null) },
             onClick = { showClearListenHistoryDialog = true },
         )
         SwitchPreference(
             title = { Text(stringResource(R.string.pause_search_history)) },
-            icon = { Icon(painterResource(R.drawable.manage_search), null) },
+            icon = { Icon(painterResource(R.drawable.search_off), null) },
             checked = pauseSearchHistory,
             onCheckedChange = onPauseSearchHistoryChange,
         )
@@ -171,7 +176,7 @@ fun PrivacySettings(
         )
 
         ListPreference(
-            title = { Text(stringResource(R.string.set_quick_picks)) },
+            title = { Text(stringResource(R.string.set_first_lyrics_provider)) },
             selectedValue = preferredProvider,
             values = listOf(PreferredLyricsProvider.KUGOU, PreferredLyricsProvider.LRCLIB),
             valueText = { it.name.toLowerCase(Locale.current).capitalize(Locale.current) },

@@ -82,7 +82,21 @@ interface DatabaseDao {
             songsByRowIdAsc().map { songs ->
                 val collator = Collator.getInstance(Locale.getDefault())
                 collator.strength = Collator.PRIMARY
-                songs.sortedWith(compareBy(collator) { song -> song.artists.joinToString("") { it.name } })
+                songs
+                    .sortedWith(
+                        compareBy(collator) { song ->
+                            song.artists.joinToString(
+                                "",
+                            ) { it.name }
+                        },
+                    ).groupBy { it.album?.title }
+                    .flatMap { (_, songsByAlbum) ->
+                        songsByAlbum.sortedBy { album ->
+                            album.artists.joinToString(
+                                "",
+                            ) { it.name }
+                        }
+                    }
             }
         SongSortType.PLAY_TIME -> songsByPlayTimeAsc()
     }.map { it.reversed(descending) }
@@ -118,7 +132,21 @@ interface DatabaseDao {
             likedSongsByRowIdAsc().map { songs ->
                 val collator = Collator.getInstance(Locale.getDefault())
                 collator.strength = Collator.PRIMARY
-                songs.sortedWith(compareBy(collator) { song -> song.artists.joinToString("") { it.name } })
+                songs
+                    .sortedWith(
+                        compareBy(collator) { song ->
+                            song.artists.joinToString(
+                                "",
+                            ) { it.name }
+                        },
+                    ).groupBy { it.album?.title }
+                    .flatMap { (_, songsByAlbum) ->
+                        songsByAlbum.sortedBy { album ->
+                            album.artists.joinToString(
+                                "",
+                            ) { it.name }
+                        }
+                    }
             }
         SongSortType.PLAY_TIME -> likedSongsByPlayTimeAsc()
     }.map { it.reversed(descending) }
@@ -359,6 +387,9 @@ interface DatabaseDao {
     @Transaction
     @Query("SELECT * FROM song WHERE id = :songId")
     fun song(songId: String?): Flow<Song?>
+
+    @Query("SELECT * FROM song_artist_map WHERE songId = :songId")
+    fun songArtistMap(songId: String): List<SongArtistMap>
 
     @Transaction
     @Query("SELECT * FROM song")
@@ -654,6 +685,9 @@ interface DatabaseDao {
     @Query("SELECT * FROM album WHERE id = :albumId")
     fun albumWithSongs(albumId: String): Flow<AlbumWithSongs?>
 
+    @Query("SELECT * FROM album_artist_map WHERE albumId = :albumId")
+    fun albumArtistMaps(albumId: String): List<AlbumArtistMap>
+
     @Transaction
     @Query("SELECT *, (SELECT COUNT(*) FROM playlist_song_map WHERE playlistId = playlist.id) AS songCount FROM playlist ORDER BY rowId")
     fun playlistsByCreateDateAsc(): Flow<List<Playlist>>
@@ -889,6 +923,39 @@ interface DatabaseDao {
             }?.forEach(::insert)
     }
 
+    @Transaction
+    fun update(
+        song: Song,
+        mediaMetadata: MediaMetadata,
+    ) {
+        update(
+            song.song.copy(
+                title = mediaMetadata.title,
+                duration = mediaMetadata.duration,
+                thumbnailUrl = mediaMetadata.thumbnailUrl,
+                albumId = mediaMetadata.album?.id,
+                albumName = mediaMetadata.album?.title,
+            ),
+        )
+        songArtistMap(song.id).forEach(::delete)
+        mediaMetadata.artists.forEachIndexed { index, artist ->
+            val artistId = artist.id ?: artistByName(artist.name)?.id ?: ArtistEntity.generateArtistId()
+            insert(
+                ArtistEntity(
+                    id = artistId,
+                    name = artist.name,
+                ),
+            )
+            insert(
+                SongArtistMap(
+                    songId = song.id,
+                    artistId = artistId,
+                    position = index,
+                ),
+            )
+        }
+    }
+
     @Update
     fun update(song: SongEntity)
 
@@ -921,6 +988,7 @@ interface DatabaseDao {
     fun update(
         album: AlbumEntity,
         albumPage: AlbumPage,
+        artists: List<ArtistEntity>? = emptyList(),
     ) {
         update(
             album.copy(
@@ -932,6 +1000,9 @@ interface DatabaseDao {
                 duration = albumPage.songs.sumOf { it.duration ?: 0 },
             ),
         )
+        if (artists?.size != albumPage.album.artists?.size) {
+            artists?.forEach(::delete)
+        }
         albumPage.songs
             .map(SongItem::toMediaMetadata)
             .onEach(::insert)
@@ -942,20 +1013,25 @@ interface DatabaseDao {
                     index = index,
                 )
             }.forEach(::upsert)
-        albumPage.album.artists
-            ?.map { artist ->
-                ArtistEntity(
-                    id = artist.id ?: artistByName(artist.name)?.id ?: ArtistEntity.generateArtistId(),
-                    name = artist.name,
-                )
-            }?.onEach(::insert)
-            ?.mapIndexed { index, artist ->
-                AlbumArtistMap(
-                    albumId = albumPage.album.browseId,
-                    artistId = artist.id,
-                    order = index,
-                )
-            }?.forEach(::insert)
+
+        albumPage.album.artists?.let { artists ->
+            // Recreate album artists
+            albumArtistMaps(album.id).forEach(::delete)
+            artists
+                .map { artist ->
+                    ArtistEntity(
+                        id = artist.id ?: artistByName(artist.name)?.id ?: ArtistEntity.generateArtistId(),
+                        name = artist.name,
+                    )
+                }.onEach(::insert)
+                .mapIndexed { index, artist ->
+                    AlbumArtistMap(
+                        albumId = albumPage.album.browseId,
+                        artistId = artist.id,
+                        order = index,
+                    )
+                }.forEach(::insert)
+        }
     }
 
     @Upsert
@@ -971,10 +1047,16 @@ interface DatabaseDao {
     fun delete(song: SongEntity)
 
     @Delete
+    fun delete(songArtistMap: SongArtistMap)
+
+    @Delete
     fun delete(artist: ArtistEntity)
 
     @Delete
     fun delete(album: AlbumEntity)
+
+    @Delete
+    fun delete(albumArtistMap: AlbumArtistMap)
 
     @Delete
     fun delete(playlist: PlaylistEntity)

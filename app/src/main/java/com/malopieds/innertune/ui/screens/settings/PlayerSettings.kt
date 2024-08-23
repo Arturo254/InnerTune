@@ -1,6 +1,9 @@
 package com.malopieds.innertune.ui.screens.settings
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -39,13 +42,13 @@ fun PlayerSettings(
     val (skipSilence, onSkipSilenceChange) = rememberPreference(key = SkipSilenceKey, defaultValue = false)
     val (audioNormalization, onAudioNormalizationChange) = rememberPreference(key = AudioNormalizationKey, defaultValue = true)
 
-
-
     Column(
         Modifier
-            .windowInsetsPadding(LocalPlayerAwareWindowInsets.current)
+            .windowInsetsPadding(LocalPlayerAwareWindowInsets.current.only(WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom))
             .verticalScroll(rememberScrollState()),
     ) {
+        Spacer(Modifier.windowInsetsPadding(LocalPlayerAwareWindowInsets.current.only(WindowInsetsSides.Top)))
+
         EnumListPreference(
             title = { Text(stringResource(R.string.audio_quality)) },
             icon = { Icon(painterResource(R.drawable.graphic_eq), null) },
@@ -56,7 +59,6 @@ fun PlayerSettings(
                     AudioQuality.AUTO -> stringResource(R.string.audio_quality_auto)
                     AudioQuality.HIGH -> stringResource(R.string.audio_quality_high)
                     AudioQuality.LOW -> stringResource(R.string.audio_quality_low)
-                    AudioQuality.HIGH_QUALITY_320KBPS -> stringResource(R.string.audio_quality_high_quality_320kbps)
                 }
             },
         )
@@ -78,56 +80,7 @@ fun PlayerSettings(
             checked = audioNormalization,
             onCheckedChange = onAudioNormalizationChange,
         )
-
-
-//        Spacer(Modifier.height(25.dp))
-//        ElevatedCard(
-//            elevation = CardDefaults.cardElevation(
-//                defaultElevation = 6.dp
-//            ),
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .height(160.dp),
-//            colors = CardDefaults.cardColors(
-//                containerColor = MaterialTheme.colorScheme.surface,
-//
-//                ),
-//
-//            ) {
-//            Column(
-//                modifier = Modifier.padding(16.dp),
-//                verticalArrangement = Arrangement.Center
-//            ) {
-//                Icon(contentDescription = null, painter = painterResource(R.drawable.funbeta))
-//                Spacer(Modifier.height(5.dp))
-//                Text(
-//                    text = (stringResource(R.string.APIFeatures)),
-//                    textAlign = TextAlign.Center,
-//                    style = MaterialTheme.typography.bodyLarge.copy(
-//                        fontSize = 17.sp,
-//                        fontFamily = FontFamily.Monospace
-//                    ),
-//                    color = MaterialTheme.colorScheme.onSurface
-//                )
-//                Spacer(Modifier.height(5.dp))
-//                Text(
-//                    text = (stringResource(R.string.audio_descriptionbeta)),
-//                    style = MaterialTheme.typography.bodyMedium.copy(
-//                        fontSize = 14.sp,
-//                        fontFamily = FontFamily.Monospace
-//                    ),
-//                    color = MaterialTheme.colorScheme.onSurface
-//
-//                )
-//
-//            }
-//        }
-
-
-
     }
-
-
 
     TopAppBar(
         title = { Text(stringResource(R.string.player_and_audio)) },

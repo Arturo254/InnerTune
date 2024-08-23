@@ -6,6 +6,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
@@ -22,8 +23,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -42,6 +44,7 @@ fun Thumbnail(
     sliderPositionProvider: () -> Long?,
     modifier: Modifier = Modifier,
     changeColor: Boolean = false,
+    color: Color,
 ) {
     val playerConnection = LocalPlayerConnection.current ?: return
     val currentView = LocalView.current
@@ -88,12 +91,11 @@ fun Thumbnail(
                                     }
                                 },
                                 onDragEnd = {
-                                    println(offsetX)
-                                    if (offsetX > 400) {
+                                    if (offsetX > 300) {
                                         if (playerConnection.player.previousMediaItemIndex != -1) {
                                             playerConnection.player.seekToPreviousMediaItem()
                                         }
-                                    } else if (offsetX < -400) {
+                                    } else if (offsetX < -300) {
                                         if (playerConnection.player.nextMediaItemIndex != -1) {
                                             playerConnection.player.seekToNext()
                                         }
@@ -106,12 +108,13 @@ fun Thumbnail(
                 AsyncImage(
                     model = mediaMetadata?.thumbnailUrl,
                     contentDescription = null,
+                    contentScale = ContentScale.Crop,
                     modifier =
                         Modifier
                             .offset { IntOffset(offsetX.roundToInt(), 0) }
                             .fillMaxWidth()
+                            .aspectRatio(1f)
                             .clip(RoundedCornerShape(ThumbnailCornerRadius * 2))
-                            .shadow(16.dp)
                             .pointerInput(Unit) {
                                 detectTapGestures(
                                     onTap = {
@@ -138,6 +141,7 @@ fun Thumbnail(
             Lyrics(
                 sliderPositionProvider = sliderPositionProvider,
                 changeColor = changeColor,
+                color = color,
             )
         }
 

@@ -351,8 +351,33 @@
     <string name="ytm_sync">Automatically sync with your YouTube Music account</string>
     <string name="lyrics_click_change">Change lyrics on click</string>
     <string name="OpenTuneText">InnerTune is now OpenTune</string>
+    <string name="discord_integration">discord integration</string>
+    <string name="dismiss">dismiss</string>
+    <string name="discord_information">Inner Tune uses the Kizzy RPC library to set your Discord account\'s status. This involves using the Discord Gateway connection, which may be considered a violation of Discord\'s TOS. However, there are no known cases of user accounts being suspended for this reason. Use at your own risk.\n</string>
+    <string name="not_logged_in">not logged in</string>
+    <string name="logout">logout</string>
+    <string name="options">options</string>
+    <string name="enable_discord_rpc">Eneable Rich Presence</string>
+    <string name="preview">preview</string>
+    <string name="history_duration">history duration</string>
+    <string name="tempo_and_pitch">tiempo and pitch</string>
+    <string name="similar_content">similar content</string>
+    <string name="default_">default</string>
+    <string name="squiggly">squiggly</string>
+    <string name="theme">theme</string>
+    <string name="player">player</string>
+    <string name="player_slider_style">player slider style</string>
+    <string name="player_text_alignment">player text alignment</string>
+    <string name="sided">sided</string>
+    <string name="misc">misc</string>
+    <string name="grid_cell_size">grid cell size</string>
+    <string name="big">big</string>
+    <string name="small">small</string>
+    <string name="hide_explicit">hide explicit</string>
+    <string name="set_first_lyrics_provider">set first yrics provider</string>
     <plurals name="numberOfSongsAvailable">
         <item quantity="one">One song available.</item>
         <item quantity="other">%d songs available.</item>
     </plurals>
+    <plurals name="seconds">seconds</plurals>
 </resources>

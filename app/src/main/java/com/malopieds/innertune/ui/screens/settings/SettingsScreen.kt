@@ -1,5 +1,6 @@
 package com.malopieds.innertune.ui.screens.settings
 
+
 import android.content.Context
 import android.content.pm.PackageManager
 import androidx.compose.foundation.BorderStroke
@@ -10,9 +11,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
@@ -85,12 +88,15 @@ fun VersionCard(uriHandler: UriHandler) {
             defaultElevation = 6.dp
         ),
         modifier = Modifier
-            .clip(RoundedCornerShape(38.dp))
+//            .clip(RoundedCornerShape(38.dp))
             .fillMaxWidth()
+            .padding(horizontal = 16.dp)
             .height(85.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
+
         ),
+        shape = RoundedCornerShape(38.dp),
         onClick = { uriHandler.openUri("https://github.com/Arturo254/InnerTune/releases/latest") }
     ) {
         Column(
@@ -136,12 +142,14 @@ fun UpdateCard(uriHandler: UriHandler) {
                 defaultElevation = 6.dp
             ),
             modifier = Modifier
-                .clip(RoundedCornerShape(28.dp))
+//                .clip(RoundedCornerShape(28.dp))
                 .fillMaxWidth()
+                .padding(horizontal = 16.dp)
                 .height(120.dp),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
             ),
+            shape = RoundedCornerShape(38.dp),
             onClick = {
                 uriHandler.openUri("https://github.com/Arturo254/InnerTune/releases/latest")
             }
@@ -255,7 +263,7 @@ fun SettingsScreen(
         Box(
             modifier = Modifier
                 .height(220.dp)
-                .clip(RoundedCornerShape(28.dp))
+                .clip(RoundedCornerShape(25.dp))
                 .background(color = Color.Transparent)
                 .clickable { changeBackgroundImage() } // change background image on click
 
@@ -328,32 +336,37 @@ fun SettingsScreen(
         PreferenceEntry(
             title = { Text(stringResource(R.string.appearance)) },
             icon = { Icon(painterResource(R.drawable.palette), null) },
-            onClick = { navController.navigate("settings/appearance") }
+            onClick = { navController.navigate("settings/appearance") },
         )
         PreferenceEntry(
             title = { Text(stringResource(R.string.content)) },
             icon = { Icon(painterResource(R.drawable.language), null) },
-            onClick = { navController.navigate("settings/content") }
+            onClick = { navController.navigate("settings/content") },
         )
         PreferenceEntry(
             title = { Text(stringResource(R.string.player_and_audio)) },
             icon = { Icon(painterResource(R.drawable.play), null) },
-            onClick = { navController.navigate("settings/player") }
+            onClick = { navController.navigate("settings/player") },
         )
         PreferenceEntry(
             title = { Text(stringResource(R.string.storage)) },
             icon = { Icon(painterResource(R.drawable.storage), null) },
-            onClick = { navController.navigate("settings/storage") }
+            onClick = { navController.navigate("settings/storage") },
         )
         PreferenceEntry(
             title = { Text(stringResource(R.string.privacy)) },
             icon = { Icon(painterResource(R.drawable.security), null) },
-            onClick = { navController.navigate("settings/privacy") }
+            onClick = { navController.navigate("settings/privacy") },
+        )
+        PreferenceEntry(
+            title = { Text(stringResource(R.string.discord_integration)) },
+            icon = { Icon(painterResource(R.drawable.discord), null) },
+            onClick = { navController.navigate("settings/discord") },
         )
         PreferenceEntry(
             title = { Text(stringResource(R.string.backup_restore)) },
             icon = { Icon(painterResource(R.drawable.restore), null) },
-            onClick = { navController.navigate("settings/backup_restore") }
+            onClick = { navController.navigate("settings/backup_restore") },
         )
         PreferenceEntry(
             title = { Text(stringResource(R.string.about)) },
@@ -391,25 +404,6 @@ fun SettingsScreen(
 //            }
 //        )
 //
-        if (latestVersion > BuildConfig.VERSION_CODE) {
-            PreferenceEntry(
-                title = {
-                    Text(
-                        text = stringResource(R.string.new_version_available),
-                    )
-                },
-                icon = {
-                    BadgedBox(
-                        badge = { Badge() },
-                    ) {
-                        Icon(painterResource(R.drawable.deployed_code_update), null)
-                    }
-                },
-                onClick = {
-                    uriHandler.openUri("https://github.com/Arturo254/InnerTune/releases/latest")
-                },
-            )
-        }
 
 
         UpdateCard(uriHandler)
@@ -442,7 +436,7 @@ fun SettingsScreen(
 //
 //                Spacer(Modifier.height(3.dp))
 ////                Text(
-////                    text = " Version : ${BuildConfig.VERSION_NAME} \n  "  ,
+//                    text = " Version : ${BuildConfig.VERSION_NAME} \n  "  ,
 ////                    style = MaterialTheme.typography.bodyLarge.copy(
 ////                        fontSize = 17.sp,
 ////                        fontFamily = FontFamily.Monospace
@@ -465,15 +459,16 @@ fun SettingsScreen(
                 defaultElevation = 6.dp
             ),
             modifier = Modifier
-                .clip(RoundedCornerShape(28.dp))
+//                .clip(RoundedCornerShape(28.dp))
                 .fillMaxWidth()
+                .padding(horizontal = 16.dp)
                 .height(120.dp),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
 
 
                 ),
-
+            shape = RoundedCornerShape(28.dp),
 
             ) {
             Column(
@@ -504,52 +499,52 @@ fun SettingsScreen(
         }
 
 
+//        Spacer(Modifier.height(25.dp))
+//        ElevatedCard(
+//            elevation = CardDefaults.cardElevation(
+//                defaultElevation = 6.dp
+//
+//            ),
+//
+//            modifier = Modifier
+//                .clip(RoundedCornerShape(28.dp))
+//                .fillMaxWidth()
+//                .height(90.dp),
+//            colors = CardDefaults.cardColors(
+//                containerColor = MaterialTheme.colorScheme.surfaceContainer,
+//
+//
+//                ),
+//
+//
+//            ) {
+//            Column(
+//                modifier = Modifier
+//
+//                    .padding(20.dp),
+//                verticalArrangement = Arrangement.Center
+//
+//            ) {
+//
+//
+//
+//                Spacer(Modifier.height(3.dp))
+//                Text(
+//                    text = (stringResource(R.string.OpenTuneText))  ,
+//                    style = MaterialTheme.typography.bodyLarge.copy(
+//                        fontSize = 17.sp,
+//                        fontFamily = FontFamily.Monospace
+//                    ),
+//                    color = MaterialTheme.colorScheme.secondary,
+//                    modifier = Modifier
+//
+//
+//                )
+//
+//
+//            }
+//        }
         Spacer(Modifier.height(25.dp))
-        ElevatedCard(
-            elevation = CardDefaults.cardElevation(
-                defaultElevation = 6.dp
-
-            ),
-
-            modifier = Modifier
-                .clip(RoundedCornerShape(28.dp))
-                .fillMaxWidth()
-                .height(90.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainer,
-
-
-                ),
-
-
-            ) {
-            Column(
-                modifier = Modifier
-
-                    .padding(20.dp),
-                verticalArrangement = Arrangement.Center
-
-            ) {
-
-
-
-                Spacer(Modifier.height(3.dp))
-                Text(
-                    text = (stringResource(R.string.OpenTuneText))  ,
-                    style = MaterialTheme.typography.bodyLarge.copy(
-                        fontSize = 17.sp,
-                        fontFamily = FontFamily.Monospace
-                    ),
-                    color = MaterialTheme.colorScheme.secondary,
-                    modifier = Modifier
-
-
-                )
-
-
-            }
-        }
-
 
     }
 
@@ -560,11 +555,11 @@ fun SettingsScreen(
         navigationIcon = {
             IconButton(
                 onClick = navController::navigateUp,
-                onLongClick = navController::backToMain
+                onLongClick = navController::backToMain,
             ) {
                 Icon(
                     painterResource(R.drawable.arrow_back),
-                    contentDescription = null
+                    contentDescription = null,
                 )
             }
         },

@@ -1,5 +1,6 @@
 package com.malopieds.innertune.viewmodels
 
+import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -8,9 +9,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.malopieds.innertube.YouTube
 import com.malopieds.innertube.pages.ArtistPage
+import com.malopieds.innertune.constants.HideExplicitKey
 import com.malopieds.innertune.db.MusicDatabase
+import com.malopieds.innertune.utils.dataStore
+import com.malopieds.innertune.utils.get
 import com.malopieds.innertune.utils.reportException
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -20,6 +25,7 @@ import javax.inject.Inject
 class ArtistViewModel
     @Inject
     constructor(
+        @ApplicationContext context: Context,
         database: MusicDatabase,
         savedStateHandle: SavedStateHandle,
     ) : ViewModel() {
@@ -39,7 +45,7 @@ class ArtistViewModel
                 YouTube
                     .artist(artistId)
                     .onSuccess {
-                        artistPage = it
+                        artistPage = it.filterExplicit(context.dataStore.get(HideExplicitKey, false))
                     }.onFailure {
                         reportException(it)
                     }

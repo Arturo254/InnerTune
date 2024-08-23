@@ -35,7 +35,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -47,6 +46,7 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -110,6 +110,7 @@ fun AlbumScreen(
     val isPlaying by playerConnection.isPlaying.collectAsState()
     val mediaMetadata by playerConnection.mediaMetadata.collectAsState()
 
+    val playlistId by viewModel.playlistId.collectAsState()
     val albumWithSongs by viewModel.albumWithSongs.collectAsState()
     val otherVersions by viewModel.otherVersions.collectAsState()
 
@@ -120,7 +121,7 @@ fun AlbumScreen(
 
     val downloadUtil = LocalDownloadUtil.current
     var downloadState by remember {
-        mutableIntStateOf(Download.STATE_STOPPED)
+        mutableStateOf(Download.STATE_STOPPED)
     }
 
     LaunchedEffect(albumWithSongs) {
@@ -336,6 +337,7 @@ fun AlbumScreen(
                     Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                         Button(
                             onClick = {
+                                playerConnection.service.getAutomix(playlistId)
                                 playerConnection.playQueue(
                                     ListQueue(
                                         title = albumWithSongs.album.title,
@@ -359,6 +361,7 @@ fun AlbumScreen(
 
                         OutlinedButton(
                             onClick = {
+                                playerConnection.service.getAutomix(playlistId)
                                 playerConnection.playQueue(
                                     ListQueue(
                                         title = albumWithSongs.album.title,
@@ -388,7 +391,7 @@ fun AlbumScreen(
                 ) {
                     if (selection) {
                         val count = wrappedSongs?.count { it.isSelected } ?: 0
-                        Text(text = "$count elements selected", modifier = Modifier.weight(1f))
+                        Text(text = pluralStringResource(R.plurals.n_elements, count, count), modifier = Modifier.weight(1f))
                         IconButton(
                             onClick = {
                                 if (count == wrappedSongs?.size) {
@@ -454,7 +457,6 @@ fun AlbumScreen(
                                             navController = navController,
                                             onDismiss = menuState::dismiss,
                                         )
-
                                     }
                                 },
                             ) {
@@ -474,6 +476,7 @@ fun AlbumScreen(
                                             if (songWrapper.item.id == mediaMetadata?.id) {
                                                 playerConnection.player.togglePlayPause()
                                             } else {
+                                                playerConnection.service.getAutomix(playlistId)
                                                 playerConnection.playQueue(
                                                     ListQueue(
                                                         title = albumWithSongs.album.title,
@@ -498,14 +501,13 @@ fun AlbumScreen(
                                     },
                                 ),
                     )
-
                 }
             }
 
             if (otherVersions.isNotEmpty()) {
                 item {
                     NavigationTitle(
-                        title = stringResource(R.string.other_versions)
+                        title = stringResource(R.string.other_versions),
                     )
                 }
                 item {
@@ -533,7 +535,7 @@ fun AlbumScreen(
                                                     )
                                                 }
                                             },
-                                        ).animateItemPlacement(),
+                                        ).animateItem(),
                             )
                         }
                     }

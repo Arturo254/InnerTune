@@ -47,6 +47,8 @@ import com.malopieds.innertune.constants.ArtistSortTypeKey
 import com.malopieds.innertune.constants.ArtistViewTypeKey
 import com.malopieds.innertune.constants.CONTENT_TYPE_ARTIST
 import com.malopieds.innertune.constants.CONTENT_TYPE_HEADER
+import com.malopieds.innertune.constants.GridItemSize
+import com.malopieds.innertune.constants.GridItemsSizeKey
 import com.malopieds.innertune.constants.GridThumbnailHeight
 import com.malopieds.innertune.constants.LibraryViewType
 import com.malopieds.innertune.ui.component.ArtistGridItem
@@ -73,6 +75,7 @@ fun LibraryArtistsScreen(
     var filter by rememberEnumPreference(ArtistFilterKey, ArtistFilter.LIBRARY)
     val (sortType, onSortTypeChange) = rememberEnumPreference(ArtistSortTypeKey, ArtistSortType.CREATE_DATE)
     val (sortDescending, onSortDescendingChange) = rememberPreference(ArtistSortDescendingKey, true)
+    val gridItemSize by rememberEnumPreference(GridItemsSizeKey, GridItemSize.BIG)
 
     val artists by viewModel.allArtists.collectAsState()
     val coroutineScope = rememberCoroutineScope()
@@ -216,14 +219,17 @@ fun LibraryArtistsScreen(
                                                 )
                                             }
                                         },
-                                    ).animateItemPlacement(),
+                                    ).animateItem(),
                         )
                     }
                 }
 
             LibraryViewType.GRID ->
                 LazyVerticalGrid(
-                    columns = GridCells.Adaptive(minSize = GridThumbnailHeight + 24.dp),
+                    columns =
+                        GridCells.Adaptive(
+                            minSize = GridThumbnailHeight + if (gridItemSize == GridItemSize.BIG) 24.dp else (-24).dp,
+                        ),
                     contentPadding = LocalPlayerAwareWindowInsets.current.asPaddingValues(),
                 ) {
                     item(
@@ -267,7 +273,7 @@ fun LibraryArtistsScreen(
                                                 )
                                             }
                                         },
-                                    ).animateItemPlacement(),
+                                    ).animateItem(),
                         )
                     }
                 }

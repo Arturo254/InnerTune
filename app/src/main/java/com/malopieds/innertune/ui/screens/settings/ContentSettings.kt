@@ -1,10 +1,13 @@
 package com.malopieds.innertune.ui.screens.settings
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -27,10 +30,11 @@ import com.malopieds.innertune.constants.ChipSortTypeKey
 import com.malopieds.innertune.constants.ContentCountryKey
 import com.malopieds.innertune.constants.ContentLanguageKey
 import com.malopieds.innertune.constants.CountryCodeToName
+import com.malopieds.innertune.constants.HideExplicitKey
+import com.malopieds.innertune.constants.HistoryDuration
 import com.malopieds.innertune.constants.InnerTubeCookieKey
 import com.malopieds.innertune.constants.LanguageCodeToName
 import com.malopieds.innertune.constants.LibraryFilter
-import com.malopieds.innertune.constants.LyricTrimKey
 import com.malopieds.innertune.constants.ProxyEnabledKey
 import com.malopieds.innertune.constants.ProxyTypeKey
 import com.malopieds.innertune.constants.ProxyUrlKey
@@ -43,6 +47,7 @@ import com.malopieds.innertune.ui.component.IconButton
 import com.malopieds.innertune.ui.component.ListPreference
 import com.malopieds.innertune.ui.component.PreferenceEntry
 import com.malopieds.innertune.ui.component.PreferenceGroupTitle
+import com.malopieds.innertune.ui.component.SliderPreference
 import com.malopieds.innertune.ui.component.SwitchPreference
 import com.malopieds.innertune.ui.utils.backToMain
 import com.malopieds.innertune.utils.rememberEnumPreference
@@ -63,22 +68,24 @@ fun ContentSettings(
         remember(innerTubeCookie) {
             "SAPISID" in parseCookieString(innerTubeCookie)
         }
-
-    val (ytmSync, onYtmSyncChange) = rememberPreference(LyricTrimKey, defaultValue = true)
     val (contentLanguage, onContentLanguageChange) = rememberPreference(key = ContentLanguageKey, defaultValue = "system")
     val (contentCountry, onContentCountryChange) = rememberPreference(key = ContentCountryKey, defaultValue = "system")
+    val (hideExplicit, onHideExplicitChange) = rememberPreference(key = HideExplicitKey, defaultValue = false)
     val (proxyEnabled, onProxyEnabledChange) = rememberPreference(key = ProxyEnabledKey, defaultValue = false)
     val (proxyType, onProxyTypeChange) = rememberEnumPreference(key = ProxyTypeKey, defaultValue = Proxy.Type.HTTP)
     val (proxyUrl, onProxyUrlChange) = rememberPreference(key = ProxyUrlKey, defaultValue = "host:port")
     val (lengthTop, onLengthTopChange) = rememberPreference(key = TopSize, defaultValue = "50")
+    val (historyDuration, onHistoryDurationChange) = rememberPreference(key = HistoryDuration, defaultValue = 30f)
     val (defaultChip, onDefaultChipChange) = rememberEnumPreference(key = ChipSortTypeKey, defaultValue = LibraryFilter.LIBRARY)
     val (quickPicks, onQuickPicksChange) = rememberEnumPreference(key = QuickPicksKey, defaultValue = QuickPicks.QUICK_PICKS)
 
     Column(
         Modifier
-            .windowInsetsPadding(LocalPlayerAwareWindowInsets.current)
+            .windowInsetsPadding(LocalPlayerAwareWindowInsets.current.only(WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom))
             .verticalScroll(rememberScrollState()),
     ) {
+        Spacer(Modifier.windowInsetsPadding(LocalPlayerAwareWindowInsets.current.only(WindowInsetsSides.Top)))
+
         PreferenceEntry(
             title = { Text(if (isLoggedIn) accountName else stringResource(R.string.login)) },
             description =
@@ -91,14 +98,6 @@ fun ContentSettings(
             icon = { Icon(painterResource(R.drawable.person), null) },
             onClick = { navController.navigate("login") },
         )
-        SwitchPreference(
-            title = { Text(stringResource(R.string.ytm_sync)) },
-            icon = { Icon(painterResource(R.drawable.library_music), null) },
-            checked = ytmSync,
-            onCheckedChange = onYtmSyncChange,
-            isEnabled = isLoggedIn
-        )
-
         ListPreference(
             title = { Text(stringResource(R.string.content_language)) },
             icon = { Icon(painterResource(R.drawable.language), null) },
@@ -123,61 +122,13 @@ fun ContentSettings(
             },
             onValueSelected = onContentCountryChange,
         )
-//// New preference for playlistIA : Enabled or Disabled
-//        val (playlistIAEnabled, isPlaylistIAEnabled) = rememberPreference(key = playlistIAEnabled, defaultValue = true)
-//
-//        Column {
-//            SwitchPreference(
-//                title = { Text(stringResource(R.string.playlistIA)) },
-//                checked = playlistIAEnabled,
-//                onCheckedChange = isPlaylistIAEnabled,
-//            )
-//
-//            if (playlistIAEnabled) {
-//                Spacer(Modifier.height(25.dp))
-//                ElevatedCard(
-//                    elevation = CardDefaults.cardElevation(
-//                        defaultElevation = 6.dp
-//                    ),
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .height(160.dp),
-//                    colors = CardDefaults.cardColors(
-//                        containerColor = MaterialTheme.colorScheme.surface,
-//                    )
-//                ) {
-//                    Column(
-//                        modifier = Modifier.padding(16.dp),
-//                        verticalArrangement = Arrangement.Center
-//                    ) {
-//                        Icon(contentDescription = null, painter = painterResource(R.drawable.funbeta))
-//                        Spacer(Modifier.height(5.dp))
-//                        Text(
-//                            text = (stringResource(R.string.APIFeatures)),
-//                            textAlign = TextAlign.Center,
-//                            style = MaterialTheme.typography.bodyLarge.copy(
-//                                fontSize = 17.sp,
-//                                fontFamily = FontFamily.Monospace
-//                            ),
-//                            color = MaterialTheme.colorScheme.onSurface
-//                        )
-//                        Spacer(Modifier.height(5.dp))
-//                        Text(
-//                            text = (stringResource(R.string.IAPlaylistdes)),
-//                            style = MaterialTheme.typography.bodyMedium.copy(
-//                                fontSize = 14.sp,
-//                                fontFamily = FontFamily.Monospace
-//                            ),
-//                            color = MaterialTheme.colorScheme.onSurface
-//                        )
-//                    }
-//                }
-//            }
-//        }
-//
-//
 
-
+        SwitchPreference(
+            title = { Text(stringResource(R.string.hide_explicit)) },
+            icon = { Icon(painterResource(R.drawable.explicit), null) },
+            checked = hideExplicit,
+            onCheckedChange = onHideExplicitChange,
+        )
 
         PreferenceGroupTitle(
             title = stringResource(R.string.proxy),
@@ -185,23 +136,26 @@ fun ContentSettings(
 
         SwitchPreference(
             title = { Text(stringResource(R.string.enable_proxy)) },
+            icon = { Icon(painterResource(R.drawable.wifi_proxy), null) },
             checked = proxyEnabled,
             onCheckedChange = onProxyEnabledChange,
         )
 
-        if (proxyEnabled) {
-            ListPreference(
-                title = { Text(stringResource(R.string.proxy_type)) },
-                selectedValue = proxyType,
-                values = listOf(Proxy.Type.HTTP, Proxy.Type.SOCKS),
-                valueText = { it.name },
-                onValueSelected = onProxyTypeChange,
-            )
-            EditTextPreference(
-                title = { Text(stringResource(R.string.proxy_url)) },
-                value = proxyUrl,
-                onValueChange = onProxyUrlChange,
-            )
+        AnimatedVisibility(proxyEnabled) {
+            Column {
+                ListPreference(
+                    title = { Text(stringResource(R.string.proxy_type)) },
+                    selectedValue = proxyType,
+                    values = listOf(Proxy.Type.HTTP, Proxy.Type.SOCKS),
+                    valueText = { it.name },
+                    onValueSelected = onProxyTypeChange,
+                )
+                EditTextPreference(
+                    title = { Text(stringResource(R.string.proxy_url)) },
+                    value = proxyUrl,
+                    onValueChange = onProxyUrlChange,
+                )
+            }
         }
 
         EditTextPreference(
@@ -248,6 +202,12 @@ fun ContentSettings(
                 }
             },
             onValueSelected = onQuickPicksChange,
+        )
+
+        SliderPreference(
+            title = { Text(stringResource(R.string.history_duration)) },
+            value = historyDuration,
+            onValueChange = onHistoryDurationChange,
         )
     }
 

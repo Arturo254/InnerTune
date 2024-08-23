@@ -1,7 +1,11 @@
 package com.malopieds.innertune.ui.screens.settings
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
@@ -28,7 +32,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.annotation.ExperimentalCoilApi
 import coil.imageLoader
-import com.malopieds.innertune.BuildConfig
 import com.malopieds.innertune.LocalPlayerAwareWindowInsets
 import com.malopieds.innertune.LocalPlayerConnection
 import com.malopieds.innertune.R
@@ -41,7 +44,6 @@ import com.malopieds.innertune.ui.component.PreferenceEntry
 import com.malopieds.innertune.ui.component.PreferenceGroupTitle
 import com.malopieds.innertune.ui.utils.backToMain
 import com.malopieds.innertune.ui.utils.formatFileSize
-import com.malopieds.innertune.utils.TranslationHelper
 import com.malopieds.innertune.utils.rememberPreference
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -60,6 +62,8 @@ fun StorageSettings(
     val downloadCache = LocalPlayerConnection.current?.service?.downloadCache ?: return
 
     val coroutineScope = rememberCoroutineScope()
+    val (maxImageCacheSize, onMaxImageCacheSizeChange) = rememberPreference(key = MaxImageCacheSizeKey, defaultValue = 512)
+    val (maxSongCacheSize, onMaxSongCacheSizeChange) = rememberPreference(key = MaxSongCacheSizeKey, defaultValue = 1024)
 
     var imageCacheSize by remember {
         mutableStateOf(imageDiskCache.size)
@@ -70,6 +74,14 @@ fun StorageSettings(
     var downloadCacheSize by remember {
         mutableStateOf(tryOrNull { downloadCache.cacheSpace } ?: 0)
     }
+    val imageCacheProgress by animateFloatAsState(
+        targetValue = (imageCacheSize.toFloat() / imageDiskCache.maxSize).coerceIn(0f, 1f),
+        label = "",
+    )
+    val playerCacheProgress by animateFloatAsState(
+        targetValue = (playerCacheSize.toFloat() / (maxSongCacheSize * 1024 * 1024L)).coerceIn(0f, 1f),
+        label = "",
+    )
 
     LaunchedEffect(imageDiskCache) {
         while (isActive) {
@@ -90,14 +102,13 @@ fun StorageSettings(
         }
     }
 
-    val (maxImageCacheSize, onMaxImageCacheSizeChange) = rememberPreference(key = MaxImageCacheSizeKey, defaultValue = 512)
-    val (maxSongCacheSize, onMaxSongCacheSizeChange) = rememberPreference(key = MaxSongCacheSizeKey, defaultValue = 1024)
-
     Column(
         Modifier
-            .windowInsetsPadding(LocalPlayerAwareWindowInsets.current)
+            .windowInsetsPadding(LocalPlayerAwareWindowInsets.current.only(WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom))
             .verticalScroll(rememberScrollState()),
     ) {
+        Spacer(Modifier.windowInsetsPadding(LocalPlayerAwareWindowInsets.current.only(WindowInsetsSides.Top)))
+
         PreferenceGroupTitle(
             title = stringResource(R.string.downloaded_songs),
         )
@@ -131,10 +142,11 @@ fun StorageSettings(
             )
         } else {
             LinearProgressIndicator(
-                progress = { (playerCacheSize.toFloat() / (maxSongCacheSize * 1024 * 1024L)).coerceIn(0f, 1f) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 6.dp),
+                progress = { playerCacheProgress },
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 6.dp),
             )
 
             Text(
@@ -176,10 +188,11 @@ fun StorageSettings(
         )
 
         LinearProgressIndicator(
-            progress = { (imageCacheSize.toFloat() / imageDiskCache.maxSize).coerceIn(0f, 1f) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 6.dp),
+            progress = { imageCacheProgress },
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 6.dp),
         )
 
         Text(
@@ -204,21 +217,6 @@ fun StorageSettings(
                 }
             },
         )
-
-        if (BuildConfig.FLAVOR != "foss") {
-            PreferenceGroupTitle(
-                title = stringResource(R.string.translation_models),
-            )
-
-            PreferenceEntry(
-                title = { Text(stringResource(R.string.clear_translation_models)) },
-                onClick = {
-                    coroutineScope.launch(Dispatchers.IO) {
-                        TranslationHelper.clearModels()
-                    }
-                },
-            )
-        }
     }
 
     TopAppBar(

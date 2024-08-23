@@ -14,6 +14,7 @@ import androidx.media3.session.MediaLibraryService
 import androidx.media3.session.MediaLibraryService.MediaLibrarySession
 import androidx.media3.session.MediaSession
 import androidx.media3.session.SessionCommand
+import androidx.media3.session.SessionError
 import androidx.media3.session.SessionResult
 import com.google.common.collect.ImmutableList
 import com.google.common.util.concurrent.Futures
@@ -162,7 +163,9 @@ class MediaLibrarySessionCallback
                                 browsableMediaItem(
                                     "${MusicService.ALBUM}/${album.id}",
                                     album.album.title,
-                                    album.artists.joinToString(),
+                                    album.artists.joinToString {
+                                        it.name
+                                    },
                                     album.album.thumbnailUrl?.toUri(),
                                     MediaMetadata.MEDIA_TYPE_ALBUM,
                                 )
@@ -253,7 +256,7 @@ class MediaLibrarySessionCallback
             scope.future(Dispatchers.IO) {
                 database.song(mediaId).first()?.toMediaItem()?.let {
                     LibraryResult.ofItem(it, null)
-                } ?: LibraryResult.ofError(LibraryResult.RESULT_ERROR_UNKNOWN)
+                } ?: LibraryResult.ofError(SessionError.ERROR_UNKNOWN)
             }
 
         override fun onSetMediaItems(

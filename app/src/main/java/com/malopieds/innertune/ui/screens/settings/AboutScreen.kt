@@ -6,12 +6,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -36,14 +38,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.UriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
@@ -52,6 +59,87 @@ import com.malopieds.innertune.LocalPlayerAwareWindowInsets
 import com.malopieds.innertune.R
 import com.malopieds.innertune.ui.component.IconButton
 import com.malopieds.innertune.ui.utils.backToMain
+
+
+@Composable
+fun UserCard(
+    imageUrl: String,
+    name: String,
+    role: String,
+    onClick: () -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .height(120.dp)
+            .shadow(8.dp, RoundedCornerShape(16.dp))
+            .clickable(onClick = onClick),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+        )
+    ) {
+        Box(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    painter = rememberAsyncImagePainter(model = imageUrl),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(80.dp)
+                        .clip(CircleShape)
+                        .background(
+                            Brush.radialGradient(
+                                colors = listOf(
+                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
+                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
+                                )
+                            )
+                        ),
+                    contentScale = ContentScale.Crop
+                )
+
+                Spacer(modifier = Modifier.width(16.dp))
+
+                Column {
+                    Text(
+                        text = name,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = role,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+
+            // Decorative element
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .size(60.dp)
+                    .offset(x = 30.dp, y = (-30).dp)
+                    .background(
+                        MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.2f),
+                        CircleShape
+                    )
+            )
+        }
+    }
+}
+
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -248,256 +336,16 @@ fun AboutScreen(
 
 
 
-// Users:
 
-        // Arturo254
-        Spacer(Modifier.height(20.dp))
-        ElevatedCard(
-            elevation = CardDefaults.cardElevation(
-                defaultElevation = 6.dp
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(100.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface,
-            ),
-            onClick = { uriHandler.openUri("https://github.com/Arturo254") }
-        ) {
-            Row(
-                modifier = Modifier.padding(26.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Image(
-                    painter = rememberAsyncImagePainter(
-                        model = "https://avatars.githubusercontent.com/u/87346871?v=4",
-
-                        ),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .clip(CircleShape)
-                        .background(
-                            MaterialTheme.colorScheme.surfaceColorAtElevation(
-                                NavigationBarDefaults.Elevation
-                            )
-                        )
-                        .clickable { }
-                )
-
-                Text(
-                    text = " 亗 Arturo254 :",
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.bodyLarge,fontFamily = FontFamily.Monospace,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-
-                Text(
-                    text = "   Lead Developer",
-                    style = MaterialTheme.typography.bodyMedium,fontFamily = FontFamily.SansSerif,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
+        UserCards(uriHandler)
 
 
-            }
-
-
-        }
-        //Fabito02
-
-        Spacer(Modifier.height(20.dp))
-        ElevatedCard(
-            elevation = CardDefaults.cardElevation(
-                defaultElevation = 6.dp
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(100.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface,
-            ),
-            onClick = { uriHandler.openUri("https://github.com/Fabito02/") }
-        ) {
-            Row(
-                modifier = Modifier.padding(26.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Image(
-                    painter = rememberAsyncImagePainter(
-                        model = "https://avatars.githubusercontent.com/u/138934847?v=4",
-
-                        ),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.surfaceColorAtElevation(NavigationBarDefaults.Elevation))
-                        .clickable { }
-                )
-
-                Text(
-                    text = " \uD81A\uDD10 Fabito02 : ",
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.bodyLarge,fontFamily = FontFamily.Monospace,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-
-                Text(
-                    text = "  Traductor (PR_BR)",
-                    style = MaterialTheme.typography.bodyMedium,fontFamily = FontFamily.SansSerif,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-
-
-
-            }
-
-
-        }
-        // Alessandro
-        Spacer(Modifier.height(20.dp))
-        ElevatedCard(
-            elevation = CardDefaults.cardElevation(
-                defaultElevation = 6.dp
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(100.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface,
-            ),
-            onClick = { uriHandler.openUri("https://github.com/AlessandroGalvan") }
-        ) {
-            Row(
-                modifier = Modifier.padding(26.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Image(
-                    painter = rememberAsyncImagePainter(
-                        model = "https://avatars.githubusercontent.com/u/40720048?v=4",
-
-                        ),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .clip(CircleShape)
-                        .background(
-                            MaterialTheme.colorScheme.surfaceColorAtElevation(
-                                NavigationBarDefaults.Elevation
-                            )
-                        )
-                        .clickable { }
-                )
-
-                Text(
-                    text = " ϟ AlessandroGalvan : ",
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.bodyLarge,fontFamily = FontFamily.Monospace,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-
-                Text(
-                    text = "S.B.P",
-                    style = MaterialTheme.typography.bodyMedium,fontFamily = FontFamily.SansSerif,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-
-
-            }
-
-
-        }
-
-//        // z-huang
-        Spacer(Modifier.height(20.dp))
-        ElevatedCard(
-            elevation = CardDefaults.cardElevation(
-                defaultElevation = 6.dp
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(100.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface,
-            ),
-            onClick = { uriHandler.openUri("https://github.com/JPGuillemin") }
-        ) {
-            Row(
-                modifier = Modifier.padding(26.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Image(
-                    painter = rememberAsyncImagePainter(
-                        model = "https://avatars.githubusercontent.com/u/55490396?v=4",
-
-                        ),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .clip(CircleShape)
-                        .background(
-                            MaterialTheme.colorScheme.surfaceColorAtElevation(
-                                NavigationBarDefaults.Elevation
-                            )
-                        )
-                        .clickable { }
-                )
-
-                Text(
-                    text = " 「★」 JPGuillemin :",
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.bodyLarge,fontFamily = FontFamily.Monospace,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-
-                Text(
-                    text = "  Icon designer",
-                    style = MaterialTheme.typography.bodyMedium,fontFamily = FontFamily.SansSerif,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-
-
-            }
-
-
-        }
 
 
         // Contribution by:
 
-        Spacer(Modifier.height(20.dp))
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(100.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface,
-            ),
-            border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary),
-            onClick = { uriHandler.openUri("https://github.com/Arturo254/InnerTune/new/master") }
-        ) {
-            Column(
-                modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.Center
-            ) {
 
-                Text(
-                    text = (stringResource(R.string.contribution)),
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary
-                )
-
-                Text(
-                    text = (stringResource(R.string.contribution_text)),
-                    style = MaterialTheme.typography.bodyMedium,
-
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-
-            }
-        }
+        ContributionCard(uriHandler)
 
 
 
@@ -506,6 +354,8 @@ fun AboutScreen(
 
     TopAppBar(
         title = { Text(stringResource(R.string.about)) },
+        modifier = Modifier
+            .clip(RoundedCornerShape(16.dp)),
         navigationIcon = {
             IconButton(
                 onClick = navController::navigateUp,
@@ -520,6 +370,41 @@ fun AboutScreen(
         scrollBehavior = scrollBehavior
     )
 }
+
+@Composable
+fun UserCards(uriHandler: UriHandler) {
+    Column {
+        UserCard(
+            imageUrl = "https://avatars.githubusercontent.com/u/87346871?v=4",
+            name = "亗 Arturo254",
+            role = "Lead Developer",
+            onClick = { uriHandler.openUri("https://github.com/Arturo254") }
+        )
+
+        UserCard(
+            imageUrl = "https://avatars.githubusercontent.com/u/138934847?v=4",
+            name = "\uD81A\uDD10 Fabito02",
+            role = "Traductor (PR_BR)",
+            onClick = { uriHandler.openUri("https://github.com/Fabito02/") }
+        )
+
+        UserCard(
+            imageUrl = "https://avatars.githubusercontent.com/u/40720048?v=4",
+            name = "ϟ AlessandroGalvan",
+            role = "Search Bar Playlist",
+            onClick = { uriHandler.openUri("https://github.com/AlessandroGalvan") }
+        )
+
+        UserCard(
+            imageUrl = "https://avatars.githubusercontent.com/u/55490396?v=4",
+            name = "「★」 JPGuillemin",
+            role = "Icon designer",
+            onClick = { uriHandler.openUri("https://github.com/JPGuillemin") }
+        )
+    }
+}
+
+
 
 @Composable
 fun CardItem(
@@ -564,6 +449,57 @@ fun CardItem(
                     text = subtitle,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun ContributionCard(uriHandler: UriHandler) {
+    Spacer(Modifier.height(24.dp))
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(120.dp)
+            .padding(horizontal = 16.dp)
+            .clickable { uriHandler.openUri("https://github.com/Arturo254/InnerTune/new/master") },
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f),
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)),
+        shape = RoundedCornerShape(16.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.extension),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(48.dp)
+                    .padding(end = 16.dp),
+                tint = MaterialTheme.colorScheme.primary
+            )
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.contribution),
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                Text(
+                    text = stringResource(R.string.contribution_text),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
         }

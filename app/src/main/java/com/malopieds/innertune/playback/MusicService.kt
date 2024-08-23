@@ -59,6 +59,10 @@ import com.malopieds.innertune.R
 import com.malopieds.innertune.constants.AudioNormalizationKey
 import com.malopieds.innertune.constants.AudioQuality
 import com.malopieds.innertune.constants.AudioQualityKey
+import com.malopieds.innertune.constants.DiscordTokenKey
+import com.malopieds.innertune.constants.EnableDiscordRPCKey
+import com.malopieds.innertune.constants.HideExplicitKey
+import com.malopieds.innertune.constants.HistoryDuration
 import com.malopieds.innertune.constants.MediaSessionConstants.CommandToggleLike
 import com.malopieds.innertune.constants.MediaSessionConstants.CommandToggleRepeatMode
 import com.malopieds.innertune.constants.MediaSessionConstants.CommandToggleShuffle
@@ -90,7 +94,9 @@ import com.malopieds.innertune.playback.queues.EmptyQueue
 import com.malopieds.innertune.playback.queues.ListQueue
 import com.malopieds.innertune.playback.queues.Queue
 import com.malopieds.innertune.playback.queues.YouTubeQueue
+import com.malopieds.innertune.playback.queues.filterExplicit
 import com.malopieds.innertune.utils.CoilBitmapLoader
+import com.malopieds.innertune.utils.DiscordRPC
 import com.malopieds.innertune.utils.dataStore
 import com.malopieds.innertune.utils.enumPreference
 import com.malopieds.innertune.utils.get
@@ -183,6 +189,10 @@ class MusicService :
 
     private var isAudioEffectSessionOpened = false
 
+    private var discordRpc: DiscordRPC? = null
+
+    val automixItems = MutableStateFlow<List<MediaItem>>(emptyList())
+
     override fun onCreate() {
         super.onCreate()
         setMediaNotificationProvider(
@@ -251,8 +261,13 @@ class MusicService :
             }
         }
 
-        currentSong.collect(scope) {
+        currentSong.debounce(1000).collect(scope) { song ->
             updateNotification()
+            if (song != null) {
+                discordRpc?.updateSong(song)
+            } else {
+                discordRpc?.closeRPC()
+            }
         }
 
         combine(
@@ -297,6 +312,23 @@ class MusicService :
                 }
         }
 
+        dataStore.data
+            .map { it[DiscordTokenKey] to (it[EnableDiscordRPCKey] ?: true) }
+            .debounce(300)
+            .distinctUntilChanged()
+            .collect(scope) { (key, enabled) ->
+                if (discordRpc?.isRpcRunning() == true) {
+                    discordRpc?.closeRPC()
+                }
+                discordRpc = null
+                if (key != null && enabled) {
+                    discordRpc = DiscordRPC(this, key)
+                    currentSong.value?.let {
+                        discordRpc?.updateSong(it)
+                    }
+                }
+            }
+
         if (dataStore.get(PersistentQueueKey, true)) {
             runCatching {
                 filesDir.resolve(PERSISTENT_QUEUE_FILE).inputStream().use { fis ->
@@ -307,14 +339,23 @@ class MusicService :
             }.onSuccess { queue ->
                 playQueue(
                     queue =
-                    ListQueue(
-                        title = queue.title,
-                        items = queue.items.map { it.toMediaItem() },
-                        startIndex = queue.mediaItemIndex,
-                        position = queue.position,
-                    ),
+                        ListQueue(
+                            title = queue.title,
+                            items = queue.items.map { it.toMediaItem() },
+                            startIndex = queue.mediaItemIndex,
+                            position = queue.position,
+                        ),
                     playWhenReady = false,
                 )
+            }
+            runCatching {
+                filesDir.resolve(PERSISTENT_AUTOMIX_FILE).inputStream().use { fis ->
+                    ObjectInputStream(fis).use { oos ->
+                        oos.readObject() as PersistQueue
+                    }
+                }
+            }.onSuccess { queue ->
+                automixItems.value = queue.items.map { it.toMediaItem() }
             }
         }
 
@@ -430,7 +471,10 @@ class MusicService :
             player.playWhenReady = playWhenReady
         }
         scope.launch(SilentHandler) {
-            val initialStatus = withContext(Dispatchers.IO) { queue.getInitialStatus() }
+            val initialStatus =
+                withContext(Dispatchers.IO) {
+                    queue.getInitialStatus().filterExplicit(dataStore.get(HideExplicitKey, false))
+                }
             if (queue.preloadItem != null && player.playbackState == STATE_IDLE) return@launch
             if (initialStatus.title != null) {
                 queueTitle = initialStatus.title
@@ -474,6 +518,60 @@ class MusicService :
             player.addMediaItems(initialStatus.items.drop(1))
             currentQueue = radioQueue
         }
+    }
+
+    fun getAutomixAlbum(albumId: String) {
+        scope.launch(SilentHandler) {
+            YouTube
+                .album(albumId)
+                .onSuccess {
+                    getAutomix(it.album.playlistId)
+                }
+        }
+    }
+
+    fun getAutomix(playlistId: String) {
+        scope.launch(SilentHandler) {
+            YouTube
+                .next(WatchEndpoint(playlistId = playlistId))
+                .onSuccess {
+                    YouTube
+                        .next(WatchEndpoint(playlistId = it.endpoint.playlistId))
+                        .onSuccess {
+                            automixItems.value =
+                                it.items.map { song ->
+                                    song.toMediaItem()
+                                }
+                        }
+                }
+        }
+    }
+
+    fun addToQueueAutomix(
+        item: MediaItem,
+        position: Int,
+    ) {
+        automixItems.value =
+            automixItems.value.toMutableList().apply {
+                removeAt(position)
+            }
+        addToQueue(listOf(item))
+    }
+
+    fun playNextAutomix(
+        item: MediaItem,
+        position: Int,
+    ) {
+        automixItems.value =
+            automixItems.value.toMutableList().apply {
+                removeAt(position)
+            }
+        playNext(listOf(item))
+    }
+
+    fun clearAutomix() {
+        filesDir.resolve(PERSISTENT_QUEUE_FILE).delete()
+        automixItems.value = emptyList()
     }
 
     fun playNext(items: List<MediaItem>) {
@@ -536,7 +634,7 @@ class MusicService :
             currentQueue.hasNextPage()
         ) {
             scope.launch(SilentHandler) {
-                val mediaItems = currentQueue.nextPage()
+                val mediaItems = currentQueue.nextPage().filterExplicit(dataStore.get(HideExplicitKey, false))
                 if (player.playbackState != STATE_IDLE) {
                     player.addMediaItems(mediaItems)
                 }
@@ -671,19 +769,28 @@ class MusicService :
                     playerResponse.streamingData?.adaptiveFormats?.find {
                         // Use itag to identify previously played format
                         it.itag == playedFormat.itag
-                    }
+                    } ?: playerResponse.streamingData
+                        ?.adaptiveFormats
+                        ?.filter { it.isAudio }
+                        ?.maxByOrNull {
+                            it.bitrate *
+                                when (audioQuality) {
+                                    AudioQuality.AUTO -> if (connectivityManager.isActiveNetworkMetered) -1 else 1
+                                    AudioQuality.HIGH -> 1
+                                    AudioQuality.LOW -> -1
+                                } + (if (it.mimeType.startsWith("audio/webm")) 10240 else 0) // prefer opus stream
+                        }
                 } else {
                     playerResponse.streamingData
                         ?.adaptiveFormats
                         ?.filter { it.isAudio }
                         ?.maxByOrNull {
                             it.bitrate *
-                                    when (audioQuality) {
-                                        AudioQuality.AUTO -> if (connectivityManager.isActiveNetworkMetered) -1 else 1
-                                        AudioQuality.HIGH -> 1
-                                        AudioQuality.LOW -> -1
-                                        AudioQuality.HIGH_QUALITY_320KBPS -> 2
-                                    } + (if (it.mimeType.startsWith("audio/webm")) 10240 else 0) // prefer opus stream
+                                when (audioQuality) {
+                                    AudioQuality.AUTO -> if (connectivityManager.isActiveNetworkMetered) -1 else 1
+                                    AudioQuality.HIGH -> 1
+                                    AudioQuality.LOW -> -1
+                                } + (if (it.mimeType.startsWith("audio/webm")) 10240 else 0) // prefer opus stream
                         }
                 } ?: throw PlaybackException(getString(R.string.error_no_stream), null, ERROR_CODE_NO_STREAM)
 
@@ -740,7 +847,13 @@ class MusicService :
         playbackStats: PlaybackStats,
     ) {
         val mediaItem = eventTime.timeline.getWindow(eventTime.windowIndex, Timeline.Window()).mediaItem
-        if (playbackStats.totalPlayTimeMs >= 30000 && !dataStore.get(PauseListenHistoryKey, false)) {
+
+        if (playbackStats.totalPlayTimeMs >= (
+                dataStore[HistoryDuration]?.times(1000f)
+                    ?: 30000f
+            ) &&
+            !dataStore.get(PauseListenHistoryKey, false)
+        ) {
             database.query {
                 incrementTotalPlayTime(mediaItem.mediaId, playbackStats.totalPlayTimeMs)
                 try {
@@ -759,6 +872,7 @@ class MusicService :
 
     private fun saveQueueToDisk() {
         if (player.playbackState == STATE_IDLE) {
+            filesDir.resolve(PERSISTENT_AUTOMIX_FILE).delete()
             filesDir.resolve(PERSISTENT_QUEUE_FILE).delete()
             return
         }
@@ -769,10 +883,26 @@ class MusicService :
                 mediaItemIndex = player.currentMediaItemIndex,
                 position = player.currentPosition,
             )
+        val persistAutomix =
+            PersistQueue(
+                title = "automix",
+                items = automixItems.value.mapNotNull { it.metadata },
+                mediaItemIndex = 0,
+                position = 0,
+            )
         runCatching {
             filesDir.resolve(PERSISTENT_QUEUE_FILE).outputStream().use { fos ->
                 ObjectOutputStream(fos).use { oos ->
                     oos.writeObject(persistQueue)
+                }
+            }
+        }.onFailure {
+            reportException(it)
+        }
+        runCatching {
+            filesDir.resolve(PERSISTENT_AUTOMIX_FILE).outputStream().use { fos ->
+                ObjectOutputStream(fos).use { oos ->
+                    oos.writeObject(persistAutomix)
                 }
             }
         }.onFailure {
@@ -784,6 +914,10 @@ class MusicService :
         if (dataStore.get(PersistentQueueKey, true)) {
             saveQueueToDisk()
         }
+        if (discordRpc?.isRpcRunning() == true) {
+            discordRpc?.closeRPC()
+        }
+        discordRpc = null
         mediaSession.release()
         player.removeListener(this)
         player.removeListener(sleepTimer)
@@ -817,5 +951,6 @@ class MusicService :
         const val ERROR_CODE_NO_STREAM = 1000001
         const val CHUNK_LENGTH = 512 * 1024L
         const val PERSISTENT_QUEUE_FILE = "persistent_queue.data"
+        const val PERSISTENT_AUTOMIX_FILE = "persistent_automix.data"
     }
 }

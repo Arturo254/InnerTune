@@ -20,6 +20,8 @@ data class HomeAlbumRecommendation(
 
 data class HomeArtistRecommendation(
     var listItem: List<YTItem>,
+//    var playlists: RecommendationAlbumBundle,
+//    var artists: List<ArtistItem>,
     val artistName: String,
 )
 
@@ -27,7 +29,6 @@ data class HomePlayList(
     val playlists: List<PlaylistItem>,
     val playlistName: String,
     val continuation: String?,
-
 ) {
     companion object {
         fun fromMusicCarouselShelfRenderer(

@@ -131,7 +131,6 @@ fun HomeScreen(
 
     val forgottenFavoritesLazyGridState = rememberLazyGridState()
 
-
     val listenAgainLazyGridState = rememberLazyGridState()
 
     val innerTubeCookie by rememberPreference(InnerTubeCookieKey, "")
@@ -149,11 +148,8 @@ fun HomeScreen(
         indicatorPadding = LocalPlayerAwareWindowInsets.current.asPaddingValues(),
     ) {
         BoxWithConstraints(
-
             modifier = Modifier.fillMaxWidth(),
-        )
-
-        {
+        ) {
             val horizontalLazyGridItemWidthFactor = if (maxWidth * 0.475f >= 320.dp) 0.475f else 0.9f
             val horizontalLazyGridItemWidth = maxWidth * horizontalLazyGridItemWidthFactor
             val snapLayoutInfoProviderQuickPicks =
@@ -180,7 +176,6 @@ fun HomeScreen(
                     ),
                 )
 
-
                 Row(
                     modifier = Modifier
                         .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Horizontal))
@@ -204,22 +199,17 @@ fun HomeScreen(
                     }
                 }
 
-
-
-
-
-                NavigationTitle(
-                    title = stringResource(R.string.quick_picks),
-                )
-
-
                 quickPicks?.let { quickPicks ->
+                    NavigationTitle(
+                        title = stringResource(R.string.quick_picks),
+                    )
+
                     if (quickPicks.isEmpty()) {
                         Box(
                             modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .height(ListItemHeight * 4),
+                                Modifier
+                                    .fillMaxWidth()
+                                    .height(ListItemHeight * 4),
                         ) {
                             Text(
                                 text = stringResource(R.string.quick_picks_empty),
@@ -240,9 +230,9 @@ fun HomeScreen(
                                     .only(WindowInsetsSides.Horizontal)
                                     .asPaddingValues(),
                             modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .height(ListItemHeight * 4),
+                                Modifier
+                                    .fillMaxWidth()
+                                    .height(ListItemHeight * 4),
                         ) {
                             items(
                                 items = quickPicks,
@@ -276,39 +266,37 @@ fun HomeScreen(
                                         }
                                     },
                                     modifier =
-                                    Modifier
-                                        .width(horizontalLazyGridItemWidth)
-                                        .combinedClickable(
-                                            onClick = {
-                                                if (song!!.id == mediaMetadata?.id) {
-                                                    playerConnection.player.togglePlayPause()
-                                                } else {
-                                                    playerConnection.playQueue(
-                                                        YouTubeQueue(
-                                                            WatchEndpoint(videoId = song!!.id),
-                                                            song!!.toMediaMetadata(),
-                                                        ),
-                                                    )
-                                                }
-                                            },
-                                            onLongClick = {
-                                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                                menuState.show {
-                                                    SongMenu(
-                                                        originalSong = song!!,
-                                                        navController = navController,
-                                                        onDismiss = menuState::dismiss,
-                                                    )
-                                                }
-                                            },
-                                        ),
+                                        Modifier
+                                            .width(horizontalLazyGridItemWidth)
+                                            .combinedClickable(
+                                                onClick = {
+                                                    if (song!!.id == mediaMetadata?.id) {
+                                                        playerConnection.player.togglePlayPause()
+                                                    } else {
+                                                        playerConnection.playQueue(
+                                                            YouTubeQueue(
+                                                                WatchEndpoint(videoId = song!!.id),
+                                                                song!!.toMediaMetadata(),
+                                                            ),
+                                                        )
+                                                    }
+                                                },
+                                                onLongClick = {
+                                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                                    menuState.show {
+                                                        SongMenu(
+                                                            originalSong = song!!,
+                                                            navController = navController,
+                                                            onDismiss = menuState::dismiss,
+                                                        )
+                                                    }
+                                                },
+                                            ),
                                 )
                             }
                         }
                     }
                 }
-
-
 
                 if (youtubePlaylists?.isNotEmpty() == true) {
                     NavigationTitle(
@@ -361,9 +349,9 @@ fun HomeScreen(
                             state = listenAgainLazyGridState,
                             rows = GridCells.Fixed(if (keepListening!!.size > 6) 2 else 1),
                             modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .height(GridThumbnailHeight * if (keepListening!!.size > 6) 2.4f else 1.2f),
+                                Modifier
+                                    .fillMaxWidth()
+                                    .height(GridThumbnailHeight * if (keepListening!!.size > 6) 2.4f else 1.2f),
                         ) {
                             keepListening?.forEach {
                                 when (it) {
@@ -638,8 +626,6 @@ fun HomeScreen(
                     }
                 }
 
-
-
                 home?.forEach { homePlaylists ->
                     if (homePlaylists.playlists.isNotEmpty()) {
                         homePlaylists.let { playlists ->
@@ -659,7 +645,7 @@ fun HomeScreen(
                                 ) { playlist ->
                                     playlist.author ?: run {
                                         playlist.author =
-                                            Artist(name = "Youtube Music", id = null)
+                                            Artist(name = "YouTube Music", id = null)
                                     }
                                     YouTubeGridItem(
                                         item = playlist,
@@ -686,8 +672,6 @@ fun HomeScreen(
                                                     },
                                                 ).animateItemPlacement(),
                                     )
-
-
                                 }
                             }
                         }
@@ -1021,7 +1005,6 @@ fun HomeScreen(
                                         coroutineScope = coroutineScope,
                                         modifier =
                                             Modifier
-
                                                 .combinedClickable(
                                                     onClick = {
                                                         navController.navigate("online_playlist/${playlist.id}")
@@ -1216,5 +1199,3 @@ fun HomeScreen(
         }
     }
 }
-
-

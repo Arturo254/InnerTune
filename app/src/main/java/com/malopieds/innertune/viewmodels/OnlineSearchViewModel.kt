@@ -1,5 +1,6 @@
 package com.malopieds.innertune.viewmodels
 
+import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
@@ -8,10 +9,15 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.malopieds.innertube.YouTube
+import com.malopieds.innertube.models.filterExplicit
 import com.malopieds.innertube.pages.SearchSummaryPage
+import com.malopieds.innertune.constants.HideExplicitKey
 import com.malopieds.innertune.models.ItemsPage
+import com.malopieds.innertune.utils.dataStore
+import com.malopieds.innertune.utils.get
 import com.malopieds.innertune.utils.reportException
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -20,6 +26,7 @@ import javax.inject.Inject
 class OnlineSearchViewModel
     @Inject
     constructor(
+        @ApplicationContext val context: Context,
         savedStateHandle: SavedStateHandle,
     ) : ViewModel() {
         val query = savedStateHandle.get<String>("query")!!
@@ -35,7 +42,13 @@ class OnlineSearchViewModel
                             YouTube
                                 .searchSummary(query)
                                 .onSuccess {
-                                    summaryPage = it
+                                    summaryPage =
+                                        it.filterExplicit(
+                                            context.dataStore.get(
+                                                HideExplicitKey,
+                                                false,
+                                            ),
+                                        )
                                 }.onFailure {
                                     reportException(it)
                                 }
@@ -45,7 +58,13 @@ class OnlineSearchViewModel
                             YouTube
                                 .search(query, filter)
                                 .onSuccess { result ->
-                                    viewStateMap[filter.value] = ItemsPage(result.items.distinctBy { it.id }, result.continuation)
+                                    viewStateMap[filter.value] =
+                                        ItemsPage(
+                                            result.items
+                                                .distinctBy { it.id }
+                                                .filterExplicit(context.dataStore.get(HideExplicitKey, false)),
+                                            result.continuation,
+                                        )
                                 }.onFailure {
                                     reportException(it)
                                 }

@@ -19,6 +19,7 @@ import com.malopieds.innertube.models.YouTubeClient.Companion.WEB
 import com.malopieds.innertube.models.YouTubeClient.Companion.WEB_REMIX
 import com.malopieds.innertube.models.YouTubeLocale
 import com.malopieds.innertube.models.getContinuation
+import com.malopieds.innertube.models.oddElements
 import com.malopieds.innertube.models.response.AccountMenuResponse
 import com.malopieds.innertube.models.response.BrowseResponse
 import com.malopieds.innertube.models.response.GetQueueResponse
@@ -271,10 +272,14 @@ object YouTube {
                                 ?.musicResponsiveHeaderRenderer
                                 ?.straplineTextOne
                                 ?.runs
+                                ?.oddElements()
                                 ?.map {
                                     Artist(
                                         name = it.text,
-                                        id = it.navigationEndpoint?.browseEndpoint?.browseId,
+                                        id =
+                                            it.navigationEndpoint
+                                                ?.browseEndpoint
+                                                ?.browseId,
                                     )
                                 }!!,
                         year =

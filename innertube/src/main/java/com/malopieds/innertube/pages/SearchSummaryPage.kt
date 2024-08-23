@@ -13,6 +13,7 @@ import com.malopieds.innertube.models.PlaylistItem
 import com.malopieds.innertube.models.SongItem
 import com.malopieds.innertube.models.YTItem
 import com.malopieds.innertube.models.clean
+import com.malopieds.innertube.models.filterExplicit
 import com.malopieds.innertube.models.oddElements
 import com.malopieds.innertube.models.splitBySeparator
 import com.malopieds.innertube.utils.parseTime
@@ -25,6 +26,23 @@ data class SearchSummary(
 data class SearchSummaryPage(
     val summaries: List<SearchSummary>,
 ) {
+    fun filterExplicit(enabled: Boolean) =
+        if (enabled) {
+            SearchSummaryPage(
+                summaries.mapNotNull { s ->
+                    SearchSummary(
+                        title = s.title,
+                        items =
+                            s.items.filterExplicit().ifEmpty {
+                                return@mapNotNull null
+                            },
+                    )
+                },
+            )
+        } else {
+            this
+        }
+
     companion object {
         fun fromMusicCardShelfRenderer(renderer: MusicCardShelfRenderer): YTItem? {
             val subtitle = renderer.subtitle.runs?.splitBySeparator()

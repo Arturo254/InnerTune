@@ -11,22 +11,23 @@ plugins {
     alias(libs.plugins.compose.compiler)
 }
 
-
 android {
     namespace = "com.malopieds.innertune"
     compileSdk = 34
     defaultConfig {
         applicationId = "com.Arturo254.opentune"
         minSdk = 26
+        //noinspection OldTargetApi
         targetSdk = 34
         versionCode = 25
-        versionName = "0.9.1"
+        versionName = "0.9.3"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
+            isCrunchPngs = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
         debug {
@@ -108,7 +109,6 @@ dependencies {
     implementation(libs.palette)
     implementation(projects.materialColorUtilities)
 
-    // custom libraries
     implementation(libs.accompanist.swiperefresh)
 
     implementation(libs.coil)
@@ -121,7 +121,6 @@ dependencies {
     implementation(libs.squigglyslider)
 
     implementation(libs.room.runtime)
-    annotationProcessor(libs.room.compiler)
     ksp(libs.room.compiler)
     implementation(libs.room.ktx)
 
@@ -130,15 +129,13 @@ dependencies {
     implementation(libs.hilt)
     kapt(libs.hilt.compiler)
 
-    implementation(libs.room.runtime)
-    ksp(libs.room.compiler)
-    implementation(libs.room.ktx)
-
-
     implementation(projects.innertube)
     implementation(projects.kugou)
     implementation(projects.lrclib)
-// custom libraries (end)
+    implementation(projects.kizzy)
+
+    implementation(libs.ktor.client.core)
+
     coreLibraryDesugaring(libs.desugaring)
 
     implementation(libs.timber)

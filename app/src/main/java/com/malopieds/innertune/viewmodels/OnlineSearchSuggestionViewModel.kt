@@ -1,12 +1,18 @@
 package com.malopieds.innertune.viewmodels
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.malopieds.innertube.YouTube
 import com.malopieds.innertube.models.YTItem
+import com.malopieds.innertube.models.filterExplicit
+import com.malopieds.innertune.constants.HideExplicitKey
 import com.malopieds.innertune.db.MusicDatabase
 import com.malopieds.innertune.db.entities.SearchHistory
+import com.malopieds.innertune.utils.dataStore
+import com.malopieds.innertune.utils.get
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -20,6 +26,7 @@ import javax.inject.Inject
 class OnlineSearchSuggestionViewModel
     @Inject
     constructor(
+        @ApplicationContext val context: Context,
         database: MusicDatabase,
     ) : ViewModel() {
         val query = MutableStateFlow("")
@@ -50,7 +57,15 @@ class OnlineSearchSuggestionViewModel
                                                 ?.filter { query ->
                                                     history.none { it.query == query }
                                                 }.orEmpty(),
-                                        items = result?.recommendedItems.orEmpty(),
+                                        items =
+                                            result
+                                                ?.recommendedItems
+                                                ?.filterExplicit(
+                                                    context.dataStore.get(
+                                                        HideExplicitKey,
+                                                        false,
+                                                    ),
+                                                ).orEmpty(),
                                     )
                                 }
                         }

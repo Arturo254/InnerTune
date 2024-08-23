@@ -16,7 +16,9 @@ import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.palette.graphics.Palette
-import com.google.material.color.scheme.Scheme
+import com.google.material.color.dynamiccolor.DynamicScheme
+import com.google.material.color.hct.Hct
+import com.google.material.color.scheme.SchemeTonalSpot
 import com.google.material.color.score.Score
 
 val DefaultThemeColor = Color(0xFF4285F4)
@@ -38,11 +40,9 @@ fun InnerTuneTheme(
                     dynamicLightColorScheme(context)
                 }
             } else {
-                if (darkTheme) {
-                    Scheme.dark(themeColor.toArgb()).toColorScheme().pureBlack(pureBlack)
-                } else {
-                    Scheme.light(themeColor.toArgb()).toColorScheme()
-                }
+                SchemeTonalSpot(Hct.fromInt(themeColor.toArgb()), darkTheme, 0.0)
+                    .toColorScheme()
+                    .pureBlack(darkTheme && pureBlack)
             }
         }
 
@@ -66,7 +66,7 @@ fun Bitmap.extractThemeColor(): Color {
 }
 
 // from OuterTune
-fun Bitmap.extractGradientColors(): List<Color> {
+fun Bitmap.extractGradientColors(darkTheme: Boolean): List<Color> {
     val extractedColors =
         Palette
             .from(this)
@@ -76,10 +76,18 @@ fun Bitmap.extractGradientColors(): List<Color> {
             .associate { it.rgb to it.population }
 
     val orderedColors =
-        Score
-            .order(extractedColors)
-            .take(2)
-            .sortedByDescending { Color(it).luminance() }
+        if (darkTheme) {
+            Score
+                .order(extractedColors)
+                .sortedBy { Color(it).luminance() }
+                .take(2)
+                .reversed()
+        } else {
+            Score
+                .order(extractedColors)
+                .sortedByDescending { Color(it).luminance() }
+                .take(2)
+        }
 
     val res = mutableListOf<Color>()
     return if (orderedColors.size >= 2) {
@@ -92,7 +100,7 @@ fun Bitmap.extractGradientColors(): List<Color> {
     }
 }
 
-fun Scheme.toColorScheme() =
+fun DynamicScheme.toColorScheme() =
     ColorScheme(
         primary = Color(primary),
         onPrimary = Color(onPrimary),
@@ -123,6 +131,13 @@ fun Scheme.toColorScheme() =
         outline = Color(outline),
         outlineVariant = Color(outlineVariant),
         scrim = Color(scrim),
+        surfaceBright = Color(surfaceBright),
+        surfaceDim = Color(surfaceDim),
+        surfaceContainer = Color(surfaceContainer),
+        surfaceContainerHigh = Color(surfaceContainerHigh),
+        surfaceContainerHighest = Color(surfaceContainerHighest),
+        surfaceContainerLow = Color(surfaceContainerLow),
+        surfaceContainerLowest = Color(surfaceContainerLowest),
     )
 
 fun ColorScheme.pureBlack(apply: Boolean) =

@@ -5,6 +5,12 @@ import android.text.format.Formatter
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -30,12 +36,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.HorizontalDivider
@@ -66,6 +75,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -75,8 +86,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import androidx.media3.common.Player
 import androidx.media3.common.Timeline
@@ -449,16 +463,47 @@ fun Queue(
                 }
 
                 if (automix.isNotEmpty()) {
+
                     item {
                         HorizontalDivider(
                             modifier = Modifier.padding(vertical = 8.dp, horizontal = 4.dp),
                         )
 
-                        Text(
-                            text = stringResource(R.string.similar_content),
-                            modifier = Modifier.padding(start = 16.dp),
-                        )
+                        ItemWithGlowingIcon()
+
+//                        Row(
+//                            verticalAlignment = Alignment.CenterVertically,
+//                            modifier = Modifier.padding(start = 16.dp)
+//                        ) {
+//                            Spacer(modifier = Modifier.width(8.dp))
+//                            Icon(
+//                                painter = painterResource(R.drawable.ia_icon),
+//                                contentDescription = null,
+//                                modifier = Modifier
+//                                    .size(32.dp)
+//                                    .shadow(8.dp, shape = CircleShape)
+//                                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f), CircleShape)
+//                                    .padding(4.dp),
+//                                tint = MaterialTheme.colorScheme.primary
+//                            )
+//
+//
+//                            Spacer(modifier = Modifier.width(8.dp))
+//
+//                            Text(
+//                                text = stringResource(R.string.similar_content),
+//                                fontSize = 16.sp,
+//                                style = MaterialTheme.typography.bodyLarge,
+//                                fontWeight = FontWeight.Medium,
+//                                fontFamily = FontFamily.SansSerif,
+//                                color = MaterialTheme.colorScheme.onSurface
+//                            )
+//                            Spacer(modifier = Modifier.width(16.dp))
+//                        }
+
+
                     }
+
 
                     itemsIndexed(
                         items = automix,
@@ -754,3 +799,59 @@ fun Queue(
         )
     }
 }
+
+
+@Composable
+fun ItemWithGlowingIcon() {
+    val infiniteTransition = rememberInfiniteTransition(label = "")
+    val scale by infiniteTransition.animateFloat(
+        initialValue = 1f,
+        targetValue = 1.15f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(2000, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ), label = ""
+    )
+
+    val alpha by infiniteTransition.animateFloat(
+        initialValue = 0.3f,
+        targetValue = 0.7f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(2000, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ), label = ""
+    )
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(start = 16.dp)
+        ) {
+            Spacer(modifier = Modifier.width(8.dp))
+            Box {
+                // Glow effect
+                Icon(
+                    painter = painterResource(R.drawable.ia_icon),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier
+                        .size(30.dp)
+                        .scale(scale)
+                        .alpha(alpha)
+
+                )
+            }
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            Text(
+                text = stringResource(R.string.similar_content),
+                fontSize = 16.sp,
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Medium,
+                fontFamily = FontFamily.SansSerif,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+        }
+    }
+

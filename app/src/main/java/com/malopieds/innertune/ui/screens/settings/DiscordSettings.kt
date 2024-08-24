@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,6 +22,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -44,6 +46,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -116,27 +119,31 @@ fun DiscordSettings(
         AnimatedVisibility(
             visible = !infoDismissed,
         ) {
-            Card(
-                colors =
-                    CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                    ),
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.info),
-                    contentDescription = null,
-                    modifier = Modifier.padding(16.dp),
-                )
+            ElevatedCard(
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 6.dp
+                ),
+                modifier = Modifier
+//                .clip(RoundedCornerShape(28.dp))
+                    .fillMaxWidth()
+                    .align(Alignment.CenterHorizontally)
+                    .padding(horizontal = 16.dp),
 
-                Text(
-                    text = stringResource(R.string.discord_information),
-                    textAlign = TextAlign.Start,
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                )
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                ),
+                shape = RoundedCornerShape(18.dp),
+
+            ) {
+                Spacer(Modifier.height(3.dp))
+                    Text(
+                        text = stringResource(R.string.discord_information) ,
+                        style = MaterialTheme.typography.bodyLarge.copy(
+                            fontSize = 17.sp,
+                            fontFamily = FontFamily.Monospace
+                        ),
+                        color = MaterialTheme.colorScheme.secondary,
+                    )
 
                 TextButton(
                     onClick = {
@@ -209,6 +216,8 @@ fun DiscordSettings(
 
     TopAppBar(
         title = { Text(stringResource(R.string.discord_integration)) },
+        modifier = Modifier
+            .clip(RoundedCornerShape(16.dp)),
         navigationIcon = {
             IconButton(
                 onClick = navController::navigateUp,
@@ -242,7 +251,7 @@ fun RichPresence(song: Song?) {
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
-                text = "Listening to InnerTune",
+                text = "Listening to OpenTune",
                 style = MaterialTheme.typography.labelLarge,
                 textAlign = TextAlign.Start,
                 fontWeight = FontWeight.ExtraBold,
@@ -344,12 +353,12 @@ fun RichPresence(song: Song?) {
 
             OutlinedButton(
                 onClick = {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Malopieds/InnerTune"))
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Arturo254/InnerTune"))
                     context.startActivity(intent)
                 },
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Text("Visit InnerTune")
+                Text("Visit OpenTune")
             }
         }
     }

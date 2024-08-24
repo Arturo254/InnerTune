@@ -138,6 +138,14 @@ import kotlin.time.Duration.Companion.days
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+
+
+
+
+
+
+
     @Inject
     lateinit var database: MusicDatabase
 

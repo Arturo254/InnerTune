@@ -198,7 +198,7 @@ class MusicService :
         setMediaNotificationProvider(
             DefaultMediaNotificationProvider(this, { NOTIFICATION_ID }, CHANNEL_ID, R.string.music_player)
                 .apply {
-                    setSmallIcon(R.drawable.small_icon)
+                    setSmallIcon(R.drawable.opentune_monochrome)
                 },
         )
         player =

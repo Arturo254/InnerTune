@@ -435,6 +435,7 @@ fun BottomSheetPlayer(
                     thumbnailContent = {
                         Box(
                             contentAlignment = Alignment.Center,
+
                             modifier = Modifier.size(ListThumbnailSize),
                         ) {
                             AsyncImage(
@@ -1049,10 +1050,13 @@ fun BottomSheetPlayer(
                 modifier = Modifier
                     .fillMaxSize()
                     .blur(200.dp)
+                    .alpha(0.8f) // agrega un valor de alpha para controlar la opacidad
             )
 
         }
 
+
+//
         when (LocalConfiguration.current.orientation) {
             Configuration.ORIENTATION_LANDSCAPE -> {
                 Row(

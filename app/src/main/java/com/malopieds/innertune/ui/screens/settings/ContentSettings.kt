@@ -204,11 +204,11 @@ fun ContentSettings(
             onValueSelected = onQuickPicksChange,
         )
 
-        SliderPreference(
-            title = { Text(stringResource(R.string.history_duration)) },
-            value = historyDuration,
-            onValueChange = onHistoryDurationChange,
-        )
+//        SliderPreference(
+//            title = { Text(stringResource(R.string.history_duration)) },
+//            value = historyDuration,
+//            onValueChange = onHistoryDurationChange,
+//        )
     }
 
     TopAppBar(

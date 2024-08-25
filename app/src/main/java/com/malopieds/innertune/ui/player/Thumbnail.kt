@@ -23,6 +23,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
@@ -114,7 +115,13 @@ fun Thumbnail(
                             .offset { IntOffset(offsetX.roundToInt(), 0) }
                             .fillMaxWidth()
                             .aspectRatio(1f)
+
                             .clip(RoundedCornerShape(ThumbnailCornerRadius * 2))
+//                            .shadow(
+//                                elevation = 20.dp,
+//                                shape = RoundedCornerShape(ThumbnailCornerRadius * 2),
+//                                clip = false
+//                            )
                             .pointerInput(Unit) {
                                 detectTapGestures(
                                     onTap = {

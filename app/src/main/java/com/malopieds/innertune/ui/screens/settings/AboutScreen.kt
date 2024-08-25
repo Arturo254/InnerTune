@@ -71,11 +71,11 @@ fun UserCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
-            .height(120.dp)
-            .shadow(8.dp, RoundedCornerShape(16.dp))
+            .padding(horizontal = 24.dp, vertical = 16.dp)
+            .height(140.dp)
+            .shadow(8.dp, RoundedCornerShape(20.dp))
             .clickable(onClick = onClick),
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
         )
@@ -86,23 +86,24 @@ fun UserCard(
             Row(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(16.dp),
+                    .padding(24.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Image(
                     painter = rememberAsyncImagePainter(model = imageUrl),
                     contentDescription = null,
                     modifier = Modifier
-                        .size(80.dp)
+                        .size(60.dp)
                         .clip(CircleShape)
                         .background(
                             Brush.radialGradient(
                                 colors = listOf(
-                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
-                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
+                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.05f)
                                 )
                             )
-                        ),
+                        )
+                        .border(1.dp, MaterialTheme.colorScheme.primary, CircleShape),
                     contentScale = ContentScale.Crop
                 )
 
@@ -113,13 +114,13 @@ fun UserCard(
                         text = name,
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = role,
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
                     )
                 }
             }
@@ -128,17 +129,16 @@ fun UserCard(
             Box(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
-                    .size(60.dp)
-                    .offset(x = 30.dp, y = (-30).dp)
+                    .size(40.dp)
+                    .offset(x = 20.dp, y = (-20).dp)
                     .background(
-                        MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.2f),
+                        MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.1f),
                         CircleShape
                     )
             )
         }
     }
 }
-
 
 
 @OptIn(ExperimentalMaterial3Api::class)

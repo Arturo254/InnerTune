@@ -2,6 +2,7 @@
 
 package com.malopieds.innertune.ui.component
 
+import android.content.Context
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandIn
@@ -39,6 +40,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -59,7 +61,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.util.fastForEachIndexed
 import androidx.compose.ui.zIndex
 import androidx.core.graphics.drawable.toBitmapOrNull
 import androidx.media3.exoplayer.offline.Download
@@ -84,6 +85,7 @@ import com.malopieds.innertune.constants.ListItemHeight
 import com.malopieds.innertune.constants.ListThumbnailSize
 import com.malopieds.innertune.constants.SmallGridThumbnailHeight
 import com.malopieds.innertune.constants.ThumbnailCornerRadius
+import com.malopieds.innertune.constants.ThumbnailCornerRadiusVariant
 import com.malopieds.innertune.db.entities.Album
 import com.malopieds.innertune.db.entities.Artist
 import com.malopieds.innertune.db.entities.Playlist
@@ -91,6 +93,7 @@ import com.malopieds.innertune.db.entities.Song
 import com.malopieds.innertune.extensions.toMediaItem
 import com.malopieds.innertune.models.MediaMetadata
 import com.malopieds.innertune.playback.queues.ListQueue
+import com.malopieds.innertune.ui.screens.playlist.loadImageUri
 import com.malopieds.innertune.ui.theme.extractThemeColor
 import com.malopieds.innertune.utils.joinByBullet
 import com.malopieds.innertune.utils.makeTimeString
@@ -628,7 +631,7 @@ fun AlbumListItem(
         }
 
         var downloadState by remember {
-            mutableStateOf(Download.STATE_STOPPED)
+            mutableIntStateOf(Download.STATE_STOPPED)
         }
 
         LaunchedEffect(songs) {
@@ -734,7 +737,7 @@ fun AlbumListItem(
                     .size(ListThumbnailSize)
                     .background(
                         color = Color.Black.copy(alpha = 0.4f),
-                        shape = RoundedCornerShape(ThumbnailCornerRadius),
+                        shape = RoundedCornerShape(ThumbnailCornerRadiusVariant),
                     ),
         )
     },
@@ -761,7 +764,7 @@ fun AlbumGridItem(
         }
 
         var downloadState by remember {
-            mutableStateOf(Download.STATE_STOPPED)
+            mutableIntStateOf(Download.STATE_STOPPED)
         }
 
         LaunchedEffect(songs) {
@@ -909,7 +912,7 @@ fun AlbumGridItem(
             }
         }
     },
-    thumbnailShape = RoundedCornerShape(ThumbnailCornerRadius),
+    thumbnailShape = RoundedCornerShape(ThumbnailCornerRadiusVariant),
     fillMaxWidth = fillMaxWidth,
     modifier = modifier,
 )
@@ -940,12 +943,12 @@ fun AlbumSmallGridItem(
                 Box(
                     contentAlignment = Alignment.Center,
                     modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .background(
-                            color = Color.Black.copy(alpha = 0.4f),
-                            shape = RoundedCornerShape(ThumbnailCornerRadius),
-                        ),
+                        Modifier
+                            .fillMaxSize()
+                            .background(
+                                color = Color.Black.copy(alpha = 0.4f),
+                                shape = RoundedCornerShape(ThumbnailCornerRadius),
+                            ),
                 ) {
                     if (isPlaying) {
                         PlayingIndicator(
@@ -962,6 +965,7 @@ fun AlbumSmallGridItem(
                 }
             }
         },
+
         thumbnailShape = RoundedCornerShape(ThumbnailCornerRadius),
         modifier = modifier,
     )
@@ -973,70 +977,85 @@ fun PlaylistListItem(
     modifier: Modifier = Modifier,
     trailingContent: @Composable RowScope.() -> Unit = {},
     autoPlaylist: Boolean = false,
+    context: Context // Aggiungi questo parametro per accedere al contesto
 ) = ListItem(
     title = playlist.playlist.name,
-    subtitle = if (autoPlaylist) "" else pluralStringResource(R.plurals.n_song, playlist.songCount, playlist.songCount),
+    subtitle = {
+        if (!autoPlaylist) {
+            Text(
+                text = pluralStringResource(R.plurals.n_song, playlist.songCount, playlist.songCount),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+    },
     thumbnailContent = {
-        val painter =
-            when (playlist.playlist.name) {
-                stringResource(R.string.liked) -> R.drawable.favorite
-                stringResource(R.string.offline) -> R.drawable.offline
+
+        val customImageUri = loadImageUri(context, playlist.id)
+
+        Box(
+            modifier = Modifier
+                .size(ListThumbnailSize)
+                .clip(RoundedCornerShape(12.dp))
+                .background(MaterialTheme.colorScheme.surfaceVariant),
+            contentAlignment = Alignment.Center
+        ) {
+            when {
+                customImageUri != null -> {
+                    AsyncImage(
+                        model = customImageUri,
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
+                playlist.thumbnails.isEmpty() -> {
+                    val painter = when (playlist.playlist.name) {
+                        stringResource(R.string.liked) -> R.drawable.thumb_up
+                        stringResource(R.string.offline) -> R.drawable.offline
+                        else -> if (autoPlaylist) R.drawable.trending_up else R.drawable.queue_music
+                    }
+                    Icon(
+                        painter = painterResource(painter),
+                        contentDescription = null,
+                        modifier = Modifier.size(24.dp),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+                playlist.thumbnails.size == 1 -> {
+                    AsyncImage(
+                        model = playlist.thumbnails[0],
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
                 else -> {
-                    if (autoPlaylist) {
-                        R.drawable.trending_up
-                    } else {
-                        R.drawable.queue_music
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        listOf(
+                            Alignment.TopStart,
+                            Alignment.TopEnd,
+                            Alignment.BottomStart,
+                            Alignment.BottomEnd,
+                        ).forEachIndexed { index, alignment ->
+                            AsyncImage(
+                                model = playlist.thumbnails.getOrNull(index),
+                                contentDescription = null,
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier
+                                    .align(alignment)
+                                    .size(ListThumbnailSize / 2)
+                            )
+                        }
                     }
                 }
             }
-        when (playlist.thumbnails.size) {
-            0 ->
-                Icon(
-                    painter = painterResource(painter),
-                    contentDescription = null,
-                    modifier = Modifier.size(ListThumbnailSize),
-                )
-
-            1 ->
-                AsyncImage(
-                    model = playlist.thumbnails[0],
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier =
-                        Modifier
-                            .size(ListThumbnailSize)
-                            .clip(RoundedCornerShape(ThumbnailCornerRadius)),
-                )
-
-            else ->
-                Box(
-                    modifier =
-                        Modifier
-                            .size(ListThumbnailSize)
-                            .clip(RoundedCornerShape(12.dp))
-                ) {
-                    listOf(
-                        Alignment.TopStart,
-                        Alignment.TopEnd,
-                        Alignment.BottomStart,
-                        Alignment.BottomEnd,
-                    ).fastForEachIndexed { index, alignment ->
-                        AsyncImage(
-                            model = playlist.thumbnails.getOrNull(index),
-                            contentDescription = null,
-                            contentScale = ContentScale.Crop,
-                            modifier =
-                                Modifier
-                                    .align(alignment)
-                                    .size(ListThumbnailSize / 2),
-                        )
-                    }
-                }
         }
     },
     trailingContent = trailingContent,
-    modifier = modifier,
+    modifier = modifier
 )
+
 
 @Composable
 fun PlaylistGridItem(
@@ -1045,85 +1064,82 @@ fun PlaylistGridItem(
     badges: @Composable RowScope.() -> Unit = { },
     fillMaxWidth: Boolean = false,
     autoPlaylist: Boolean = false,
+    context: Context?
 ) = GridItem(
     title = playlist.playlist.name,
     subtitle = if (autoPlaylist) "" else pluralStringResource(R.plurals.n_song, playlist.songCount, playlist.songCount),
     badges = badges,
     thumbnailContent = {
-        val painter =
-            when (playlist.playlist.name) {
-                stringResource(R.string.liked) -> R.drawable.thumb_up
-                stringResource(R.string.offline) -> R.drawable.offline
+        val width = maxWidth
+        val Libcarditem = 25.dp
+
+        val imageUri by remember { mutableStateOf(context?.let { loadImageUri(it, playlist.id) }) }
+
+        Box(
+            modifier = Modifier
+                .size(width)
+                .clip(RoundedCornerShape(Libcarditem))
+                .background(MaterialTheme.colorScheme.secondaryContainer)
+        ) {
+            when {
+                imageUri != null -> {
+                    AsyncImage(
+                        model = imageUri,
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
+                playlist.thumbnails.isEmpty() -> {
+                    val iconResId = when (playlist.playlist.name) {
+                        stringResource(R.string.liked) -> R.drawable.thumb_up
+                        stringResource(R.string.offline) -> R.drawable.offline
+                        else -> if (autoPlaylist) R.drawable.trending_up else R.drawable.queue_music
+                    }
+                    Icon(
+                        painter = painterResource(iconResId),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier
+                            .size(width * 0.5f)
+                            .align(Alignment.Center)
+                    )
+                }
+                playlist.thumbnails.size == 1 -> {
+                    AsyncImage(
+                        model = playlist.thumbnails[0],
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
                 else -> {
-                    if (autoPlaylist) {
-                        R.drawable.trending_up
-                    } else {
-                        R.drawable.queue_music
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        listOf(
+                            Alignment.TopStart,
+                            Alignment.TopEnd,
+                            Alignment.BottomStart,
+                            Alignment.BottomEnd,
+                        ).forEachIndexed { index, alignment ->
+                            AsyncImage(
+                                model = playlist.thumbnails.getOrNull(index),
+                                contentDescription = null,
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier
+                                    .align(alignment)
+                                    .size(width / 2)
+                            )
+                        }
                     }
                 }
             }
-        val width = maxWidth
-        val Libcarditem = 25.dp
-        when (playlist.thumbnails.size) {
-            0 ->
-                Box(
-                    modifier = Modifier
-                        .size(width)
-                        .clip(RoundedCornerShape(Libcarditem))
-                        .background(MaterialTheme.colorScheme.secondaryContainer)
-                ) {
-                    Icon(
-                        painter = painterResource(painter),
-                        contentDescription = null,
-                        tint = LocalContentColor.current.copy(alpha = 0.8f),
-                        modifier =
-                            Modifier
-                                .size(width / 2)
-                                .align(Alignment.Center),
-                    )
-                }
-
-            1 ->
-                AsyncImage(
-                    model = playlist.thumbnails[0],
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier =
-                        Modifier
-                            .size(width)
-                            .clip(RoundedCornerShape(ThumbnailCornerRadius)),
-                )
-
-            else ->
-                Box(
-                    modifier =
-                        Modifier
-                            .size(width)
-                            .clip(RoundedCornerShape(ThumbnailCornerRadius)),
-                ) {
-                    listOf(
-                        Alignment.TopStart,
-                        Alignment.TopEnd,
-                        Alignment.BottomStart,
-                        Alignment.BottomEnd,
-                    ).fastForEachIndexed { index, alignment ->
-                        AsyncImage(
-                            model = playlist.thumbnails.getOrNull(index),
-                            contentDescription = null,
-                            contentScale = ContentScale.Crop,
-                            modifier =
-                                Modifier
-                                    .align(alignment)
-                                    .size(width / 2),
-                        )
-                    }
-                }
         }
     },
     thumbnailShape = RoundedCornerShape(ThumbnailCornerRadius),
     fillMaxWidth = fillMaxWidth,
-    modifier = modifier,
+    modifier = modifier
 )
+
 
 @Composable
 fun MediaMetadataListItem(
@@ -1141,49 +1157,27 @@ fun MediaMetadataListItem(
             makeTimeString(mediaMetadata.duration * 1000L),
         ),
     thumbnailContent = {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier.size(ListThumbnailSize),
-        ) {
-            if (isSelected) {
-                Box(
-                    modifier =
-                        Modifier
-                            .fillMaxSize()
-                            .zIndex(1000f)
-                            .clip(RoundedCornerShape(ThumbnailCornerRadius))
-                            .background(Color.Black.copy(alpha = 0.5f)),
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.done),
-                        modifier = Modifier.align(Alignment.Center),
-                        contentDescription = null,
-                    )
-                }
-            }
 
-            AsyncImage(
-                model = mediaMetadata.thumbnailUrl,
-                contentDescription = null,
-                modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .clip(RoundedCornerShape(ThumbnailCornerRadius)),
-            )
+        AsyncImage(
+            model = mediaMetadata.thumbnailUrl,
+            contentDescription = null,
+            modifier =
+                Modifier
+                    .size(ListThumbnailSize)
+                    .clip(RoundedCornerShape(ThumbnailCornerRadius)),
+        )
 
-            PlayingIndicatorBox(
-                isActive = isActive,
-                playWhenReady = isPlaying,
-                color = Color.White,
-                modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .background(
-                            color = Color.Black.copy(alpha = 0.4f),
-                            shape = RoundedCornerShape(ThumbnailCornerRadius),
-                        ),
-            )
-        }
+        PlayingIndicatorBox(
+            isActive = isActive,
+            playWhenReady = isPlaying,
+            modifier =
+                Modifier
+                    .size(ListThumbnailSize)
+                    .background(
+                        color = Color.Black.copy(alpha = 0.4f),
+                        shape = RoundedCornerShape(ThumbnailCornerRadius),
+                    ),
+        )
     },
     trailingContent = trailingContent,
     modifier = modifier,
@@ -1219,16 +1213,6 @@ fun YouTubeListItem(
         if (item.explicit) {
             Icon(
                 painter = painterResource(R.drawable.explicit),
-                contentDescription = null,
-                modifier =
-                    Modifier
-                        .size(18.dp)
-                        .padding(end = 2.dp),
-            )
-        }
-        if (item is SongItem && song?.song?.inLibrary != null) {
-            Icon(
-                painter = painterResource(R.drawable.library_add_check),
                 contentDescription = null,
                 modifier =
                     Modifier

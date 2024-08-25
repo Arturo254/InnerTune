@@ -228,6 +228,7 @@ fun PlaylistMenu(
                 modifier = Modifier.padding(end = 12.dp),
             )
         },
+        context = LocalContext.current
     )
 
     HorizontalDivider()

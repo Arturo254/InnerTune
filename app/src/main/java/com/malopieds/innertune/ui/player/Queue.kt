@@ -45,6 +45,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.HorizontalDivider
@@ -75,6 +76,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
@@ -572,6 +574,7 @@ fun Queue(
         Column(
             modifier =
                 Modifier
+                    .clip(RoundedCornerShape(19.dp))
                     .background(
                         MaterialTheme.colorScheme
                             .surfaceContainer
@@ -725,6 +728,7 @@ fun Queue(
         Box(
             modifier =
                 Modifier
+                    .clip(RoundedCornerShape(19.dp))
                     .background(MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.8f))
                     .fillMaxWidth()
                     .height(
@@ -801,6 +805,7 @@ fun Queue(
 }
 
 
+@SuppressLint("SuspiciousIndentation")
 @Composable
 fun ItemWithGlowingIcon() {
     val infiniteTransition = rememberInfiniteTransition(label = "")

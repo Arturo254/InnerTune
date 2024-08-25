@@ -203,7 +203,7 @@ fun BottomSheetPlayer(
     }
 
     LaunchedEffect(mediaMetadata, playerBackground) {
-        if (useBlackBackground) {
+        if (useBlackBackground && playerBackground != PlayerBackgroundStyle.BLUR) {
             gradientColors = listOf(Color.Black, Color.Black)
         } else if (playerBackground == PlayerBackgroundStyle.GRADIENT) {
             withContext(Dispatchers.IO) {
@@ -218,9 +218,9 @@ fun BottomSheetPlayer(
                                         .build(),
                                 ).drawable as? BitmapDrawable
                             )?.bitmap?.extractGradientColors(
-                        darkTheme =
+                            darkTheme =
                             darkTheme == DarkMode.ON || (darkTheme == DarkMode.AUTO && isSystemInDarkTheme),
-                    )
+                        )
 
                 result?.let {
                     gradientColors = it
@@ -236,7 +236,7 @@ fun BottomSheetPlayer(
     val onBackgroundColor =
         when (playerBackground) {
             PlayerBackgroundStyle.DEFAULT -> MaterialTheme.colorScheme.onBackground
-            else -> {
+            PlayerBackgroundStyle.GRADIENT -> {
                 val whiteContrast =
                     if (gradientColors.size >= 2) {
                         ColorUtils.calculateContrast(
@@ -269,6 +269,7 @@ fun BottomSheetPlayer(
                     MaterialTheme.colorScheme.onSurface
                 }
             }
+            PlayerBackgroundStyle.BLUR -> MaterialTheme.colorScheme.onBackground
         }
 
 
@@ -1050,7 +1051,7 @@ fun BottomSheetPlayer(
                 modifier = Modifier
                     .fillMaxSize()
                     .blur(200.dp)
-                    .alpha(0.8f) // agrega un valor de alpha para controlar la opacidad
+                    .alpha(0.8f)
             )
 
         }

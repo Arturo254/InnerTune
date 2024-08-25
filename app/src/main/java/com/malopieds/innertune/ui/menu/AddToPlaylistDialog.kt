@@ -16,6 +16,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.malopieds.innertune.LocalDatabase
@@ -64,9 +65,9 @@ fun AddToPlaylistDialog(
                         )
                     },
                     modifier =
-                        Modifier.clickable {
-                            showCreatePlaylistDialog = true
-                        },
+                    Modifier.clickable {
+                        showCreatePlaylistDialog = true
+                    },
                 )
             }
 
@@ -74,10 +75,11 @@ fun AddToPlaylistDialog(
                 PlaylistListItem(
                     playlist = playlist,
                     modifier =
-                        Modifier.clickable {
-                            onAdd(playlist)
-                            onDismiss()
-                        },
+                    Modifier.clickable {
+                        onAdd(playlist)
+                        onDismiss()
+                    },
+                    context = LocalContext.current
                 )
             }
         }

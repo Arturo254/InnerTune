@@ -23,7 +23,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -52,6 +54,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Popup
 import androidx.navigation.NavController
 import com.malopieds.innertube.utils.parseCookieString
 import com.malopieds.innertune.BuildConfig
@@ -81,6 +84,7 @@ fun getAppVersion(context: Context): String {
 fun VersionCard(uriHandler: UriHandler) {
     val context = LocalContext.current
     val appVersion = remember { getAppVersion(context) }
+
 
     Spacer(Modifier.height(25.dp))
     ElevatedCard(
@@ -211,6 +215,7 @@ fun SettingsScreen(
 
 
     val uriHandler = LocalUriHandler.current
+
 
 //    var isBetaFunEnabled by remember { mutableStateOf(false) }
 
@@ -385,166 +390,18 @@ fun SettingsScreen(
             onClick = { uriHandler.openUri("https://t.me/+NZXjVj6lETxkYTNh") }
         )
 
-//        PreferenceEntry(
-//            title = { Text(stringResource(R.string.betafun)) },
-//            icon = { Icon(painterResource(R.drawable.funbeta), null) },
-//
-//            trailingContent = {
-//
-//                Switch(
-//                    checked = isBetaFunEnabled,
-//                    onCheckedChange = { isBetaFunEnabled = it },
-//                    modifier = Modifier.padding(end = 8.dp)
-//                )
-//
-//            },
-//            onClick = {
-//
-//
-//            }
-//        )
-//
+        ChangelogButtonWithPopup()
+
 
 
         UpdateCard(uriHandler)
         Spacer(Modifier.height(25.dp))
-//        ElevatedCard(
-//            elevation = CardDefaults.cardElevation(
-//                defaultElevation = 6.dp
-//            ),
-//            modifier = Modifier
-//                .clip(RoundedCornerShape(38.dp))
-//                .fillMaxWidth()
-//                .height(85.dp),
-//
-//            colors = CardDefaults.cardColors(
-//                containerColor = MaterialTheme.colorScheme.surface,
-//
-//                ),
-//            onClick = { uriHandler.openUri("https://github.com/Arturo254/InnerTune/releases/latest") }
-//
-//        ) {
-//            Column(
-//                modifier = Modifier
-//                    .clip(RoundedCornerShape(38.dp))
-//                    .padding(20.dp),
-//                verticalArrangement = Arrangement.Center
-//
-//            ) {
-//
-//
-//
-//                Spacer(Modifier.height(3.dp))
-////                Text(
-//                    text = " Version : ${BuildConfig.VERSION_NAME} \n  "  ,
-////                    style = MaterialTheme.typography.bodyLarge.copy(
-////                        fontSize = 17.sp,
-////                        fontFamily = FontFamily.Monospace
-////                    ),
-////                    color = MaterialTheme.colorScheme.secondary,
-////                    modifier = Modifier.align(Alignment.CenterHorizontally),
-////
-////                    )
-//
-//            }
-//        }
-
 
 
                     VersionCard(uriHandler)
 
         Spacer(Modifier.height(25.dp))
-        ElevatedCard(
-            elevation = CardDefaults.cardElevation(
-                defaultElevation = 6.dp
-            ),
-            modifier = Modifier
-//                .clip(RoundedCornerShape(28.dp))
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-                .height(120.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
 
-
-                ),
-            shape = RoundedCornerShape(28.dp),
-
-            ) {
-            Column(
-                modifier = Modifier
-
-                    .padding(20.dp),
-                verticalArrangement = Arrangement.Center
-
-            ) {
-
-
-
-                Spacer(Modifier.height(3.dp))
-                Text(
-                    text = (stringResource(R.string.Betatext))  ,
-                    style = MaterialTheme.typography.bodyLarge.copy(
-                        fontSize = 17.sp,
-                        fontFamily = FontFamily.Monospace
-                    ),
-                    color = MaterialTheme.colorScheme.secondary,
-                    modifier = Modifier
-
-
-                )
-
-
-            }
-        }
-
-
-//        Spacer(Modifier.height(25.dp))
-//        ElevatedCard(
-//            elevation = CardDefaults.cardElevation(
-//                defaultElevation = 6.dp
-//
-//            ),
-//
-//            modifier = Modifier
-//                .clip(RoundedCornerShape(28.dp))
-//                .fillMaxWidth()
-//                .height(90.dp),
-//            colors = CardDefaults.cardColors(
-//                containerColor = MaterialTheme.colorScheme.surfaceContainer,
-//
-//
-//                ),
-//
-//
-//            ) {
-//            Column(
-//                modifier = Modifier
-//
-//                    .padding(20.dp),
-//                verticalArrangement = Arrangement.Center
-//
-//            ) {
-//
-//
-//
-//                Spacer(Modifier.height(3.dp))
-//                Text(
-//                    text = (stringResource(R.string.OpenTuneText))  ,
-//                    style = MaterialTheme.typography.bodyLarge.copy(
-//                        fontSize = 17.sp,
-//                        fontFamily = FontFamily.Monospace
-//                    ),
-//                    color = MaterialTheme.colorScheme.secondary,
-//                    modifier = Modifier
-//
-//
-//                )
-//
-//
-//            }
-//        }
-        Spacer(Modifier.height(25.dp))
 
     }
 
@@ -567,3 +424,134 @@ fun SettingsScreen(
 
     )
 }
+
+
+
+
+@Composable
+fun ChangelogButtonWithPopup() {
+    var showPopup by remember { mutableStateOf(false) }
+
+
+    PreferenceEntry(
+        title = { Text(stringResource(R.string.Changelog)) },
+        icon = { Icon(painterResource(R.drawable.schedule), null) },
+        onClick = { showPopup = true }
+    )
+
+
+    if (showPopup) {
+        Popup(
+            alignment = Alignment.Center,
+            onDismissRequest = { showPopup = false }
+        ) {
+            Box(
+                Modifier
+                    .fillMaxSize()
+                    .clickable { showPopup = false } // Cerrar popup al hacer clic fuera
+            ) {
+                Box(
+                    Modifier
+                        .align(Alignment.Center)
+                        .padding(20.dp)
+                        .background(MaterialTheme.colorScheme.surface)
+                        .clip(RoundedCornerShape(16.dp))
+                ) {
+                    Column(
+                        modifier = Modifier.padding(20.dp)
+                    ) {
+                        // Contenido del Popup
+                        ChangelogScreen()
+
+                        Spacer(Modifier.height(20.dp))
+
+                        // Botón para cerrar el popup
+                        Button(onClick = { showPopup = false }) {
+                            Text(stringResource(R.string.closepopup))
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+@Composable
+fun AutoChangelogCard(repoOwner: String, repoName: String) {
+    var changes by remember { mutableStateOf<List<String>>(emptyList()) }
+    var isLoading by remember { mutableStateOf(true) }
+    var error by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(key1 = Unit) {
+        try {
+            changes = fetchLatestChanges(repoOwner, repoName)
+            isLoading = false
+        } catch (e: Exception) {
+            error = "Error al cargar los cambios: ${e.message}"
+            isLoading = false
+        }
+    }
+
+    Spacer(Modifier.height(25.dp))
+    ElevatedCard(
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+        modifier = Modifier
+            .clip(RoundedCornerShape(28.dp))
+            .fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+        )
+    ) {
+        Column(
+            modifier = Modifier.padding(20.dp),
+            verticalArrangement = Arrangement.Top
+        ) {
+            Text(
+                stringResource(R.string.changelogs),
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.primary
+            )
+            Spacer(Modifier.height(8.dp))
+            when {
+                isLoading -> CircularProgressIndicator()
+                error != null -> Text(
+                    text = error!!,
+                    color = MaterialTheme.colorScheme.error
+                )
+                changes.isEmpty() -> Text(stringResource(R.string.no_changes))
+                else -> changes.forEach { change ->
+                    Text(
+                        text = "• $change",
+                        style = MaterialTheme.typography.bodyMedium.copy(
+                            fontSize = 14.sp,
+                            fontFamily = FontFamily.Monospace
+                        ),
+                        color = MaterialTheme.colorScheme.secondary,
+                        modifier = Modifier.padding(vertical = 2.dp)
+                    )
+                }
+            }
+        }
+    }
+}
+
+suspend fun fetchLatestChanges(owner: String, repo: String): List<String> = withContext(Dispatchers.IO) {
+    val url = URL("https://api.github.com/repos/$owner/$repo/releases/latest")
+    val connection = url.openConnection()
+    connection.setRequestProperty("Accept", "application/vnd.github.v3+json")
+
+    val response = connection.getInputStream().bufferedReader().use { it.readText() }
+    val jsonObject = JSONObject(response)
+    val body = jsonObject.getString("body")
+
+    return@withContext body.lines()
+        .filter { it.trim().startsWith("-") || it.trim().startsWith("*") }
+        .map { it.trim().removePrefix("-").removePrefix("*").trim() }
+}
+
+@Composable
+fun ChangelogScreen() {
+    AutoChangelogCard(repoOwner = "Arturo254", repoName = "InnerTune")
+}
+

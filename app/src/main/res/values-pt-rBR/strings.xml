@@ -366,4 +366,8 @@
     <string name="hide_explicit">Ocultar explícito</string>
     <string name="set_first_lyrics_provider">Definir o primeiro provedor de yrics</string>
     <string name="discord_information">"OpenTube usa a biblioteca Kizzy RPC para definir o status de sua conta do Discord. Isso envolve o uso da conexão do Discord Gateway, que pode ser considerada uma violação dos termos de serviço do Discord. No entanto, não há casos conhecidos de contas de usuários sendo suspensas por esse motivo. "</string>
+    <string name="Changelog">Registro de alterações</string>
+    <string name="no_changes">Não foram encontradas alterações recentes</string>
+    <string name="changelogs">Mudanças recentes:</string>
+    <string name="closepopup">Fechar</string>
 </resources>

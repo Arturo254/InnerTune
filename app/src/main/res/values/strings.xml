@@ -380,5 +380,8 @@
     </plurals>
     <plurals name="seconds">seconds</plurals>
     <string name="ytm_sync">Automatically sync with your YouTube Music account</string>
-    <string name="none">Image Background</string>
+    <string name="Changelog">Changelog</string>
+    <string name="no_changes">No recent changes found</string>
+    <string name="changelogs">Recent changes:</string>
+    <string name="closepopup">Close</string>
 </resources>

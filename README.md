@@ -23,6 +23,19 @@
 
 ![Mockup de InnerTune](https://github.com/user-attachments/assets/edcab771-a1ef-437a-81b1-f1c641b18bcf)
 
+
+## Descargas:
+
+GitHub:
+
+[![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Arturo254/InnerTune/releases/latest)
+
+Pagina Web:
+
+[![GitHub](https://img.shields.io/badge/Pagina-Web-100000?style=for-the-badge&logo=web&logoColor=Blue)](https://innertunne.netlify.app/#downloadapk)
+
+[![Appteka](https://img.shields.io/badge/Appteka-58CC02?style=for-the-badge&logo=Appteka&logoColor=white)](https://appteka.store/app/3d2r188065)
+
 ## ✨ Características Destacadas
 
 - 🎵 Reproduce música de YouTube y YouTube Music sin anuncios

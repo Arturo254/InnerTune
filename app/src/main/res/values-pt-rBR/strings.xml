@@ -370,4 +370,5 @@
     <string name="no_changes">Não foram encontradas alterações recentes</string>
     <string name="changelogs">Mudanças recentes:</string>
     <string name="closepopup">Fechar</string>
+    <string name="tip">No momento, estamos enfrentando um erro com o fundo “gradiente”, que será resolvido em breve</string>
 </resources>

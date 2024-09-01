@@ -289,4 +289,7 @@
     <string name="betafun">Beta Features</string>
     <string name="app_name">OpenTune</string>
     <string name="IAPlaylistdes">A função de lista de reprodução AI está em função experimental</string>
+    <string name="backup_link_description">Seu backup ficará disponível por 14 dias.</string>
+    <string name="backup_link_title">Backup carregado com sucesso!</string>
+    <string name="copy_link">Copiar link</string>
 </resources>

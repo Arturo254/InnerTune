@@ -1,22 +1,32 @@
 package com.malopieds.innertune.ui.screens.settings
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -35,10 +45,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import com.malopieds.innertune.LocalPlayerAwareWindowInsets
 import com.malopieds.innertune.R
@@ -102,6 +117,8 @@ fun AppearanceSettings(
     var showSliderOptionDialog by rememberSaveable {
         mutableStateOf(false)
     }
+
+
 
     if (showSliderOptionDialog) {
         DefaultDialog(
@@ -244,12 +261,26 @@ fun AppearanceSettings(
 
         AnimatedVisibility(useDarkTheme) {
             SwitchPreference(
-                title = { Text(stringResource(R.string.pure_black)) },
+                title = {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(stringResource(R.string.pure_black))
+                        Spacer(modifier = Modifier.width(4.dp))
+                        ButtonTip()
+                    }
+                },
                 icon = { Icon(painterResource(R.drawable.contrast), null) },
                 checked = pureBlack,
                 onCheckedChange = onPureBlackChange,
+
+
             )
+
         }
+
+
+
 
         PreferenceGroupTitle(
             title = stringResource(R.string.player),
@@ -404,3 +435,91 @@ enum class PlayerTextAlignment {
     SIDED,
     CENTER,
 }
+
+
+@Composable
+fun ButtonTip()
+
+{
+    var isDialogVisible by remember { mutableStateOf(false) }
+
+    if (isDialogVisible) {
+        DialogWithImage(
+            onDismissRequest = { isDialogVisible = false },
+            onConfirmation = {
+                isDialogVisible = false
+            },
+            painter =
+            painterResource
+                (id = R.drawable.bug_report),
+            imageDescription = "Image Description"
+        )
+    }
+    Button(
+        modifier = Modifier
+            .size(20.dp)
+            .padding(0.dp),
+        onClick = { isDialogVisible = true },
+        contentPadding = PaddingValues(0.dp),
+        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onSecondaryContainer)
+    ) {
+        Text(
+            "?",
+            fontSize = 10.sp,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxSize()
+        )
+    }
+}
+
+
+@Composable
+fun DialogWithImage(
+    onDismissRequest: () -> Unit,
+    onConfirmation: () -> Unit,
+    painter: Painter,
+    imageDescription: String,
+) {
+    Dialog(onDismissRequest = { onDismissRequest() }) {
+        // Draw a rectangle shape with rounded corners inside the dialog
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(375.dp)
+                .padding(16.dp),
+            shape = RoundedCornerShape(16.dp),
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Image(
+                    painter = painter,
+                    contentDescription = imageDescription,
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier
+                        .height(160.dp)
+                )
+                Text(
+                    stringResource(R.string.tip),
+                    modifier = Modifier.padding(16.dp),
+                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                ) {
+                    TextButton(
+                        onClick = { onConfirmation() },
+                        modifier = Modifier.padding(8.dp),
+                    ) {
+                        Text("OK")
+                    }
+                }
+            }
+        }
+    }
+}
+

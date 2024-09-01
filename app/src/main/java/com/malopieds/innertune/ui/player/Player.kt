@@ -140,6 +140,7 @@ import me.saket.squiggles.SquigglySlider
 import java.time.LocalDateTime
 import kotlin.math.roundToInt
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BottomSheetPlayer(
@@ -203,9 +204,11 @@ fun BottomSheetPlayer(
     }
 
     LaunchedEffect(mediaMetadata, playerBackground) {
-        if (useBlackBackground && playerBackground != PlayerBackgroundStyle.BLUR) {
+
+        if (useBlackBackground && playerBackground != PlayerBackgroundStyle.BLUR ) {
             gradientColors = listOf(Color.Black, Color.Black)
-        } else if (playerBackground == PlayerBackgroundStyle.GRADIENT) {
+        }
+        else if (playerBackground == PlayerBackgroundStyle.GRADIENT) {
             withContext(Dispatchers.IO) {
                 val result =
                     (

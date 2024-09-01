@@ -39,6 +39,7 @@ import com.malopieds.innertune.constants.ThumbnailCornerRadius
 import com.malopieds.innertune.ui.component.Lyrics
 import com.malopieds.innertune.utils.rememberPreference
 import kotlin.math.roundToInt
+import com.google.accompanist.coil.rememberCoilPainter
 
 @Composable
 fun Thumbnail(

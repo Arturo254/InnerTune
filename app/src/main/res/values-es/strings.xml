@@ -382,4 +382,8 @@
     <string name="no_changes">No se encontraron cambios recientes</string>
     <string name="changelogs">Cambios recientes:</string>
     <string name="closepopup">Cerrar</string>
+    <string name="tip">En estos momentos estamos experimentando un error con el fondo «degradado» se solucionará en breve</string>
+    <string name="backup_link_description">Tu copia de seguridad estará disponible durante 14 días.</string>
+    <string name="backup_link_title">¡Copia de seguridad cargada correctamente!</string>
+    <string name="copy_link">Copiar enlace</string>
 </resources>

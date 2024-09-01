@@ -272,14 +272,14 @@ fun YouTubePlaylistMenu(
             onDismiss()
         }
 
-        if (canSelect) {
-            GridMenuItem(
-                icon = R.drawable.select_all,
-                title = R.string.select,
-            ) {
-                onDismiss()
-                selectAction()
-            }
-        }
+//        if (canSelect) {
+//            GridMenuItem(
+//                icon = R.drawable.select_all,
+//                title = R.string.select,
+//            ) {
+//                onDismiss()
+//                selectAction()
+//            }
+//        }
     }
 }

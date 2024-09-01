@@ -20,7 +20,7 @@ android {
         //noinspection OldTargetApi
         targetSdk = 34
         versionCode = 25
-        versionName = "0.9.5"
+        versionName = "0.9.6"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -121,6 +121,7 @@ dependencies {
     implementation(libs.squigglyslider)
 
     implementation(libs.room.runtime)
+    implementation(libs.accompanist.coil)
     ksp(libs.room.compiler)
     implementation(libs.room.ktx)
 
@@ -133,7 +134,6 @@ dependencies {
     implementation(projects.kugou)
     implementation(projects.lrclib)
     implementation(projects.kizzy)
-
     implementation(libs.ktor.client.core)
 
     coreLibraryDesugaring(libs.desugaring)

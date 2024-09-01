@@ -384,4 +384,8 @@
     <string name="no_changes">No recent changes found</string>
     <string name="changelogs">Recent changes:</string>
     <string name="closepopup">Close</string>
+    <string name="tip">At the moment we are experiencing an error with the \"gradient\" background it will be solved soon</string>
+    <string name="backup_link_description">Your backup will be available for 14 days.</string>
+    <string name="backup_link_title">Backup uploaded successfully!</string>
+    <string name="copy_link">Copy Link</string>
 </resources>

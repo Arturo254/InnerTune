@@ -220,6 +220,37 @@ fun LibrarySongsScreen(
                 key = { _, item -> item.item.song.id },
                 contentType = { _, _ -> CONTENT_TYPE_SONG },
             ) { index, songWrapper ->
+                Modifier
+                    .fillMaxWidth()
+                    .combinedClickable(
+                        onClick = {
+                            if (!selection) {
+                                if (songWrapper.item.id == mediaMetadata?.id) {
+                                    playerConnection.player.togglePlayPause()
+                                } else {
+                                    playerConnection.playQueue(
+                                        ListQueue(
+                                            title = context.getString(R.string.queue_all_songs),
+                                            items = songs.map { it.toMediaItem() },
+                                            startIndex = index,
+                                        ),
+                                    )
+                                }
+                            } else {
+                                songWrapper.isSelected = !songWrapper.isSelected
+                            }
+                        },
+                        onLongClick = {
+                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                            menuState.show {
+                                SongMenu(
+                                    originalSong = songWrapper.item,
+                                    navController = navController,
+                                    onDismiss = menuState::dismiss,
+                                )
+                            }
+                        },
+                    )
                 SongListItem(
                     song = songWrapper.item,
                     isActive = songWrapper.item.id == mediaMetadata?.id,
@@ -244,37 +275,7 @@ fun LibrarySongsScreen(
                     },
                     isSelected = songWrapper.isSelected && selection,
                     modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .combinedClickable(
-                                onClick = {
-                                    if (!selection) {
-                                        if (songWrapper.item.id == mediaMetadata?.id) {
-                                            playerConnection.player.togglePlayPause()
-                                        } else {
-                                            playerConnection.playQueue(
-                                                ListQueue(
-                                                    title = context.getString(R.string.queue_all_songs),
-                                                    items = songs.map { it.toMediaItem() },
-                                                    startIndex = index,
-                                                ),
-                                            )
-                                        }
-                                    } else {
-                                        songWrapper.isSelected = !songWrapper.isSelected
-                                    }
-                                },
-                                onLongClick = {
-                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                    menuState.show {
-                                        SongMenu(
-                                            originalSong = songWrapper.item,
-                                            navController = navController,
-                                            onDismiss = menuState::dismiss,
-                                        )
-                                    }
-                                },
-                            ).animateItemPlacement(),
+                    Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null),
                 )
             }
         }

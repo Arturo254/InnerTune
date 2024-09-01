@@ -48,6 +48,7 @@ import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.malopieds.innertune.BuildConfig
+import com.google.accompanist.coil.rememberCoilPainter
 import com.malopieds.innertune.LocalPlayerConnection
 import com.malopieds.innertune.R
 import com.malopieds.innertune.constants.LyricsClickKey

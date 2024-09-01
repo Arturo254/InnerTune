@@ -380,14 +380,14 @@ fun AlbumMenu(
                 }
             context.startActivity(Intent.createChooser(intent, null))
         }
-        if (selectAction != {}) {
-            GridMenuItem(
-                icon = R.drawable.select_all,
-                title = R.string.select,
-            ) {
-                onDismiss()
-                selectAction()
-            }
-        }
+//        if (selectAction != {}) {
+//            GridMenuItem(
+//                icon = R.drawable.select_all,
+//                title = R.string.select,
+//            ) {
+//                onDismiss()
+//                selectAction()
+//            }
+//        }
     }
 }

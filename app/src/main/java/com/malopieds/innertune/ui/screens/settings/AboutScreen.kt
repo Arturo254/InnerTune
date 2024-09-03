@@ -377,7 +377,7 @@ fun UserCards(uriHandler: UriHandler) {
         UserCard(
             imageUrl = "https://avatars.githubusercontent.com/u/87346871?v=4",
             name = "亗 Arturo254",
-            role = "Lead Developer",
+            role = "Lead Developer and Icon designer",
             onClick = { uriHandler.openUri("https://github.com/Arturo254") }
         )
 

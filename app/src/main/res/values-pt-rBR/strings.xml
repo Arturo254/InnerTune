@@ -371,4 +371,5 @@
     <string name="changelogs">Mudanças recentes:</string>
     <string name="closepopup">Fechar</string>
     <string name="tip">No momento, estamos enfrentando um erro com o fundo “gradiente”, que será resolvido em breve</string>
+    <string name="stop_music_on_task_clear">Parar música ao limpar tarefa</string>
 </resources>

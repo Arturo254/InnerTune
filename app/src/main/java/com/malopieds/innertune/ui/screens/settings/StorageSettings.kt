@@ -2,10 +2,7 @@ package com.malopieds.innertune.ui.screens.settings
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
@@ -20,6 +17,7 @@ import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -66,19 +64,19 @@ fun StorageSettings(
     val (maxSongCacheSize, onMaxSongCacheSizeChange) = rememberPreference(key = MaxSongCacheSizeKey, defaultValue = 1024)
 
     var imageCacheSize by remember {
-        mutableStateOf(imageDiskCache.size)
+        mutableLongStateOf(imageDiskCache.size)
     }
     var playerCacheSize by remember {
-        mutableStateOf(tryOrNull { playerCache.cacheSpace } ?: 0)
+        mutableLongStateOf(tryOrNull { playerCache.cacheSpace } ?: 0)
     }
     var downloadCacheSize by remember {
-        mutableStateOf(tryOrNull { downloadCache.cacheSpace } ?: 0)
+        mutableLongStateOf(tryOrNull { downloadCache.cacheSpace } ?: 0)
     }
-    val imageCacheProgress by animateFloatAsState(
+    val animatedImageCacheSize by animateFloatAsState(
         targetValue = (imageCacheSize.toFloat() / imageDiskCache.maxSize).coerceIn(0f, 1f),
         label = "",
     )
-    val playerCacheProgress by animateFloatAsState(
+    val animatedPlayerCacheSize by animateFloatAsState(
         targetValue = (playerCacheSize.toFloat() / (maxSongCacheSize * 1024 * 1024L)).coerceIn(0f, 1f),
         label = "",
     )
@@ -104,11 +102,9 @@ fun StorageSettings(
 
     Column(
         Modifier
-            .windowInsetsPadding(LocalPlayerAwareWindowInsets.current.only(WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom))
+            .windowInsetsPadding(LocalPlayerAwareWindowInsets.current)
             .verticalScroll(rememberScrollState()),
     ) {
-        Spacer(Modifier.windowInsetsPadding(LocalPlayerAwareWindowInsets.current.only(WindowInsetsSides.Top)))
-
         PreferenceGroupTitle(
             title = stringResource(R.string.downloaded_songs),
         )
@@ -142,21 +138,21 @@ fun StorageSettings(
             )
         } else {
             LinearProgressIndicator(
-                progress = { playerCacheProgress },
+                progress = { animatedPlayerCacheSize },
                 modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 6.dp),
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 6.dp),
             )
 
             Text(
                 text =
-                    stringResource(
-                        R.string.size_used,
-                        "${formatFileSize(playerCacheSize)} / ${formatFileSize(
-                            maxSongCacheSize * 1024 * 1024L,
-                        )}",
-                    ),
+                stringResource(
+                    R.string.size_used,
+                    "${formatFileSize(playerCacheSize)} / ${formatFileSize(
+                        maxSongCacheSize * 1024 * 1024L,
+                    )}",
+                ),
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
             )
@@ -188,11 +184,11 @@ fun StorageSettings(
         )
 
         LinearProgressIndicator(
-            progress = { imageCacheProgress },
+            progress = { animatedImageCacheSize },
             modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 6.dp),
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 6.dp),
         )
 
         Text(

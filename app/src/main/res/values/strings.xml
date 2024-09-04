@@ -388,4 +388,8 @@
     <string name="backup_link_description">Your backup will be available for 14 days.</string>
     <string name="backup_link_title">Backup uploaded successfully!</string>
     <string name="copy_link">Copy Link</string>
+    <string name="stop_music_on_task_clear">Stop music on task clear</string>
+    <string name="app_language">App language</string>
+    <string name="configure_app_language">Configure app languages</string>
+    <string name="intent_app_language_not_found">Couldn\\\'t find app language settings, please configure them manually</string>
 </resources>

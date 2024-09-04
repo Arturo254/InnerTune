@@ -24,6 +24,7 @@ import com.malopieds.innertune.constants.AudioQuality
 import com.malopieds.innertune.constants.AudioQualityKey
 import com.malopieds.innertune.constants.PersistentQueueKey
 import com.malopieds.innertune.constants.SkipSilenceKey
+import com.malopieds.innertune.constants.StopMusicOnTaskClearKey
 import com.malopieds.innertune.ui.component.EnumListPreference
 import com.malopieds.innertune.ui.component.IconButton
 import com.malopieds.innertune.ui.component.SwitchPreference
@@ -41,7 +42,7 @@ fun PlayerSettings(
     val (persistentQueue, onPersistentQueueChange) = rememberPreference(key = PersistentQueueKey, defaultValue = true)
     val (skipSilence, onSkipSilenceChange) = rememberPreference(key = SkipSilenceKey, defaultValue = false)
     val (audioNormalization, onAudioNormalizationChange) = rememberPreference(key = AudioNormalizationKey, defaultValue = true)
-
+    val (stopMusicOnTaskClear, onStopMusicOnTaskClearChange) = rememberPreference(key = StopMusicOnTaskClearKey, defaultValue = false)
     Column(
         Modifier
             .windowInsetsPadding(LocalPlayerAwareWindowInsets.current.only(WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom))
@@ -80,6 +81,13 @@ fun PlayerSettings(
             checked = audioNormalization,
             onCheckedChange = onAudioNormalizationChange,
         )
+        SwitchPreference(
+            title = { Text(stringResource(R.string.stop_music_on_task_clear)) },
+            icon = { Icon(painterResource(R.drawable.clear_all), null) },
+            checked = stopMusicOnTaskClear,
+            onCheckedChange = onStopMusicOnTaskClearChange,
+        )
+
     }
 
     TopAppBar(

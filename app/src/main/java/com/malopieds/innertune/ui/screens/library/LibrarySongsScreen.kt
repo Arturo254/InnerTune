@@ -20,6 +20,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,6 +37,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.malopieds.innertune.LocalPlayerAwareWindowInsets
 import com.malopieds.innertune.LocalPlayerConnection
 import com.malopieds.innertune.R
@@ -89,6 +91,16 @@ fun LibrarySongsScreen(
 
     val lazyListState = rememberLazyListState()
 
+    val backStackEntry by navController.currentBackStackEntryAsState()
+    val scrollToTop = backStackEntry?.savedStateHandle?.getStateFlow("scrollToTop", false)?.collectAsState()
+
+    LaunchedEffect(scrollToTop?.value) {
+        if (scrollToTop?.value == true) {
+            lazyListState.animateScrollToItem(0)
+            backStackEntry?.savedStateHandle?.set("scrollToTop", false)
+        }
+    }
+
     Box(
         modifier = Modifier.fillMaxSize(),
     ) {
@@ -113,11 +125,11 @@ fun LibrarySongsScreen(
                     )
                     ChipsRow(
                         chips =
-                            listOf(
-                                SongFilter.LIBRARY to stringResource(R.string.filter_library),
-                                SongFilter.LIKED to stringResource(R.string.filter_liked),
-                                SongFilter.DOWNLOADED to stringResource(R.string.filter_downloaded),
-                            ),
+                        listOf(
+                            SongFilter.LIBRARY to stringResource(R.string.filter_library),
+                            SongFilter.LIKED to stringResource(R.string.filter_liked),
+                            SongFilter.DOWNLOADED to stringResource(R.string.filter_downloaded),
+                        ),
                         currentValue = filter,
                         onValueUpdate = {
                             filter = it
@@ -220,37 +232,6 @@ fun LibrarySongsScreen(
                 key = { _, item -> item.item.song.id },
                 contentType = { _, _ -> CONTENT_TYPE_SONG },
             ) { index, songWrapper ->
-                Modifier
-                    .fillMaxWidth()
-                    .combinedClickable(
-                        onClick = {
-                            if (!selection) {
-                                if (songWrapper.item.id == mediaMetadata?.id) {
-                                    playerConnection.player.togglePlayPause()
-                                } else {
-                                    playerConnection.playQueue(
-                                        ListQueue(
-                                            title = context.getString(R.string.queue_all_songs),
-                                            items = songs.map { it.toMediaItem() },
-                                            startIndex = index,
-                                        ),
-                                    )
-                                }
-                            } else {
-                                songWrapper.isSelected = !songWrapper.isSelected
-                            }
-                        },
-                        onLongClick = {
-                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                            menuState.show {
-                                SongMenu(
-                                    originalSong = songWrapper.item,
-                                    navController = navController,
-                                    onDismiss = menuState::dismiss,
-                                )
-                            }
-                        },
-                    )
                 SongListItem(
                     song = songWrapper.item,
                     isActive = songWrapper.item.id == mediaMetadata?.id,
@@ -275,7 +256,37 @@ fun LibrarySongsScreen(
                     },
                     isSelected = songWrapper.isSelected && selection,
                     modifier =
-                    Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null),
+                    Modifier
+                        .fillMaxWidth()
+                        .combinedClickable(
+                            onClick = {
+                                if (!selection) {
+                                    if (songWrapper.item.id == mediaMetadata?.id) {
+                                        playerConnection.player.togglePlayPause()
+                                    } else {
+                                        playerConnection.playQueue(
+                                            ListQueue(
+                                                title = context.getString(R.string.queue_all_songs),
+                                                items = songs.map { it.toMediaItem() },
+                                                startIndex = index,
+                                            ),
+                                        )
+                                    }
+                                } else {
+                                    songWrapper.isSelected = !songWrapper.isSelected
+                                }
+                            },
+                            onLongClick = {
+                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                menuState.show {
+                                    SongMenu(
+                                        originalSong = songWrapper.item,
+                                        navController = navController,
+                                        onDismiss = menuState::dismiss,
+                                    )
+                                }
+                            },
+                        ).animateItemPlacement(),
                 )
             }
         }

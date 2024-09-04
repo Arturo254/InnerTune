@@ -3,17 +3,21 @@ package com.malopieds.innertune.ui.screens.search
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -34,9 +38,7 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -55,6 +57,7 @@ import com.malopieds.innertune.extensions.togglePlayPause
 import com.malopieds.innertune.models.toMediaMetadata
 import com.malopieds.innertune.playback.queues.YouTubeQueue
 import com.malopieds.innertune.ui.component.LocalMenuState
+import com.malopieds.innertune.ui.component.SearchBarIconOffsetX
 import com.malopieds.innertune.ui.component.YouTubeListItem
 import com.malopieds.innertune.ui.menu.YouTubeAlbumMenu
 import com.malopieds.innertune.ui.menu.YouTubeArtistMenu
@@ -98,103 +101,85 @@ fun OnlineSearchScreen(
         viewModel.query.value = query
     }
 
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
+    LazyColumn(
+        state = lazyListState,
+        contentPadding =
+        WindowInsets.systemBars
+            .only(WindowInsetsSides.Bottom)
+            .asPaddingValues(),
     ) {
-        LazyColumn(
-            state = lazyListState,
-            contentPadding = PaddingValues(vertical = 8.dp)
-        ) {
+        items(
+            items = viewState.history,
+            key = { it.query },
+        ) { history ->
+            SuggestionItem(
+                query = history.query,
+                online = false,
+                onClick = {
+                    onSearch(history.query)
+                    onDismiss()
+                },
+                onDelete = {
+                    database.query {
+                        delete(history)
+                    }
+                },
+                onFillTextField = {
+                    onQueryChange(
+                        TextFieldValue(
+                            text = history.query,
+                            selection = TextRange(history.query.length),
+                        ),
+                    )
+                },
+                modifier = Modifier.animateItemPlacement(),
+            )
+        }
+
+        items(
+            items = viewState.suggestions,
+            key = { it },
+        ) { query ->
+            SuggestionItem(
+                query = query,
+                online = true,
+                onClick = {
+                    onSearch(query)
+                    onDismiss()
+                },
+                onFillTextField = {
+                    onQueryChange(
+                        TextFieldValue(
+                            text = query,
+                            selection = TextRange(query.length),
+                        ),
+                    )
+                },
+                modifier = Modifier.animateItemPlacement(),
+            )
+        }
+
+        if (viewState.items.isNotEmpty() && viewState.history.size + viewState.suggestions.size > 0) {
             item {
-                Text(
-                    text = (stringResource(R.string.SearchHistory)),
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                )
+                HorizontalDivider()
             }
+        }
 
-            items(
-                items = viewState.history,
-                key = { it.query },
-            ) { history ->
-                SuggestionItem(
-                    query = history.query,
-                    online = false,
-                    onClick = {
-                        onSearch(history.query)
-                        onDismiss()
-                    },
-                    onDelete = {
-                        database.query {
-                            delete(history)
-                        }
-                    },
-                    onFillTextField = {
-                        onQueryChange(
-                            TextFieldValue(
-                                text = history.query,
-                                selection = TextRange(history.query.length),
-                            ),
-                        )
-                    },
-                    modifier = Modifier.animateItemPlacement(),
-                )
-            }
-
-            if (viewState.suggestions.isNotEmpty()) {
-                item {
-                    Text(
-                        text = (stringResource(R.string.Sujestions)),
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                    )
-                }
-            }
-
-            items(
-                items = viewState.suggestions,
-                key = { it },
-            ) { query ->
-                SuggestionItem(
-                    query = query,
-                    online = true,
-                    onClick = {
-                        onSearch(query)
-                        onDismiss()
-                    },
-                    onFillTextField = {
-                        onQueryChange(
-                            TextFieldValue(
-                                text = query,
-                                selection = TextRange(query.length),
-                            ),
-                        )
-                    },
-                    modifier = Modifier.animateItemPlacement(),
-                )
-            }
-
-            if (viewState.items.isNotEmpty()) {
-                item {
-                    Text(
-                        text = (stringResource(R.string.SearchResutls)),
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                    )
-                }
-            }
-
-            items(
-                items = viewState.items,
-                key = { it.id },
-            ) { item ->
+        items(
+            items = viewState.items,
+            key = { it.id },
+        ) { item ->
+            YouTubeListItem(
+                item = item,
+                isActive =
+                when (item) {
+                    is SongItem -> mediaMetadata?.id == item.id
+                    is AlbumItem -> mediaMetadata?.album?.id == item.id
+                    else -> false
+                },
+                isPlaying = isPlaying,
+                modifier =
                 Modifier
-                    .padding(horizontal = 16.dp, vertical = 4.dp)
-                    .clip(RoundedCornerShape(8.dp))
                     .combinedClickable(
                         onClick = {
                             when (item) {
@@ -208,14 +193,17 @@ fun OnlineSearchScreen(
                                         onDismiss()
                                     }
                                 }
+
                                 is AlbumItem -> {
                                     navController.navigate("album/${item.id}")
                                     onDismiss()
                                 }
+
                                 is ArtistItem -> {
                                     navController.navigate("artist/${item.id}")
                                     onDismiss()
                                 }
+
                                 is PlaylistItem -> {
                                     navController.navigate("online_playlist/${item.id}")
                                     onDismiss()
@@ -226,40 +214,37 @@ fun OnlineSearchScreen(
                             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                             menuState.show {
                                 when (item) {
-                                    is SongItem -> YouTubeSongMenu(
-                                        song = item,
-                                        navController = navController,
-                                        onDismiss = menuState::dismiss,
-                                    )
-                                    is AlbumItem -> YouTubeAlbumMenu(
-                                        albumItem = item,
-                                        navController = navController,
-                                        onDismiss = menuState::dismiss,
-                                    )
-                                    is ArtistItem -> YouTubeArtistMenu(
-                                        artist = item,
-                                        onDismiss = menuState::dismiss,
-                                    )
-                                    is PlaylistItem -> YouTubePlaylistMenu(
-                                        playlist = item,
-                                        coroutineScope = coroutineScope,
-                                        onDismiss = menuState::dismiss,
-                                    )
+                                    is SongItem ->
+                                        YouTubeSongMenu(
+                                            song = item,
+                                            navController = navController,
+                                            onDismiss = menuState::dismiss,
+                                        )
+
+                                    is AlbumItem ->
+                                        YouTubeAlbumMenu(
+                                            albumItem = item,
+                                            navController = navController,
+                                            onDismiss = menuState::dismiss,
+                                        )
+
+                                    is ArtistItem ->
+                                        YouTubeArtistMenu(
+                                            artist = item,
+                                            onDismiss = menuState::dismiss,
+                                        )
+
+                                    is PlaylistItem ->
+                                        YouTubePlaylistMenu(
+                                            playlist = item,
+                                            coroutineScope = coroutineScope,
+                                            onDismiss = menuState::dismiss,
+                                        )
                                 }
                             }
                         },
-                    )
-                YouTubeListItem(
-                    item = item,
-                    isActive = when (item) {
-                        is SongItem -> mediaMetadata?.id == item.id
-                        is AlbumItem -> mediaMetadata?.album?.id == item.id
-                        else -> false
-                    },
-                    isPlaying = isPlaying,
-                    modifier = Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null),
-                )
-            }
+                    ).animateItemPlacement(),
+            )
         }
     }
 }
@@ -281,54 +266,63 @@ fun SuggestionItem(
             .clickable(onClick = onClick),
         color = MaterialTheme.colorScheme.surfaceVariant
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier =
+        modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(18.dp))
+            .height(SuggestionItemHeight)
+            .clickable(onClick = onClick)
+            .padding(end = SearchBarIconOffsetX),
+    ) {
+        Icon(
+            painterResource(if (online) R.drawable.search else R.drawable.history),
+            contentDescription = null,
             modifier = Modifier
-                .height(SuggestionItemHeight)
-                .padding(horizontal = 12.dp)
-        ) {
-            Icon(
-                painterResource(if (online) R.drawable.search else R.drawable.history),
-                contentDescription = null,
-                modifier = Modifier
-                    .padding(end = 12.dp)
-                    .size(24.dp)
-                    .alpha(0.7f),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+                .padding(end = 12.dp)
+                .size(24.dp)
+                .alpha(0.7f),
+            tint = MaterialTheme.colorScheme.onSurfaceVariant
+        )
 
-            Text(
-                text = query,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.weight(1f),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+        Text(
+            text = query,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.weight(1f),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
 
-            if (!online) {
-                IconButton(
-                    onClick = onDelete,
-                    modifier = Modifier.alpha(0.7f),
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.close),
-                        contentDescription = "Delete",
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            }
-
+        if (!online) {
             IconButton(
-                onClick = onFillTextField,
-                modifier = Modifier.alpha(0.7f),
+                onClick = onDelete,
+                modifier = Modifier.alpha(0.5f),
             ) {
                 Icon(
-                    painter = painterResource(R.drawable.arrow_top_left),
-                    contentDescription = "Fill",
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    painter = painterResource(R.drawable.close),
+                    contentDescription = null,
                 )
             }
         }
+
+        IconButton(
+            onClick = onFillTextField,
+            modifier = Modifier.alpha(0.5f),
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.arrow_top_left),
+                contentDescription = null,
+            )
+        }
     }
 }
+}
+
+
+
+
+
+

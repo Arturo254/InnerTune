@@ -386,4 +386,5 @@
     <string name="backup_link_description">Tu copia de seguridad estará disponible durante 14 días.</string>
     <string name="backup_link_title">¡Copia de seguridad cargada correctamente!</string>
     <string name="copy_link">Copiar enlace</string>
+    <string name="stop_music_on_task_clear">Detener la música al borrar la tarea</string>
 </resources>

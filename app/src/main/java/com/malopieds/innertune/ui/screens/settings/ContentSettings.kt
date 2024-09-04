@@ -1,5 +1,12 @@
 package com.malopieds.innertune.ui.screens.settings
 
+
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
+import android.provider.Settings
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -17,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
@@ -47,7 +55,6 @@ import com.malopieds.innertune.ui.component.IconButton
 import com.malopieds.innertune.ui.component.ListPreference
 import com.malopieds.innertune.ui.component.PreferenceEntry
 import com.malopieds.innertune.ui.component.PreferenceGroupTitle
-import com.malopieds.innertune.ui.component.SliderPreference
 import com.malopieds.innertune.ui.component.SwitchPreference
 import com.malopieds.innertune.ui.utils.backToMain
 import com.malopieds.innertune.utils.rememberEnumPreference
@@ -60,6 +67,7 @@ fun ContentSettings(
     navController: NavController,
     scrollBehavior: TopAppBarScrollBehavior,
 ) {
+    val context = LocalContext.current
     val accountName by rememberPreference(AccountNameKey, "")
     val accountEmail by rememberPreference(AccountEmailKey, "")
     val accountChannelHandle by rememberPreference(AccountChannelHandleKey, "")
@@ -122,6 +130,23 @@ fun ContentSettings(
             },
             onValueSelected = onContentCountryChange,
         )
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            PreferenceEntry(
+                title = { Text(stringResource(R.string.app_language)) },
+                description = stringResource(R.string.configure_app_language),
+                icon = { Icon(painterResource(R.drawable.language), null) },
+                onClick = {
+                    try {
+                        context.startActivity(
+                            Intent(Settings.ACTION_APPLICATION_SETTINGS, Uri.parse("package:${context.packageName}")),
+                        )
+                    } catch (e: ActivityNotFoundException) {
+                        Toast.makeText(context, R.string.intent_app_language_not_found, Toast.LENGTH_LONG).show()
+                    }
+                },
+            )
+        }
 
         SwitchPreference(
             title = { Text(stringResource(R.string.hide_explicit)) },

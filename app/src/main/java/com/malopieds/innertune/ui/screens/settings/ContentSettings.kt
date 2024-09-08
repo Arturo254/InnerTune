@@ -1,32 +1,26 @@
 package com.malopieds.innertune.ui.screens.settings
 
 
-import android.content.ActivityNotFoundException
-import android.content.Intent
-import android.net.Uri
+import android.content.Context
+import android.content.res.Configuration
 import android.os.Build
-import android.provider.Settings
-import android.widget.Toast
+import android.os.LocaleList
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.only
-import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarScrollBehavior
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.malopieds.innertube.utils.parseCookieString
 import com.malopieds.innertune.LocalPlayerAwareWindowInsets
@@ -55,11 +49,13 @@ import com.malopieds.innertune.ui.component.IconButton
 import com.malopieds.innertune.ui.component.ListPreference
 import com.malopieds.innertune.ui.component.PreferenceEntry
 import com.malopieds.innertune.ui.component.PreferenceGroupTitle
+import com.malopieds.innertune.ui.component.SliderPreference
 import com.malopieds.innertune.ui.component.SwitchPreference
 import com.malopieds.innertune.ui.utils.backToMain
 import com.malopieds.innertune.utils.rememberEnumPreference
 import com.malopieds.innertune.utils.rememberPreference
 import java.net.Proxy
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -131,22 +127,13 @@ fun ContentSettings(
             onValueSelected = onContentCountryChange,
         )
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            PreferenceEntry(
-                title = { Text(stringResource(R.string.app_language)) },
-                description = stringResource(R.string.configure_app_language),
-                icon = { Icon(painterResource(R.drawable.language), null) },
-                onClick = {
-                    try {
-                        context.startActivity(
-                            Intent(Settings.ACTION_APPLICATION_SETTINGS, Uri.parse("package:${context.packageName}")),
-                        )
-                    } catch (e: ActivityNotFoundException) {
-                        Toast.makeText(context, R.string.intent_app_language_not_found, Toast.LENGTH_LONG).show()
-                    }
-                },
-            )
-        }
+        PreferenceGroupTitle(
+            title = stringResource(R.string.app_language),
+        )
+
+        LanguageSelector()
+
+
 
         SwitchPreference(
             title = { Text(stringResource(R.string.hide_explicit)) },
@@ -229,11 +216,11 @@ fun ContentSettings(
             onValueSelected = onQuickPicksChange,
         )
 
-//        SliderPreference(
-//            title = { Text(stringResource(R.string.history_duration)) },
-//            value = historyDuration,
-//            onValueChange = onHistoryDurationChange,
-//        )
+        SliderPreference(
+            title = { Text(stringResource(R.string.history_duration)) },
+            value = historyDuration,
+            onValueChange = onHistoryDurationChange,
+        )
     }
 
     TopAppBar(
@@ -251,3 +238,112 @@ fun ContentSettings(
         },
     )
 }
+
+
+@Composable
+fun LanguageSelector() {
+    val context = LocalContext.current
+    // List of supported languages and their locale codes
+    val languages = listOf(
+        "Arabic" to "ar",
+        "Belarusian" to "be",
+        "Chinese Simplified" to "zh",
+        "Czech" to "cs",
+        "Dutch" to "nl",
+        "English" to "en",
+        "French" to "fr",
+        "German" to "de",
+        "Indonesian" to "id",
+        "Italian" to "it",
+        "Japanese" to "ja",
+        "Korean" to "ko",
+        "Portuguese, Brazilian" to "pt-BR",
+        "Russian" to "ru",
+        "Spanish" to "es",
+        "Turkish" to "tr",
+        "Ukrainian" to "uk",
+        "Vietnamese" to "vi"
+    )
+
+    // State to hold the currently selected language
+    var selectedLanguage by remember { mutableStateOf(languages[0].second) }
+    var expanded by remember { mutableStateOf(false) } // Dropdown expanded state
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+
+
+            // Dropdown button
+            FloatingActionButton(
+                modifier = Modifier
+                    .size(48.dp),
+                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                onClick = { expanded = true },
+            ) {
+               Icon(
+                   painter = painterResource(R.drawable.translate),
+                   contentDescription = null
+               )
+            }
+
+
+Box(
+    modifier = Modifier.padding(16.dp),
+    contentAlignment = Alignment.Center
+
+)
+{
+
+
+        // Dropdown menu for language selection
+        DropdownMenu(
+
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            modifier = Modifier
+                .fillMaxWidth(0.8f)
+                .background(MaterialTheme.colorScheme.background, shape = RoundedCornerShape(16.dp))
+        ) {
+            languages.forEach { language ->
+                DropdownMenuItem(
+                    text = { Text(text = language.first) },
+                    onClick = {
+                        selectedLanguage = language.second
+                        expanded = false
+                        updateLanguage(context, selectedLanguage)
+                    },
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+            }
+        }
+    }
+}
+}
+}
+
+
+fun updateLanguage(context: Context, languageCode: String) {
+    val locale: Locale = if (languageCode.contains("-")) {
+        // Handle languages with regions like pt-BR
+        val parts = languageCode.split("-")
+        Locale(parts[0], parts[1])
+    } else {
+        Locale(languageCode)
+    }
+
+    val config = Configuration(context.resources.configuration)
+    config.setLocales(LocaleList(locale))
+
+    // Update the configuration
+    context.resources.updateConfiguration(config, context.resources.displayMetrics)
+
+    // Optionally, recreate the activity to apply the language change throughout the app
+    (context as? androidx.activity.ComponentActivity)?.recreate()
+}
+
+

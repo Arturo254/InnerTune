@@ -1,5 +1,11 @@
 package com.malopieds.innertune.ui.screens.settings
 
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -39,8 +45,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalUriHandler
@@ -60,6 +68,32 @@ import com.malopieds.innertune.R
 import com.malopieds.innertune.ui.component.IconButton
 import com.malopieds.innertune.ui.utils.backToMain
 
+
+
+@Composable
+fun shimmerEffect(): Brush {
+    val shimmerColors = listOf(
+        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f),
+        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f),
+        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f),
+    )
+
+    val transition = rememberInfiniteTransition(label = "shimmerEffect")
+    val translateAnim = transition.animateFloat(
+        initialValue = 0f,
+        targetValue = 1000f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 1200, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ), label = "shimmerEffect"
+    )
+
+    return Brush.linearGradient(
+        colors = shimmerColors,
+        start = Offset.Zero,
+        end = Offset(x = translateAnim.value, y = translateAnim.value)
+    )
+}
 
 @Composable
 fun UserCard(
@@ -149,6 +183,7 @@ fun AboutScreen(
 
     ) {
     val uriHandler = LocalUriHandler.current
+    val shimmerBrush = shimmerEffect()
 
     Column(
         modifier = Modifier
@@ -159,17 +194,31 @@ fun AboutScreen(
     ) {
         Spacer(Modifier.height(4.dp))
 
-        Image(
-            painter = painterResource(R.drawable.opentune_monochrome),
-            contentDescription = null,
-            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onBackground, BlendMode.SrcIn),
+        // Image with shimmer effect
+        Box(
             modifier = Modifier
+                .size(90.dp)
                 .clip(CircleShape)
                 .background(MaterialTheme.colorScheme.surfaceColorAtElevation(NavigationBarDefaults.Elevation))
-                .clickable { }
-        )
+        ) {
+            Image(
+                painter = painterResource(R.drawable.opentune_monochrome),
+                contentDescription = null,
+                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onBackground, BlendMode.SrcIn),
+                modifier = Modifier
+                    .matchParentSize()
+                    .clickable { }
+            )
 
+            // Shimmer effect overlay only for the image
+            Box(
+                modifier = Modifier
+                    .matchParentSize()
+                    .background(shimmerBrush)
+            )
+        }
 
+        // Text without shimmer effect
         Row(
             verticalAlignment = Alignment.Top,
         ) {
@@ -179,7 +228,6 @@ fun AboutScreen(
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(top = 8.dp, bottom = 4.dp)
             )
-
         }
 
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -251,16 +299,16 @@ fun AboutScreen(
             }
 
             IconButton(
-                onClick = { uriHandler.openUri("https://innertunne.netlify.app/") }
+                onClick = { uriHandler.openUri("https://g.dev/Arturo254") }
             ) {
-                Icon(contentDescription = null, painter = painterResource(R.drawable.liberapay))
+                Icon(contentDescription = null, painter = painterResource(R.drawable.google))
             }
 
             IconButton(
                 onClick = { uriHandler.openUri("https://www.paypal.com/donate?hosted_button_id=LPK2LT9SY5MBY") }
             ) {
                 Icon(
-                    painter = painterResource(R.drawable.buymeacoffee),
+                    painter = painterResource(R.drawable.paypal),
                     contentDescription = null
                 )
             }
@@ -377,14 +425,14 @@ fun UserCards(uriHandler: UriHandler) {
         UserCard(
             imageUrl = "https://avatars.githubusercontent.com/u/87346871?v=4",
             name = "亗 Arturo254",
-            role = "Lead Developer and Icon designer",
+            role = "Lead Developer ",
             onClick = { uriHandler.openUri("https://github.com/Arturo254") }
         )
 
         UserCard(
             imageUrl = "https://avatars.githubusercontent.com/u/138934847?v=4",
             name = "\uD81A\uDD10 Fabito02",
-            role = "Traductor (PR_BR)",
+            role = "Traductor (PR_BR)  Icon designer",
             onClick = { uriHandler.openUri("https://github.com/Fabito02/") }
         )
 
@@ -395,12 +443,12 @@ fun UserCards(uriHandler: UriHandler) {
             onClick = { uriHandler.openUri("https://github.com/AlessandroGalvan") }
         )
 
-        UserCard(
-            imageUrl = "https://avatars.githubusercontent.com/u/55490396?v=4",
-            name = "「★」 JPGuillemin",
-            role = "Icon designer",
-            onClick = { uriHandler.openUri("https://github.com/JPGuillemin") }
-        )
+//        UserCard(
+//            imageUrl = "https://avatars.githubusercontent.com/u/55490396?v=4",
+//            name = "「★」 JPGuillemin",
+//            role = "Icon designer",
+//            onClick = { uriHandler.openUri("https://github.com/JPGuillemin") }
+//        )
     }
 }
 
@@ -450,58 +498,82 @@ fun CardItem(
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                 )
+
             }
+
         }
     }
+
 }
+
+
 
 @Composable
 fun ContributionCard(uriHandler: UriHandler) {
+    val shimmerBrush = shimmerEffect()
+
     Spacer(Modifier.height(24.dp))
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(120.dp)
+            .height(140.dp)
             .padding(horizontal = 16.dp)
-            .clickable { uriHandler.openUri("https://github.com/Arturo254/InnerTune/new/master") },
+            .clickable { uriHandler.openUri("https://github.com/Arturo254/InnerTune/new/master") }
+            .shadow(elevation = 8.dp, shape = RoundedCornerShape(20.dp)),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f),
+            containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f),
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)),
-        shape = RoundedCornerShape(16.dp)
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)),
+        shape = RoundedCornerShape(20.dp)
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.extension),
-                contentDescription = null,
+        Box(modifier = Modifier.fillMaxSize()) {
+            Row(
                 modifier = Modifier
-                    .size(48.dp)
-                    .padding(end = 16.dp),
-                tint = MaterialTheme.colorScheme.primary
-            )
-            Column(
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                    .fillMaxSize()
+                    .padding(20.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = stringResource(R.string.contribution),
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary
-                )
-                Text(
-                    text = stringResource(R.string.contribution_text),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
-                )
+                Box(
+                    modifier = Modifier
+                        .size(64.dp)
+                        .background(
+                            MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                            shape = CircleShape
+                        )
+                        .padding(12.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.extension),
+                        contentDescription = null,
+                        modifier = Modifier.size(40.dp),
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+                Spacer(modifier = Modifier.width(20.dp))
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.contribution),
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Text(
+                        text = stringResource(R.string.contribution_text),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
             }
+            // Shimmer effect overlay
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(shimmerBrush)
+            )
         }
     }
 }

@@ -22,7 +22,8 @@
   [![Licencia](https://img.shields.io/github/license/Arturo254/InnerTune?style=for-the-badge&logo=gnu&color=green)](https://github.com/z-huang/InnerTune/blob/main/LICENSE)
 </div>
 
-![Mockup de InnerTune](https://github.com/user-attachments/assets/edcab771-a1ef-437a-81b1-f1c641b18bcf)
+![mock](https://github.com/user-attachments/assets/93b4dd12-8f94-4d12-b770-2138fbf1358d)
+
 
 
 ## Descargas:

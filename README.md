@@ -5,7 +5,8 @@
 
 <div align="center">
 
-![icon-192](https://github.com/user-attachments/assets/137bef2a-8138-4ac6-b18b-7fc0ebd2f3c0)
+
+![image](https://github.com/user-attachments/assets/f008ac47-d2c1-475a-9dbf-5a0e85353206)
 
 
 
@@ -26,13 +27,15 @@
 
 ## Descargas:
 
-GitHub:
+### GitHub:
 
 [![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Arturo254/InnerTune/releases/latest)
 
-Pagina Web:
+### Pagina Web:
 
 [![GitHub](https://img.shields.io/badge/Pagina-Web-100000?style=for-the-badge&logo=web&logoColor=Blue)](https://innertunne.netlify.app/#downloadapk)
+
+### Tienda de apps
 
 [![Appteka](https://img.shields.io/badge/Appteka-58CC02?style=for-the-badge&logo=Appteka&logoColor=white)](https://appteka.store/app/3d2r188065)
 

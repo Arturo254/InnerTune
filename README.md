@@ -5,7 +5,8 @@
 
 <div align="center">
 
-![icon-192](https://github.com/user-attachments/assets/137bef2a-8138-4ac6-b18b-7fc0ebd2f3c0)
+
+![image](https://github.com/user-attachments/assets/f008ac47-d2c1-475a-9dbf-5a0e85353206)
 
 
 
@@ -21,18 +22,21 @@
   [![Licencia](https://img.shields.io/github/license/Arturo254/InnerTune?style=for-the-badge&logo=gnu&color=green)](https://github.com/z-huang/InnerTune/blob/main/LICENSE)
 </div>
 
-![Mockup de InnerTune](https://github.com/user-attachments/assets/edcab771-a1ef-437a-81b1-f1c641b18bcf)
+![mock](https://github.com/user-attachments/assets/93b4dd12-8f94-4d12-b770-2138fbf1358d)
+
 
 
 ## Descargas:
 
-GitHub:
+### GitHub:
 
 [![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Arturo254/InnerTune/releases/latest)
 
-Pagina Web:
+### Pagina Web:
 
 [![GitHub](https://img.shields.io/badge/Pagina-Web-100000?style=for-the-badge&logo=web&logoColor=Blue)](https://innertunne.netlify.app/#downloadapk)
+
+### Tienda de apps
 
 [![Appteka](https://img.shields.io/badge/Appteka-58CC02?style=for-the-badge&logo=Appteka&logoColor=white)](https://appteka.store/app/3d2r188065)
 

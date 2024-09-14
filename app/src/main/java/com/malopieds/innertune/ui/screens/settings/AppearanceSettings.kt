@@ -267,7 +267,7 @@ fun AppearanceSettings(
                     ) {
                         Text(stringResource(R.string.pure_black))
                         Spacer(modifier = Modifier.width(4.dp))
-                        ButtonTip()
+//                        ButtonTip()
                     }
                 },
                 icon = { Icon(painterResource(R.drawable.contrast), null) },

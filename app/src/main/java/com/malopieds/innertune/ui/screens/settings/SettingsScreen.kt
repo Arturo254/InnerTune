@@ -99,7 +99,7 @@ fun VersionCard(uriHandler: UriHandler) {
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
 
-        ),
+            ),
         shape = RoundedCornerShape(38.dp),
         onClick = { uriHandler.openUri("https://github.com/Arturo254/InnerTune/releases/latest") }
     ) {
@@ -120,10 +120,11 @@ fun VersionCard(uriHandler: UriHandler) {
                 modifier = Modifier.align(Alignment.CenterHorizontally),
 
 
-            )
+                )
         }
     }
 }
+
 @Composable
 fun UpdateCard(uriHandler: UriHandler) {
     var showUpdateCard by remember { mutableStateOf(false) }
@@ -166,7 +167,7 @@ fun UpdateCard(uriHandler: UriHandler) {
                 Spacer(Modifier.height(3.dp))
                 Text(
                     text = "${stringResource(R.string.NewVersion)} $latestVersion",
-                            style = MaterialTheme.typography.bodyLarge.copy(
+                    style = MaterialTheme.typography.bodyLarge.copy(
                         fontSize = 17.sp,
                         fontFamily = FontFamily.Monospace
                     ),
@@ -280,7 +281,7 @@ fun SettingsScreen(
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxSize()
-               .blur(0.5.dp)
+                    .blur(0.5.dp)
 
             )
 
@@ -326,7 +327,7 @@ fun SettingsScreen(
                                 style = MaterialTheme.typography.titleSmall,
                                 fontFamily = FontFamily.Monospace
 
-                                )
+                            )
 
                         }
                     }
@@ -334,7 +335,7 @@ fun SettingsScreen(
                 description = null,
                 onClick = { changeBackgroundImage() },
             )
-            }
+        }
 
         Spacer(Modifier.height(25.dp))
 
@@ -398,7 +399,7 @@ fun SettingsScreen(
         Spacer(Modifier.height(25.dp))
 
 
-                    VersionCard(uriHandler)
+        VersionCard(uriHandler)
 
         Spacer(Modifier.height(25.dp))
 
@@ -409,11 +410,15 @@ fun SettingsScreen(
 
 
         title = { Text(stringResource(R.string.settings)) },
+        modifier = Modifier
+            .clip(RoundedCornerShape(bottomStart = 20.dp, bottomEnd = 20.dp)),
         navigationIcon = {
             IconButton(
                 onClick = navController::navigateUp,
                 onLongClick = navController::backToMain,
-            ) {
+            )
+
+            {
                 Icon(
                     painterResource(R.drawable.arrow_back),
                     contentDescription = null,
@@ -424,8 +429,6 @@ fun SettingsScreen(
 
     )
 }
-
-
 
 
 @Composable
@@ -519,6 +522,7 @@ fun AutoChangelogCard(repoOwner: String, repoName: String) {
                     text = error!!,
                     color = MaterialTheme.colorScheme.error
                 )
+
                 changes.isEmpty() -> Text(stringResource(R.string.no_changes))
                 else -> changes.forEach { change ->
                     Text(
@@ -536,19 +540,20 @@ fun AutoChangelogCard(repoOwner: String, repoName: String) {
     }
 }
 
-suspend fun fetchLatestChanges(owner: String, repo: String): List<String> = withContext(Dispatchers.IO) {
-    val url = URL("https://api.github.com/repos/$owner/$repo/releases/latest")
-    val connection = url.openConnection()
-    connection.setRequestProperty("Accept", "application/vnd.github.v3+json")
+suspend fun fetchLatestChanges(owner: String, repo: String): List<String> =
+    withContext(Dispatchers.IO) {
+        val url = URL("https://api.github.com/repos/$owner/$repo/releases/latest")
+        val connection = url.openConnection()
+        connection.setRequestProperty("Accept", "application/vnd.github.v3+json")
 
-    val response = connection.getInputStream().bufferedReader().use { it.readText() }
-    val jsonObject = JSONObject(response)
-    val body = jsonObject.getString("body")
+        val response = connection.getInputStream().bufferedReader().use { it.readText() }
+        val jsonObject = JSONObject(response)
+        val body = jsonObject.getString("body")
 
-    return@withContext body.lines()
-        .filter { it.trim().startsWith("-") || it.trim().startsWith("*") }
-        .map { it.trim().removePrefix("-").removePrefix("*").trim() }
-}
+        return@withContext body.lines()
+            .filter { it.trim().startsWith("-") || it.trim().startsWith("*") }
+            .map { it.trim().removePrefix("-").removePrefix("*").trim() }
+    }
 
 @Composable
 fun ChangelogScreen() {

@@ -1,5 +1,6 @@
 package com.malopieds.innertune.ui.player
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -14,11 +15,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.media3.common.PlaybackException
+import androidx.navigation.NavController
 import com.malopieds.innertune.R
 
 @Composable
 fun PlaybackError(
     error: PlaybackException,
+
     retry: () -> Unit,
 ) {
     Row(
@@ -37,9 +40,14 @@ fun PlaybackError(
             tint = MaterialTheme.colorScheme.error,
         )
 
+
+
         Text(
             text = error.cause?.cause?.message ?: stringResource(R.string.error_unknown),
             style = MaterialTheme.typography.bodyMedium,
         )
+
+
+
     }
 }

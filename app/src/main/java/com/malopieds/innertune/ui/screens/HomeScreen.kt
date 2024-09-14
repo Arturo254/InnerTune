@@ -1,24 +1,13 @@
 package com.malopieds.innertune.ui.screens
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.only
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
@@ -28,19 +17,18 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -87,6 +75,11 @@ import com.malopieds.innertune.ui.utils.SnapLayoutInfoProvider
 import com.malopieds.innertune.utils.rememberPreference
 import com.malopieds.innertune.viewmodels.HomeViewModel
 import kotlin.random.Random
+
+
+
+
+
 
 @SuppressLint("UnrememberedMutableState")
 @Suppress("DEPRECATION")
@@ -139,6 +132,11 @@ fun HomeScreen(
             "SAPISID" in parseCookieString(innerTubeCookie)
         }
 
+
+    val context = LocalContext.current
+    var showNoInternetDialog by remember { mutableStateOf(false) }
+
+
     val coroutineScope = rememberCoroutineScope()
     val scrollState = rememberScrollState()
 
@@ -165,6 +163,47 @@ fun HomeScreen(
                     )
                 }
 
+
+            if (!isInternetAvailable(context)) {
+                showNoInternetDialog = true
+            }
+
+            // Mostrar popup si no hay Internet
+            if (showNoInternetDialog) {
+                AlertDialog(
+                    onDismissRequest = { showNoInternetDialog = false },
+                    title = {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.signal_cellular_nodata),
+                                contentDescription = null,
+                                modifier = Modifier.size(24.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(stringResource(R.string.not_internet))
+                        }
+                    },
+                    text = { Text(stringResource(R.string.internet_required)) },
+                    confirmButton = {},
+                    dismissButton = {
+                        Box(
+                            modifier = Modifier.fillMaxWidth(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Button(onClick = {
+
+                                navController.navigate("auto_playlist/downloads")
+                                showNoInternetDialog = false
+                            }) {
+                                Text(stringResource(R.string.downloadspage))
+                            }
+                        }
+                    }
+                )
+
+
+            }
+
             Column(
                 modifier = Modifier.verticalScroll(scrollState),
             ) {
@@ -186,7 +225,8 @@ fun HomeScreen(
                     val navigationItems = listOf(
                         Triple(R.string.history, R.drawable.history, "history"),
                         Triple(R.string.stats, R.drawable.trending_up, "stats"),
-                        Triple(R.string.liked_songs, R.drawable.thumb_up, "auto_playlist/liked")
+                        Triple(R.string.liked_songs, R.drawable.thumb_up, "auto_playlist/liked"),
+                        Triple(R.string.downloaded_songs, R.drawable.download, "auto_playlist/downloads"),
                     ) + if (isLoggedIn) listOf(Triple(R.string.account, R.drawable.person, "account")) else emptyList()
 
                     navigationItems.forEach { (titleRes, iconRes, route) ->
@@ -1197,5 +1237,18 @@ fun HomeScreen(
                 },
             )
         }
+    }
+}
+
+
+fun isInternetAvailable(context: Context): Boolean {
+    val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    val network = connectivityManager.activeNetwork ?: return false
+    val activeNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false
+    return when {
+        activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+        activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+        activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
+        else -> false
     }
 }

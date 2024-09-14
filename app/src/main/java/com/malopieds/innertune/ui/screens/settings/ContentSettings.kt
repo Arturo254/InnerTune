@@ -130,11 +130,7 @@ fun ContentSettings(
         PreferenceGroupTitle(
             title = stringResource(R.string.app_language),
         )
-
         LanguageSelector()
-
-
-
         SwitchPreference(
             title = { Text(stringResource(R.string.hide_explicit)) },
             icon = { Icon(painterResource(R.drawable.explicit), null) },
@@ -216,11 +212,11 @@ fun ContentSettings(
             onValueSelected = onQuickPicksChange,
         )
 
-        SliderPreference(
-            title = { Text(stringResource(R.string.history_duration)) },
-            value = historyDuration,
-            onValueChange = onHistoryDurationChange,
-        )
+//        SliderPreference(
+//            title = { Text(stringResource(R.string.history_duration)) },
+//            value = historyDuration,
+//            onValueChange = onHistoryDurationChange,
+//        )
     }
 
     TopAppBar(
@@ -270,9 +266,6 @@ fun LanguageSelector() {
     var expanded by remember { mutableStateOf(false) } // Dropdown expanded state
 
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
 
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -293,7 +286,6 @@ fun LanguageSelector() {
 
 
 Box(
-    modifier = Modifier.padding(16.dp),
     contentAlignment = Alignment.Center
 
 )

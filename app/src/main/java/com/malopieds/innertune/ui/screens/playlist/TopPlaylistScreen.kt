@@ -50,6 +50,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -69,6 +70,7 @@ import androidx.media3.exoplayer.offline.Download
 import androidx.media3.exoplayer.offline.DownloadRequest
 import androidx.media3.exoplayer.offline.DownloadService
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import com.malopieds.innertune.LocalDownloadUtil
 import com.malopieds.innertune.LocalPlayerAwareWindowInsets
 import com.malopieds.innertune.LocalPlayerConnection
@@ -228,10 +230,10 @@ fun TopPlaylistScreen(
                                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
-                                Icon(
-                                    painter = painterResource(R.drawable.trending_up),
+                                AsyncImage(
+                                    model = songs!![0].song.thumbnailUrl,
                                     contentDescription = null,
-                                    tint = LocalContentColor.current.copy(alpha = 0.8f),
+                                    contentScale = ContentScale.Crop,
                                     modifier =
                                     Modifier
                                         .size(AlbumThumbnailSize)

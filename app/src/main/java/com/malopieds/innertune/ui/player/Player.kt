@@ -6,11 +6,16 @@ import android.text.format.Formatter
 import android.widget.Toast
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
@@ -55,6 +60,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -65,6 +71,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
@@ -143,6 +150,7 @@ import kotlinx.coroutines.withContext
 import me.saket.squiggles.SquigglySlider
 import java.time.LocalDateTime
 import kotlin.math.roundToInt
+import kotlin.random.Random
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -197,6 +205,8 @@ fun BottomSheetPlayer(
         mutableStateOf<Long?>(null)
     }
 
+
+
     var gradientColors by remember {
         mutableStateOf<List<Color>>(emptyList())
     }
@@ -235,51 +245,45 @@ fun BottomSheetPlayer(
                     gradientColors = it
                 }
             }
-        } else {
+        }
+        else {
             gradientColors = emptyList()
         }
+
     }
+
 
     val changeBound = state.expandedBound / 3
 
-    val onBackgroundColor =
-        when (playerBackground) {
-            PlayerBackgroundStyle.DEFAULT -> MaterialTheme.colorScheme.onBackground
-            PlayerBackgroundStyle.GRADIENT -> {
-                val whiteContrast =
-                    if (gradientColors.size >= 2) {
-                        ColorUtils.calculateContrast(
-                            gradientColors.first().toArgb(),
-                            Color.White.toArgb(),
-                        )
-                    } else {
-                        2.0
-                    }
-                val blackContrast: Double =
-                    if (gradientColors.size >= 2) {
-                        ColorUtils.calculateContrast(
-                            gradientColors.last().toArgb(),
-                            Color.Black.toArgb(),
-                        )
-                    } else {
-                        2.0
-                    }
-                if (gradientColors.size >= 2 &&
-                    whiteContrast < 2f &&
-                    blackContrast > 2f
-                ) {
+    val onBackgroundColor = when {
+        playerBackground == PlayerBackgroundStyle.GRADIENT && gradientColors.size >= 2 -> {
+            val whiteContrast = ColorUtils.calculateContrast(
+                gradientColors.first().toArgb(),
+                Color.White.toArgb()
+            )
+            val blackContrast = ColorUtils.calculateContrast(
+                gradientColors.last().toArgb(),
+                Color.Black.toArgb()
+            )
+            when {
+                whiteContrast < 2f && blackContrast > 2f -> {
                     changeColor = true
                     Color.Black
-                } else if (whiteContrast > 2f && blackContrast < 2f) {
+                }
+                whiteContrast > 2f && blackContrast < 2f -> {
                     changeColor = true
                     Color.White
-                } else {
+                }
+                else -> {
                     changeColor = false
                     MaterialTheme.colorScheme.onSurface
                 }
             }
-            PlayerBackgroundStyle.BLUR -> MaterialTheme.colorScheme.onBackground
         }
+        useBlackBackground -> Color.White
+        else -> MaterialTheme.colorScheme.onBackground
+    }
+
 
 
 
@@ -1044,15 +1048,11 @@ fun BottomSheetPlayer(
 
         if (gradientColors.size >= 2 && state.isExpanded) {
             Box(
-                modifier =
-                Modifier
+                modifier = Modifier
                     .fillMaxSize()
                     .background(Brush.verticalGradient(gradientColors)),
             )
-
-        }
-        else if (playerBackground == PlayerBackgroundStyle.BLUR )  {
-            Brush.verticalGradient(gradientColors)
+        } else if (playerBackground == PlayerBackgroundStyle.BLUR) {
             AsyncImage(
                 model = mediaMetadata?.thumbnailUrl,
                 contentDescription = null,
@@ -1061,8 +1061,15 @@ fun BottomSheetPlayer(
                     .fillMaxSize()
                     .blur(200.dp)
                     .alpha(0.8f)
+                    .background(if (useBlackBackground) Color.Black.copy(alpha = 0.5f) else Color.Transparent)
             )
 
+        } else if (useBlackBackground && playerBackground == PlayerBackgroundStyle.DEFAULT) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black)
+            )
         }
 
 
@@ -1148,3 +1155,4 @@ fun BottomSheetPlayer(
         )
     }
 }
+

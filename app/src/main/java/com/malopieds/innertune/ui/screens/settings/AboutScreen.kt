@@ -60,6 +60,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.malopieds.innertune.BuildConfig
@@ -218,7 +219,7 @@ fun AboutScreen(
             )
         }
 
-        // Text without shimmer effect
+
         Row(
             verticalAlignment = Alignment.Top,
         ) {
@@ -231,11 +232,7 @@ fun AboutScreen(
         }
 
         Row(verticalAlignment = Alignment.CenterVertically) {
-//            Text(
-//                text = "${BuildConfig.VERSION_NAME} ",
-//                style = MaterialTheme.typography.titleMedium,
-//                color = MaterialTheme.colorScheme.secondary
-//            )
+//
 
             Spacer(Modifier.width(4.dp))
 
@@ -279,8 +276,11 @@ fun AboutScreen(
         Spacer(Modifier.height(4.dp))
 
         Text(
-            text = "\uD835\uDE73\uD835\uDE8E\uD835\uDE9F \uD835\uDE71\uD835\uDEA2 \uD835\uDE70\uD835\uDE9B\uD835\uDE9D\uD835\uDE9E\uD835\uDE9B\uD835\uDE98 \uD835\uDE72\uD835\uDE8E\uD835\uDE9B\uD835\uDE9F\uD835\uDE8A\uD835\uDE97\uD835\uDE9D\uD835\uDE8E\uD835\uDE9C 亗",
-            style = MaterialTheme.typography.titleMedium,
+            text = " Dev By Arturo Cervantes 亗",
+            style = MaterialTheme.typography.titleMedium.copy(
+                fontFamily = FontFamily.Monospace
+            ),
+            fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.secondary
         )
 
@@ -291,7 +291,7 @@ fun AboutScreen(
                 onClick = { uriHandler.openUri("https://github.com/Arturo254/InnerTune") }
             ) {
                 Icon(
-
+modifier = Modifier.size(20.dp),
                     painter = painterResource(R.drawable.github),
                     contentDescription = null
 
@@ -301,16 +301,30 @@ fun AboutScreen(
             IconButton(
                 onClick = { uriHandler.openUri("https://g.dev/Arturo254") }
             ) {
-                Icon(contentDescription = null, painter = painterResource(R.drawable.google))
+                Icon(
+                    modifier = Modifier.size(20.dp),
+                    contentDescription = null,
+                    painter = painterResource(R.drawable.google))
+
             }
 
             IconButton(
                 onClick = { uriHandler.openUri("https://www.paypal.com/donate?hosted_button_id=LPK2LT9SY5MBY") }
             ) {
                 Icon(
+                    modifier = Modifier.size(20.dp),
                     painter = painterResource(R.drawable.paypal),
                     contentDescription = null
                 )
+            }
+            IconButton(
+                onClick = { uriHandler.openUri("https://innertunne.netlify.app/") }
+            ) {
+                Icon(
+                    modifier = Modifier.size(22.dp),
+                    contentDescription = null,
+                    painter = painterResource(R.drawable.resource_public))
+
             }
 
 
@@ -358,6 +372,14 @@ fun AboutScreen(
             title = stringResource(R.string.help),
             subtitle = stringResource(R.string.help_text),
             onClick = { uriHandler.openUri("https://wa.me/525576847925") }
+        )
+        Spacer(Modifier.height(20.dp))
+
+        CardItem(
+            icon = R.drawable.tensorflow,
+            title = stringResource(R.string.IA_content),
+            subtitle = stringResource(R.string.IA_content_text),
+            onClick = { uriHandler.openUri("https://www.tensorflow.org/") }
         )
         Spacer(Modifier.height(20.dp))
         Row(

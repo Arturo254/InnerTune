@@ -372,4 +372,7 @@
     <string name="closepopup">Fechar</string>
     <string name="tip">No momento, estamos enfrentando um erro com o fundo “gradiente”, que será resolvido em breve</string>
     <string name="stop_music_on_task_clear">Parar música ao limpar tarefa</string>
+    <string name="not_internet">Sem conexão com a Internet</string>
+    <string name="internet_required">Parece que você não tem conexão com a Internet. Verifique sua rede.</string>
+    <string name="downloadspage">Ir para downloads</string>
 </resources>

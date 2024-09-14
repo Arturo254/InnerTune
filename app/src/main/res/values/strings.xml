@@ -389,8 +389,14 @@
     <string name="backup_link_title">Backup uploaded successfully!</string>
     <string name="copy_link">Copy Link</string>
     <string name="stop_music_on_task_clear">Stop music on task clear</string>
-    <string name="app_language">App language</string>
+    <string name="app_language">App language (beta)</string>
     <string name="configure_app_language">Configure app languages</string>
     <string name="intent_app_language_not_found">Couldn\\\'t find app language settings, please configure them manually</string>
     <string name="language_settings_not_supported">the version is lower than android 13, not supported</string>
+    <string name="particle_system">particle system</string>
+    <string name="IA_content">AI content</string>
+    <string name="IA_content_text">Development in TensorFlow</string>
+    <string name="not_internet">No Internet Connection</string>
+    <string name="internet_required">It looks like you have no Internet connection. Please check your network.</string>
+    <string name="downloadspage">Go to downloads</string>
 </resources>

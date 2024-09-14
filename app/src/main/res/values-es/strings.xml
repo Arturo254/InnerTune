@@ -387,4 +387,7 @@
     <string name="backup_link_title">¡Copia de seguridad cargada correctamente!</string>
     <string name="copy_link">Copiar enlace</string>
     <string name="stop_music_on_task_clear">Detener la música al borrar la tarea</string>
+    <string name="not_internet">Sin conexión a Internet</string>
+    <string name="internet_required">Parece que no tiene conexión a Internet. Por favor, compruebe su red.</string>
+    <string name="downloadspage">Ir a descargas</string>
 </resources>

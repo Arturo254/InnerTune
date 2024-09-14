@@ -38,7 +38,9 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -108,6 +110,15 @@ fun OnlineSearchScreen(
             .only(WindowInsetsSides.Bottom)
             .asPaddingValues(),
     ) {
+        item {
+            Text(
+                text = (stringResource(R.string.SearchHistory)),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+            )
+        }
+
         items(
             items = viewState.history,
             key = { it.query },
@@ -132,9 +143,20 @@ fun OnlineSearchScreen(
                         ),
                     )
                 },
-                modifier = Modifier.animateItemPlacement(),
+                modifier = Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null),
             )
         }
+        if (viewState.suggestions.isNotEmpty()) {
+            item {
+                Text(
+                    text = (stringResource(R.string.Sujestions)),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                )
+            }
+        }
+
 
         items(
             items = viewState.suggestions,
@@ -155,16 +177,20 @@ fun OnlineSearchScreen(
                         ),
                     )
                 },
-                modifier = Modifier.animateItemPlacement(),
+                modifier = Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null),
             )
         }
 
-        if (viewState.items.isNotEmpty() && viewState.history.size + viewState.suggestions.size > 0) {
+        if (viewState.items.isNotEmpty()) {
             item {
-                HorizontalDivider()
+                Text(
+                    text = (stringResource(R.string.SearchResutls)),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                )
             }
         }
-
         items(
             items = viewState.items,
             key = { it.id },
@@ -266,59 +292,56 @@ fun SuggestionItem(
             .clickable(onClick = onClick),
         color = MaterialTheme.colorScheme.surfaceVariant
     ) {
-
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier =
-        modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(18.dp))
-            .height(SuggestionItemHeight)
-            .clickable(onClick = onClick)
-            .padding(end = SearchBarIconOffsetX),
-    ) {
-        Icon(
-            painterResource(if (online) R.drawable.search else R.drawable.history),
-            contentDescription = null,
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .padding(end = 12.dp)
-                .size(24.dp)
-                .alpha(0.7f),
-            tint = MaterialTheme.colorScheme.onSurfaceVariant
-        )
+                .height(SuggestionItemHeight)
+                .padding(horizontal = 12.dp)
+        ) {
+            Icon(
+                painterResource(if (online) R.drawable.search else R.drawable.history),
+                contentDescription = null,
+                modifier = Modifier
+                    .padding(end = 12.dp)
+                    .size(24.dp)
+                    .alpha(0.7f),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
+            )
 
-        Text(
-            text = query,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.weight(1f),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
+            Text(
+                text = query,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.weight(1f),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
 
-        if (!online) {
+            if (!online) {
+                IconButton(
+                    onClick = onDelete,
+                    modifier = Modifier.alpha(0.7f),
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.close),
+                        contentDescription = "Delete",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+
             IconButton(
-                onClick = onDelete,
-                modifier = Modifier.alpha(0.5f),
+                onClick = onFillTextField,
+                modifier = Modifier.alpha(0.7f),
             ) {
                 Icon(
-                    painter = painterResource(R.drawable.close),
-                    contentDescription = null,
+                    painter = painterResource(R.drawable.arrow_top_left),
+                    contentDescription = "Fill",
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         }
-
-        IconButton(
-            onClick = onFillTextField,
-            modifier = Modifier.alpha(0.5f),
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.arrow_top_left),
-                contentDescription = null,
-            )
-        }
     }
-}
 }
 
 

@@ -26,9 +26,9 @@ fun <E> ChipsRow(
 ) {
     Row(
         modifier =
-            modifier
-                .fillMaxWidth()
-                .horizontalScroll(rememberScrollState()),
+        modifier
+            .fillMaxWidth()
+            .horizontalScroll(rememberScrollState()),
     ) {
         Spacer(Modifier.width(12.dp))
 

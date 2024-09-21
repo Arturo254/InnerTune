@@ -1,5 +1,6 @@
 package com.malopieds.innertune.ui.screens.settings
 
+import android.os.Build
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -286,18 +287,34 @@ fun AppearanceSettings(
             title = stringResource(R.string.player),
         )
 
+
+// ...
+
+
+// ...
+
+        val isBlurSupported = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+
         EnumListPreference(
             title = { Text(stringResource(R.string.player_background_style)) },
             icon = { Icon(painterResource(R.drawable.gradient), null) },
             selectedValue = playerBackground,
-            onValueSelected = onPlayerBackgroundChange,
-            valueText = {
-                when (it) {
-                    PlayerBackgroundStyle.DEFAULT -> stringResource(R.string.follow_theme)
-                    PlayerBackgroundStyle.GRADIENT -> stringResource(R.string.gradient)
-                    PlayerBackgroundStyle.BLUR -> stringResource(R.string.blur)
+            onValueSelected = { newValue ->
+                if (newValue != PlayerBackgroundStyle.BLUR || isBlurSupported) {
+                    onPlayerBackgroundChange(newValue)
                 }
             },
+            valueText = { style ->
+                when (style) {
+                    PlayerBackgroundStyle.DEFAULT -> stringResource(R.string.follow_theme)
+                    PlayerBackgroundStyle.GRADIENT -> stringResource(R.string.gradient)
+                    PlayerBackgroundStyle.BLUR -> if (isBlurSupported) {
+                        stringResource(R.string.blur)
+                    } else {
+                        stringResource(R.string.blur_not_supported)
+                    }
+                }
+            }
         )
 
         PreferenceEntry(

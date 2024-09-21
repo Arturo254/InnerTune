@@ -5,6 +5,7 @@ import android.graphics.drawable.BitmapDrawable
 import android.text.format.Formatter
 import android.widget.Toast
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateDpAsState
@@ -1046,33 +1047,38 @@ fun BottomSheetPlayer(
             }
         }
 
-        if (gradientColors.size >= 2 && state.isExpanded) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Brush.verticalGradient(gradientColors)),
-            )
-        } else if (playerBackground == PlayerBackgroundStyle.BLUR) {
-            AsyncImage(
-                model = mediaMetadata?.thumbnailUrl,
-                contentDescription = null,
-                contentScale = ContentScale.FillBounds,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .blur(200.dp)
-                    .alpha(0.8f)
-                    .background(if (useBlackBackground) Color.Black.copy(alpha = 0.5f) else Color.Transparent)
-            )
 
-        } else if (useBlackBackground && playerBackground == PlayerBackgroundStyle.DEFAULT) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.Black)
-            )
+
+        AnimatedVisibility(
+            visible = state.isExpanded,
+            enter = fadeIn(tween(900)),
+            exit = fadeOut()
+        ) {
+            if (gradientColors.size >= 2) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Brush.verticalGradient(gradientColors)),
+                )
+            } else if (playerBackground == PlayerBackgroundStyle.BLUR) {
+                AsyncImage(
+                    model = mediaMetadata?.thumbnailUrl,
+                    contentDescription = null,
+                    contentScale = ContentScale.FillBounds,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .blur(200.dp)
+                        .alpha(0.8f)
+                        .background(if (useBlackBackground) Color.Black.copy(alpha = 0.5f) else Color.Transparent)
+                )
+            } else if (useBlackBackground && playerBackground == PlayerBackgroundStyle.DEFAULT) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.Black)
+                )
+            }
         }
-
-
 //
         when (LocalConfiguration.current.orientation) {
             Configuration.ORIENTATION_LANDSCAPE -> {

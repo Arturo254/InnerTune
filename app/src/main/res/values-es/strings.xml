@@ -390,4 +390,5 @@
     <string name="not_internet">Sin conexión a Internet</string>
     <string name="internet_required">Parece que no tiene conexión a Internet. Por favor, compruebe su red.</string>
     <string name="downloadspage">Ir a descargas</string>
+    <string name="blur_not_supported">Desenfoque no compatible</string>
 </resources>

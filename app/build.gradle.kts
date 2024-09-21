@@ -20,7 +20,7 @@ android {
         //noinspection OldTargetApi
         targetSdk = 34
         versionCode = 25
-        versionName = "1.1.0"
+        versionName = "1.2.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -122,6 +122,7 @@ dependencies {
 
     implementation(libs.room.runtime)
     implementation(libs.accompanist.coil)
+    implementation(libs.blurry)
     ksp(libs.room.compiler)
     implementation(libs.room.ktx)
 

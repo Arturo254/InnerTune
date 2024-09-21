@@ -13,6 +13,9 @@ ktor = "2.3.12"
 ksp = "2.0.0-1.0.24"
 squigglyslider = "1.0.0"
 accompanistCoil = "0.15.0"
+blurry = "4.0.1"
+coilCompose = "2.7.0"
+coil = "2.7.0"
 
 [libraries]
 annotation = { module = "androidx.annotation:annotation", version.ref = "annotation" }
@@ -82,6 +85,9 @@ junit = { group = "junit", name = "junit", version = "4.13.2" }
 
 timber = { group = "com.jakewharton.timber", name = "timber", version = "5.0.1" }
 accompanist-coil = { group = "com.google.accompanist", name = "accompanist-coil", version.ref = "accompanistCoil" }
+blurry = { group = "jp.wasabeef", name = "blurry", version.ref = "blurry" }
+coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coilCompose" }
+coil-kt-coil = { group = "io.coil-kt", name = "coil", version.ref = "coil" }
 
 [plugins]
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

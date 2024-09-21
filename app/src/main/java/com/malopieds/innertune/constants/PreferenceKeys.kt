@@ -233,6 +233,8 @@ enum class PlayerBackgroundStyle {
 val TopSize = stringPreferencesKey("topSize")
 val HistoryDuration = floatPreferencesKey("historyDuration")
 
+val SkipOnErrorKey = booleanPreferencesKey("skipOnError")
+
 val PlayerBackgroundStyleKey = stringPreferencesKey("playerBackgroundStyle")
 val ShowLyricsKey = booleanPreferencesKey("showLyrics")
 val LyricsTextPositionKey = stringPreferencesKey("lyricsTextPosition")

@@ -192,7 +192,7 @@ fun HomeScreen(
                         ) {
                             Button(onClick = {
 
-                                navController.navigate("auto_playlist/downloads")
+                                navController.navigate("library")
                                 showNoInternetDialog = false
                             }) {
                                 Text(stringResource(R.string.downloadspage))
@@ -238,6 +238,7 @@ fun HomeScreen(
                         )
                     }
                 }
+
 
                 quickPicks?.let { quickPicks ->
                     NavigationTitle(
@@ -718,11 +719,15 @@ fun HomeScreen(
                     }
                 }
 
+
+
                 homeFirstAlbumRecommendation?.albums?.let { albums ->
                     if (albums.recommendationAlbum.isNotEmpty()) {
                         NavigationTitle(
                             title = stringResource(R.string.similar_to) + " " + albums.recommendedAlbum.name,
                         )
+
+
 
                         LazyRow(
                             contentPadding =
@@ -759,12 +764,16 @@ fun HomeScreen(
                                                         }
                                                     },
                                                 ).animateItemPlacement(),
+
+
                                     )
                                 }
                             }
                         }
                     }
                 }
+
+
 
                 homeFirstContinuation?.forEach { homePlaylists ->
                     if (homePlaylists.playlists.isNotEmpty()) {

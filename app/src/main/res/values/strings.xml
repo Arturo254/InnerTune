@@ -399,4 +399,5 @@
     <string name="not_internet">No Internet Connection</string>
     <string name="internet_required">It looks like you have no Internet connection. Please check your network.</string>
     <string name="downloadspage">Go to downloads</string>
+    <string name="blur_not_supported">Blur not supported</string>
 </resources>

@@ -308,6 +308,11 @@ fun AppearanceSettings(
                 when (style) {
                     PlayerBackgroundStyle.DEFAULT -> stringResource(R.string.follow_theme)
                     PlayerBackgroundStyle.GRADIENT -> stringResource(R.string.gradient)
+                    PlayerBackgroundStyle.BLURMOV -> if (isBlurSupported) {
+                        stringResource(R.string.blurmv)
+                    } else {
+                        stringResource(R.string.blur_not_supported)
+                    }
                     PlayerBackgroundStyle.BLUR -> if (isBlurSupported) {
                         stringResource(R.string.blur)
                     } else {

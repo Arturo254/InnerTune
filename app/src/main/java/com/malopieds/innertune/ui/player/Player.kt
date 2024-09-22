@@ -6,12 +6,16 @@ import android.text.format.Formatter
 import android.widget.Toast
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -72,6 +76,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -225,6 +231,9 @@ fun BottomSheetPlayer(
         if (useBlackBackground && playerBackground != PlayerBackgroundStyle.BLUR ) {
             gradientColors = listOf(Color.Black, Color.Black)
         }
+        if (useBlackBackground && playerBackground != PlayerBackgroundStyle.BLURMOV ) {
+            gradientColors = listOf(Color.Black, Color.Black)
+        }
         else if (playerBackground == PlayerBackgroundStyle.GRADIENT) {
             withContext(Dispatchers.IO) {
                 val result =
@@ -300,6 +309,19 @@ fun BottomSheetPlayer(
                 changeColor = false
                 MaterialTheme.colorScheme.onSurface
             }
+    }
+    when (playerBackground) {
+        PlayerBackgroundStyle.BLURMOV -> MaterialTheme.colorScheme.onBackground
+        else ->
+        if (gradientColors.size >= 3 &&
+            ColorUtils.calculateContrast(gradientColors.first().toArgb(), Color.White.toArgb()) < 1.5f
+        ) {
+            changeColor = true
+            Color.Black
+        } else {
+            changeColor = false
+            MaterialTheme.colorScheme.onSurface
+        }
     }
 
 
@@ -947,16 +969,24 @@ fun BottomSheetPlayer(
                         .fillMaxWidth()
                         .padding(horizontal = PlayerHorizontalPadding),
             ) {
+//                Box(modifier = Modifier.weight(1f)) {
+//                    ResizableIconButton(
+//                        icon = if (currentSong?.song?.liked == true) R.drawable.favorite else R.drawable.favorite_border,
+//                        color = if (currentSong?.song?.liked == true) MaterialTheme.colorScheme.error else onBackgroundColor,
+//                        modifier =
+//                            Modifier
+//                                .size(32.dp)
+//                                .padding(4.dp)
+//                                .align(Alignment.Center),
+//                        onClick = playerConnection::toggleLike,
+//                    )
+//                }
+                // button to toggle like
                 Box(modifier = Modifier.weight(1f)) {
-                    ResizableIconButton(
-                        icon = if (currentSong?.song?.liked == true) R.drawable.favorite else R.drawable.favorite_border,
-                        color = if (currentSong?.song?.liked == true) MaterialTheme.colorScheme.error else onBackgroundColor,
-                        modifier =
-                            Modifier
-                                .size(32.dp)
-                                .padding(4.dp)
-                                .align(Alignment.Center),
-                        onClick = playerConnection::toggleLike,
+                    LikeButton(
+                        isLiked = currentSong?.song?.liked == true,
+                        onLikeClick = playerConnection::toggleLike,
+                        color = if (currentSong?.song?.liked == true) MaterialTheme.colorScheme.error else onBackgroundColor
                     )
                 }
 
@@ -1070,8 +1100,39 @@ fun BottomSheetPlayer(
                         .blur(200.dp)
                         .alpha(0.8f)
                         .background(if (useBlackBackground) Color.Black.copy(alpha = 0.5f) else Color.Transparent)
+
                 )
-            } else if (useBlackBackground && playerBackground == PlayerBackgroundStyle.DEFAULT) {
+            }
+            else if (playerBackground == PlayerBackgroundStyle.BLURMOV) {
+                val infiniteTransition = rememberInfiniteTransition(label = "")
+
+
+                val rotation by infiniteTransition.animateFloat(
+                    initialValue = 0f,
+                    targetValue = 360f,
+                    animationSpec = infiniteRepeatable(
+                        animation = tween(
+                            durationMillis = 100000,
+                            easing = FastOutSlowInEasing // Easing suave
+                        ),
+                        repeatMode = RepeatMode.Restart
+                    ), label = ""
+                )
+                AsyncImage(
+                    model = mediaMetadata?.thumbnailUrl,
+                    contentDescription = null,
+                    contentScale = ContentScale.FillBounds,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .blur(200.dp)
+                        .alpha(0.8f)
+                        .background(if (useBlackBackground) Color.Black.copy(alpha = 0.5f) else Color.Transparent)
+                        .rotate(rotation)
+
+                )
+            }
+
+            else if (useBlackBackground && playerBackground == PlayerBackgroundStyle.DEFAULT) {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -1162,3 +1223,32 @@ fun BottomSheetPlayer(
     }
 }
 
+
+@Composable
+fun LikeButton(
+    isLiked: Boolean,
+    onLikeClick: () -> Unit,
+    color: Color
+) {
+    var isLikedState by remember { mutableStateOf(isLiked) }
+    val scale by animateFloatAsState(
+        targetValue = if (isLikedState) 1.2f else 1f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessLow
+        ), label = ""
+    )
+
+    ResizableIconButton(
+        icon = if (isLikedState) R.drawable.favorite else R.drawable.favorite_border,
+        color = color,
+        modifier = Modifier
+            .size(32.dp)
+            .padding(4.dp)
+            .scale(scale),
+        onClick = {
+            isLikedState = !isLikedState
+            onLikeClick()
+        },
+    )
+}

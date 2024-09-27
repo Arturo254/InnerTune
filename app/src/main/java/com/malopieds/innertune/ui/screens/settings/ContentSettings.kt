@@ -24,7 +24,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.malopieds.innertube.utils.parseCookieString
 import com.malopieds.innertune.LocalPlayerAwareWindowInsets
+import com.malopieds.innertune.NotificationPermissionPreference
 import com.malopieds.innertune.R
+
 import com.malopieds.innertune.constants.AccountChannelHandleKey
 import com.malopieds.innertune.constants.AccountEmailKey
 import com.malopieds.innertune.constants.AccountNameKey
@@ -138,6 +140,8 @@ fun ContentSettings(
             onCheckedChange = onHideExplicitChange,
         )
 
+        NotificationPermissionPreference()
+
         PreferenceGroupTitle(
             title = stringResource(R.string.proxy),
         )
@@ -217,6 +221,7 @@ fun ContentSettings(
 //            value = historyDuration,
 //            onValueChange = onHistoryDurationChange,
 //        )
+
     }
 
     TopAppBar(

@@ -1,9 +1,13 @@
 package com.malopieds.innertune.ui.screens
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
@@ -32,7 +36,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
+import androidx.core.content.PermissionChecker
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.google.accompanist.swiperefresh.SwipeRefresh
@@ -75,6 +82,8 @@ import com.malopieds.innertune.ui.utils.SnapLayoutInfoProvider
 import com.malopieds.innertune.utils.rememberPreference
 import com.malopieds.innertune.viewmodels.HomeViewModel
 import kotlin.random.Random
+
+
 
 
 
@@ -164,45 +173,45 @@ fun HomeScreen(
                 }
 
 
-            if (!isInternetAvailable(context)) {
-                showNoInternetDialog = true
-            }
-
-            // Mostrar popup si no hay Internet
-            if (showNoInternetDialog) {
-                AlertDialog(
-                    onDismissRequest = { showNoInternetDialog = false },
-                    title = {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.signal_cellular_nodata),
-                                contentDescription = null,
-                                modifier = Modifier.size(24.dp)
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(stringResource(R.string.not_internet))
-                        }
-                    },
-                    text = { Text(stringResource(R.string.internet_required)) },
-                    confirmButton = {},
-                    dismissButton = {
-                        Box(
-                            modifier = Modifier.fillMaxWidth(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Button(onClick = {
-
-                                navController.navigate("library")
-                                showNoInternetDialog = false
-                            }) {
-                                Text(stringResource(R.string.downloadspage))
-                            }
-                        }
-                    }
-                )
-
-
-            }
+//            if (!isInternetAvailable(context)) {
+//                showNoInternetDialog = true
+//            }
+//
+//            // Mostrar popup si no hay Internet
+//            if (showNoInternetDialog) {
+//                AlertDialog(
+//                    onDismissRequest = { showNoInternetDialog = false },
+//                    title = {
+//                        Row(verticalAlignment = Alignment.CenterVertically) {
+//                            Icon(
+//                                painter = painterResource(id = R.drawable.signal_cellular_nodata),
+//                                contentDescription = null,
+//                                modifier = Modifier.size(24.dp)
+//                            )
+//                            Spacer(modifier = Modifier.width(8.dp))
+//                            Text(stringResource(R.string.not_internet))
+//                        }
+//                    },
+//                    text = { Text(stringResource(R.string.internet_required)) },
+//                    confirmButton = {},
+//                    dismissButton = {
+//                        Box(
+//                            modifier = Modifier.fillMaxWidth(),
+//                            contentAlignment = Alignment.Center
+//                        ) {
+//                            Button(onClick = {
+//
+//                                navController.navigate("library")
+//                                showNoInternetDialog = false
+//                            }) {
+//                                Text(stringResource(R.string.downloadspage))
+//                            }
+//                        }
+//                    }
+//                )
+//
+//
+//            }
 
             Column(
                 modifier = Modifier.verticalScroll(scrollState),

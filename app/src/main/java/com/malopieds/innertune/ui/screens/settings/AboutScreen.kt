@@ -318,7 +318,7 @@ modifier = Modifier.size(20.dp),
                 )
             }
             IconButton(
-                onClick = { uriHandler.openUri("https://innertunne.netlify.app/") }
+                onClick = { uriHandler.openUri("https://opentune.netlify.app/") }
             ) {
                 Icon(
                     modifier = Modifier.size(22.dp),
@@ -463,6 +463,12 @@ fun UserCards(uriHandler: UriHandler) {
             name = "ϟ AlessandroGalvan",
             role = "Search Bar Playlist",
             onClick = { uriHandler.openUri("https://github.com/AlessandroGalvan") }
+        )
+        UserCard(
+            imageUrl = "https://avatars.githubusercontent.com/u/106829560?v=4",
+            name = "ϟ Derpachi",
+            role = "Traductor (ru_RU)",
+            onClick = { uriHandler.openUri("https://github.com/Derpachi") }
         )
 
 //        UserCard(

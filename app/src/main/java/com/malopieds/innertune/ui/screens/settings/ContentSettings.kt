@@ -1,18 +1,21 @@
 package com.malopieds.innertune.ui.screens.settings
 
 
+import android.content.ActivityNotFoundException
 import android.content.Context
+import android.content.Intent
 import android.content.res.Configuration
+import android.net.Uri
 import android.os.Build
 import android.os.LocaleList
+import android.provider.Settings
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -26,7 +29,6 @@ import com.malopieds.innertube.utils.parseCookieString
 import com.malopieds.innertune.LocalPlayerAwareWindowInsets
 import com.malopieds.innertune.NotificationPermissionPreference
 import com.malopieds.innertune.R
-
 import com.malopieds.innertune.constants.AccountChannelHandleKey
 import com.malopieds.innertune.constants.AccountEmailKey
 import com.malopieds.innertune.constants.AccountNameKey
@@ -51,7 +53,6 @@ import com.malopieds.innertune.ui.component.IconButton
 import com.malopieds.innertune.ui.component.ListPreference
 import com.malopieds.innertune.ui.component.PreferenceEntry
 import com.malopieds.innertune.ui.component.PreferenceGroupTitle
-import com.malopieds.innertune.ui.component.SliderPreference
 import com.malopieds.innertune.ui.component.SwitchPreference
 import com.malopieds.innertune.ui.utils.backToMain
 import com.malopieds.innertune.utils.rememberEnumPreference
@@ -152,6 +153,24 @@ fun ContentSettings(
             checked = proxyEnabled,
             onCheckedChange = onProxyEnabledChange,
         )
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            PreferenceEntry(
+                title = { Text(stringResource(R.string.open_supported_links)) },
+                description = stringResource(R.string.configure_supported_links),
+                icon = { Icon(painterResource(R.drawable.add_link), null) },
+                onClick = {
+                    try {
+                        context.startActivity(
+                            Intent(Settings.ACTION_APP_OPEN_BY_DEFAULT_SETTINGS, Uri.parse("package:${context.packageName}")),
+                        )
+                    } catch (e: ActivityNotFoundException) {
+                        Toast.makeText(context, R.string.intent_supported_links_not_found, Toast.LENGTH_LONG).show()
+                    }
+                },
+            )
+        }
+
 
         AnimatedVisibility(proxyEnabled) {
             Column {

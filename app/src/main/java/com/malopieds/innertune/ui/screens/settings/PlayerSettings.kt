@@ -22,6 +22,7 @@ import com.malopieds.innertune.R
 import com.malopieds.innertune.constants.AudioNormalizationKey
 import com.malopieds.innertune.constants.AudioQuality
 import com.malopieds.innertune.constants.AudioQualityKey
+import com.malopieds.innertune.constants.AutoSkipNextOnErrorKey
 import com.malopieds.innertune.constants.PersistentQueueKey
 import com.malopieds.innertune.constants.SkipSilenceKey
 import com.malopieds.innertune.constants.StopMusicOnTaskClearKey
@@ -38,11 +39,14 @@ fun PlayerSettings(
     navController: NavController,
     scrollBehavior: TopAppBarScrollBehavior,
 ) {
-    val (audioQuality, onAudioQualityChange) = rememberEnumPreference(key = AudioQualityKey, defaultValue = AudioQuality.AUTO)
-    val (persistentQueue, onPersistentQueueChange) = rememberPreference(key = PersistentQueueKey, defaultValue = true)
-    val (skipSilence, onSkipSilenceChange) = rememberPreference(key = SkipSilenceKey, defaultValue = false)
-    val (audioNormalization, onAudioNormalizationChange) = rememberPreference(key = AudioNormalizationKey, defaultValue = true)
-    val (stopMusicOnTaskClear, onStopMusicOnTaskClearChange) = rememberPreference(key = StopMusicOnTaskClearKey, defaultValue = false)
+    val (audioQuality, onAudioQualityChange) = rememberEnumPreference(AudioQualityKey, defaultValue = AudioQuality.AUTO)
+    val (persistentQueue, onPersistentQueueChange) = rememberPreference(PersistentQueueKey, defaultValue = true)
+    val (skipSilence, onSkipSilenceChange) = rememberPreference(SkipSilenceKey, defaultValue = false)
+    val (audioNormalization, onAudioNormalizationChange) = rememberPreference(AudioNormalizationKey, defaultValue = true)
+    val (autoSkipNextOnError, onAutoSkipNextOnErrorChange) = rememberPreference(AutoSkipNextOnErrorKey, defaultValue = false)
+    val (stopMusicOnTaskClear, onStopMusicOnTaskClearChange) = rememberPreference(StopMusicOnTaskClearKey, defaultValue = false)
+
+
     Column(
         Modifier
             .windowInsetsPadding(LocalPlayerAwareWindowInsets.current.only(WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom))
@@ -71,9 +75,16 @@ fun PlayerSettings(
         )
         SwitchPreference(
             title = { Text(stringResource(R.string.skip_silence)) },
-            icon = { Icon(painterResource(R.drawable.skip_next), null) },
+            icon = { Icon(painterResource(R.drawable.fast_forward), null) },
             checked = skipSilence,
             onCheckedChange = onSkipSilenceChange,
+        )
+        SwitchPreference(
+            title = { Text(stringResource(R.string.auto_skip_next_on_error)) },
+            description = stringResource(R.string.auto_skip_next_on_error_desc),
+            icon = { Icon(painterResource(R.drawable.skip_next), null) },
+            checked = autoSkipNextOnError,
+            onCheckedChange = onAutoSkipNextOnErrorChange,
         )
         SwitchPreference(
             title = { Text(stringResource(R.string.audio_normalization)) },

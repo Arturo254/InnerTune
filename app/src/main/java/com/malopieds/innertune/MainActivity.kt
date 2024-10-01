@@ -178,6 +178,7 @@ class MainActivity : ComponentActivity() {
             }
         }
 
+
     private var latestVersionName by mutableStateOf(BuildConfig.VERSION_NAME)
     val latestVersion by mutableLongStateOf(BuildConfig.VERSION_CODE.toLong())
 

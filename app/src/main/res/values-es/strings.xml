@@ -391,4 +391,10 @@
     <string name="internet_required">Parece que no tiene conexión a Internet. Por favor, compruebe su red.</string>
     <string name="downloadspage">Ir a descargas</string>
     <string name="blur_not_supported">Desenfoque no compatible</string>
+    <string name="blurmv">Desenfoque (Movimiento)</string>
+    <string name="auto_skip_next_on_error">Saltar automáticamente al siguiente en caso de error</string>
+    <string name="auto_skip_next_on_error_desc">Pasar a la siguiente canción para disfrutar de una mejor experiencia.</string>
+    <string name="open_supported_links">Abrir enlace compatible de forma predeterminada</string>
+    <string name="configure_supported_links">Configurar enlaces admitidos</string>
+    <string name="intent_supported_links_not_found">No se pudieron encontrar las configuraciones de enlaces compatibles, configúrelas manualmente</string>
 </resources>

@@ -376,4 +376,10 @@
     <string name="internet_required">Parece que você não tem conexão com a Internet. Verifique sua rede.</string>
     <string name="downloadspage">Ir para downloads</string>
     <string name="blur_not_supported">Desfoque não suportado</string>
+    <string name="blurmv">Desfoque (Movimento)</string>
+    <string name="auto_skip_next_on_error">pular automaticamente o próximo em caso de erro</string>
+    <string name="auto_skip_next_on_error_desc">Pule para a próxima música para uma melhor experiência</string>
+    <string name="open_supported_links">Abrir link suportado por padrão</string>
+    <string name="configure_supported_links">Configurar links suportados</string>
+    <string name="intent_supported_links_not_found">Não foi possível encontrar as configurações de links suportados, configure-as manualmente</string>
 </resources>

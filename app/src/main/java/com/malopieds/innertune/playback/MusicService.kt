@@ -59,6 +59,7 @@ import com.malopieds.innertune.R
 import com.malopieds.innertune.constants.AudioNormalizationKey
 import com.malopieds.innertune.constants.AudioQuality
 import com.malopieds.innertune.constants.AudioQualityKey
+import com.malopieds.innertune.constants.AutoSkipNextOnErrorKey
 import com.malopieds.innertune.constants.DiscordTokenKey
 import com.malopieds.innertune.constants.EnableDiscordRPCKey
 import com.malopieds.innertune.constants.HideExplicitKey
@@ -689,6 +690,16 @@ class MusicService :
             }
         }
     }
+
+
+    override fun onPlayerError(error: PlaybackException) {
+        if (dataStore.get(AutoSkipNextOnErrorKey, false) && player.hasNextMediaItem()) {
+            player.seekToNext()
+            player.prepare()
+            player.playWhenReady = true
+        }
+    }
+
 
     private fun createCacheDataSource(): CacheDataSource.Factory =
         CacheDataSource

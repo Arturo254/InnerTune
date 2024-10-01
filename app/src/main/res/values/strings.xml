@@ -393,7 +393,6 @@
     <string name="configure_app_language">Configure app languages</string>
     <string name="intent_app_language_not_found">Couldn\\\'t find app language settings, please configure them manually</string>
     <string name="language_settings_not_supported">the version is lower than android 13, not supported</string>
-    <string name="particle_system">particle system</string>
     <string name="IA_content">AI content</string>
     <string name="IA_content_text">Development in TensorFlow</string>
     <string name="not_internet">No Internet Connection</string>
@@ -401,4 +400,9 @@
     <string name="downloadspage">Go to downloads</string>
     <string name="blur_not_supported">Blur not supported</string>
     <string name="blurmv">Blur (Motion)</string>
+    <string name="auto_skip_next_on_error">auto skip next on error</string>
+    <string name="auto_skip_next_on_error_desc">Skip to the next song for a better experience</string>
+    <string name="open_supported_links">Open supported link by default</string>
+    <string name="configure_supported_links">Configure supported links</string>
+    <string name="intent_supported_links_not_found">Couldn\\\'t find supported links settings, please configure them manually</string>
 </resources>

@@ -93,6 +93,12 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.work.Constraints
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
 import coil.imageLoader
 import coil.request.ImageRequest
 import com.malopieds.innertube.YouTube
@@ -148,6 +154,7 @@ import org.json.JSONObject
 import java.net.URL
 import java.net.URLDecoder
 import java.net.URLEncoder
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.days
 
@@ -179,11 +186,46 @@ class MainActivity : ComponentActivity() {
         }
 
 
+
     private var latestVersionName by mutableStateOf(BuildConfig.VERSION_NAME)
     val latestVersion by mutableLongStateOf(BuildConfig.VERSION_CODE.toLong())
 
+
+    private fun scheduleUpdateChecker() {
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
+
+        // Verificación periódica cada 6 horas
+        val updateCheckRequest = PeriodicWorkRequestBuilder<UpdateCheckerWorker>(
+            6, TimeUnit.HOURS
+        )
+            .setConstraints(constraints)
+            .build()
+
+        // Programar el trabajo
+        WorkManager.getInstance(applicationContext)
+            .enqueueUniquePeriodicWork(
+                "version_check",
+                ExistingPeriodicWorkPolicy.UPDATE,
+                updateCheckRequest
+            )
+
+        // Verificación inmediata al abrir la app
+        val immediateCheck = OneTimeWorkRequestBuilder<UpdateCheckerWorker>()
+            .setConstraints(constraints)
+            .build()
+
+        WorkManager.getInstance(applicationContext)
+            .enqueue(immediateCheck)
+    }
+
+
+        // Iniciar el verificador de actualizaciones
+
     override fun onStart() {
         super.onStart()
+        scheduleUpdateChecker()
         startService(Intent(this, MusicService::class.java))
         bindService(Intent(this, MusicService::class.java), serviceConnection, Context.BIND_AUTO_CREATE)
     }

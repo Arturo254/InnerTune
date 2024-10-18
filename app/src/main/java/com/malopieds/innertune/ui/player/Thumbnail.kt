@@ -118,11 +118,6 @@ fun Thumbnail(
                             .aspectRatio(1f)
 
                             .clip(RoundedCornerShape(ThumbnailCornerRadius * 2))
-//                            .shadow(
-//                                elevation = 20.dp,
-//                                shape = RoundedCornerShape(ThumbnailCornerRadius * 2),
-//                                clip = false
-//                            )
                             .pointerInput(Unit) {
                                 detectTapGestures(
                                     onTap = {

@@ -20,7 +20,7 @@ android {
         //noinspection OldTargetApi
         targetSdk = 34
         versionCode = 25
-        versionName = "1.5.0"
+        versionName = "1.6.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -123,6 +123,7 @@ dependencies {
     implementation(libs.room.runtime)
     implementation(libs.accompanist.coil)
     implementation(libs.blurry)
+    implementation(libs.work.runtime.ktx)
     ksp(libs.room.compiler)
     implementation(libs.room.ktx)
 
@@ -140,4 +141,10 @@ dependencies {
     coreLibraryDesugaring(libs.desugaring)
 
     implementation(libs.timber)
+
+
+    implementation(libs.glance)
+    implementation(libs.glance.appwidget)
+    implementation(libs.glance.appwidget.preview)
+    implementation(libs.glance.preview)
 }

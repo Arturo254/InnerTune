@@ -122,7 +122,7 @@ import org.burnoutcrew.reorderable.detectReorder
 import org.burnoutcrew.reorderable.rememberReorderableLazyListState
 import org.burnoutcrew.reorderable.reorderable
 
-@SuppressLint("UnrememberedMutableState")
+@SuppressLint("UnrememberedMutableState", "StringFormatInvalid")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun Queue(

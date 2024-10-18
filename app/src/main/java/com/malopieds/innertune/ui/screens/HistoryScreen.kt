@@ -58,6 +58,9 @@ fun HistoryScreen(
 
     val events by viewModel.events.collectAsState()
 
+
+    
+
     LazyColumn(
         contentPadding =
             LocalPlayerAwareWindowInsets.current

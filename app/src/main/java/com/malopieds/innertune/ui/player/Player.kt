@@ -969,26 +969,19 @@ fun BottomSheetPlayer(
                         .fillMaxWidth()
                         .padding(horizontal = PlayerHorizontalPadding),
             ) {
-//                Box(modifier = Modifier.weight(1f)) {
-//                    ResizableIconButton(
-//                        icon = if (currentSong?.song?.liked == true) R.drawable.favorite else R.drawable.favorite_border,
-//                        color = if (currentSong?.song?.liked == true) MaterialTheme.colorScheme.error else onBackgroundColor,
-//                        modifier =
-//                            Modifier
-//                                .size(32.dp)
-//                                .padding(4.dp)
-//                                .align(Alignment.Center),
-//                        onClick = playerConnection::toggleLike,
-//                    )
-//                }
-                // button to toggle like
                 Box(modifier = Modifier.weight(1f)) {
-                    LikeButton(
-                        isLiked = currentSong?.song?.liked == true,
-                        onLikeClick = playerConnection::toggleLike,
-                        color = if (currentSong?.song?.liked == true) MaterialTheme.colorScheme.error else onBackgroundColor
+                    ResizableIconButton(
+                        icon = if (currentSong?.song?.liked == true) R.drawable.favorite else R.drawable.favorite_border,
+                        color = if (currentSong?.song?.liked == true) MaterialTheme.colorScheme.error else onBackgroundColor,
+                        modifier =
+                            Modifier
+                                .size(32.dp)
+                                .padding(4.dp)
+                                .align(Alignment.Center),
+                        onClick = playerConnection::toggleLike,
                     )
                 }
+
 
                 Box(modifier = Modifier.weight(1f)) {
                     ResizableIconButton(
@@ -1224,31 +1217,3 @@ fun BottomSheetPlayer(
 }
 
 
-@Composable
-fun LikeButton(
-    isLiked: Boolean,
-    onLikeClick: () -> Unit,
-    color: Color
-) {
-    var isLikedState by remember { mutableStateOf(isLiked) }
-    val scale by animateFloatAsState(
-        targetValue = if (isLikedState) 1.2f else 1f,
-        animationSpec = spring(
-            dampingRatio = Spring.DampingRatioMediumBouncy,
-            stiffness = Spring.StiffnessLow
-        ), label = ""
-    )
-
-    ResizableIconButton(
-        icon = if (isLikedState) R.drawable.favorite else R.drawable.favorite_border,
-        color = color,
-        modifier = Modifier
-            .size(32.dp)
-            .padding(4.dp)
-            .scale(scale),
-        onClick = {
-            isLikedState = !isLikedState
-            onLikeClick()
-        },
-    )
-}

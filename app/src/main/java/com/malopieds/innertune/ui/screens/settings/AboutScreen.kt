@@ -193,7 +193,7 @@ fun AboutScreen(
             .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(Modifier.height(4.dp))
+        Spacer(Modifier.height(20.dp))
 
         // Image with shimmer effect
         Box(
@@ -231,10 +231,11 @@ fun AboutScreen(
             )
         }
 
+
         Row(verticalAlignment = Alignment.CenterVertically) {
 //
 
-            Spacer(Modifier.width(4.dp))
+            Spacer(Modifier.width(10.dp))
 
             Text(
                 text = BuildConfig.FLAVOR.uppercase(),
@@ -273,7 +274,7 @@ fun AboutScreen(
             }
         }
 
-        Spacer(Modifier.height(4.dp))
+        Spacer(Modifier.height(10.dp))
 
         Text(
             text = " Dev By Arturo Cervantes 亗",
@@ -286,48 +287,63 @@ fun AboutScreen(
 
         Spacer(Modifier.height(8.dp))
 
-        Row {
-            IconButton(
-                onClick = { uriHandler.openUri("https://github.com/Arturo254/InnerTune") }
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            shape = RoundedCornerShape(28.dp), // Bordes muy redondeados estilo MD3
+            elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceVariant, // Color de fondo MD3
+            )
+        ) {
+            Row(
+                modifier = Modifier
+                    .padding(8.dp)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(
-modifier = Modifier.size(20.dp),
-                    painter = painterResource(R.drawable.github),
-                    contentDescription = null
+                IconButton(
+                    onClick = { uriHandler.openUri("https://github.com/Arturo254/InnerTune") }
+                ) {
+                    Icon(
+                        modifier = Modifier.size(20.dp),
+                        painter = painterResource(R.drawable.github),
+                        contentDescription = null
+                    )
+                }
 
-                )
+                IconButton(
+                    onClick = { uriHandler.openUri("https://g.dev/Arturo254") }
+                ) {
+                    Icon(
+                        modifier = Modifier.size(20.dp),
+                        contentDescription = null,
+                        painter = painterResource(R.drawable.google)
+                    )
+                }
+
+                IconButton(
+                    onClick = { uriHandler.openUri("https://www.paypal.com/donate?hosted_button_id=LPK2LT9SY5MBY") }
+                ) {
+                    Icon(
+                        modifier = Modifier.size(20.dp),
+                        painter = painterResource(R.drawable.paypal),
+                        contentDescription = null
+                    )
+                }
+
+                IconButton(
+                    onClick = { uriHandler.openUri("https://opentune.netlify.app/") }
+                ) {
+                    Icon(
+                        modifier = Modifier.size(22.dp),
+                        contentDescription = null,
+                        painter = painterResource(R.drawable.resource_public)
+                    )
+                }
             }
-
-            IconButton(
-                onClick = { uriHandler.openUri("https://g.dev/Arturo254") }
-            ) {
-                Icon(
-                    modifier = Modifier.size(20.dp),
-                    contentDescription = null,
-                    painter = painterResource(R.drawable.google))
-
-            }
-
-            IconButton(
-                onClick = { uriHandler.openUri("https://www.paypal.com/donate?hosted_button_id=LPK2LT9SY5MBY") }
-            ) {
-                Icon(
-                    modifier = Modifier.size(20.dp),
-                    painter = painterResource(R.drawable.paypal),
-                    contentDescription = null
-                )
-            }
-            IconButton(
-                onClick = { uriHandler.openUri("https://opentune.netlify.app/") }
-            ) {
-                Icon(
-                    modifier = Modifier.size(22.dp),
-                    contentDescription = null,
-                    painter = painterResource(R.drawable.resource_public))
-
-            }
-
-
         }
 
         Spacer(Modifier.height(20.dp))

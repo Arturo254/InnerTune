@@ -730,29 +730,7 @@ class MainActivity : ComponentActivity() {
                                             )
                                         }
                                     } else if (navBackStackEntry?.destination?.route in topLevelScreens) {
-//                                        Box(
-//                                            contentAlignment = Alignment.Center,
-//                                            modifier =
-//                                                Modifier
-//                                                    .size(48.dp)
-//                                                    .clip(CircleShape)
-//                                                    .clickable {
-//                                                        navController.navigate("settings")
-//                                                    },
-//                                        ) {
-//                                            BadgedBox(
-//                                                badge = {
-//                                                    if (latestVersion > BuildConfig.VERSION_CODE) {
-//                                                        Badge()
-//                                                    }
-//                                                },
-//                                            ) {
-//                                                Icon(
-//                                                    painter = painterResource(R.drawable.settingsv2),
-//                                                    contentDescription = null,
-//                                                )
-//                                            }
-//                                        }
+//
                                         SettingsIconWithUpdateBadge(
                                             currentVersion = BuildConfig.VERSION_NAME,
                                             onSettingsClick = { navController.navigate("settings") }

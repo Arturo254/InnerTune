@@ -5,8 +5,8 @@
 
 <div align="center">
 
+![icon-512](https://github.com/user-attachments/assets/179f1b0b-77db-4adc-8bae-46bf4bce0bc2)
 
-![image](https://github.com/user-attachments/assets/f008ac47-d2c1-475a-9dbf-5a0e85353206)
 
 
 

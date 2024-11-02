@@ -19,7 +19,7 @@
 
   
   [![Última versión](https://img.shields.io/github/v/release/Arturo254/InnerTune?style=for-the-badge&logo=github&color=blue)](https://github.com/Arturo254/InnerTune/releases)
-  [![Licencia](https://img.shields.io/github/license/Arturo254/InnerTune?style=for-the-badge&logo=gnu&color=green)](https://github.com/z-huang/InnerTune/blob/main/LICENSE)
+  [![Licencia](https://img.shields.io/github/license/Arturo254/InnerTune?style=for-the-badge&logo=gnu&color=green)](https://github.com/Arturo254/InnerTune/blob/master/LICENSE)
 </div>
 
 ![mock](https://github.com/user-attachments/assets/93b4dd12-8f94-4d12-b770-2138fbf1358d)

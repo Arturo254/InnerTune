@@ -13,7 +13,7 @@ import com.malopieds.innertube.models.SearchSuggestions
 import com.malopieds.innertube.models.SongItem
 import com.malopieds.innertube.models.WatchEndpoint
 import com.malopieds.innertube.models.WatchEndpoint.WatchEndpointMusicSupportedConfigs.WatchEndpointMusicConfig.Companion.MUSIC_VIDEO_TYPE_ATV
-import com.malopieds.innertube.models.YouTubeClient.Companion.ANDROID_MUSIC
+import com.malopieds.innertube.models.YouTubeClient.Companion.IOS
 import com.malopieds.innertube.models.YouTubeClient.Companion.TVHTML5
 import com.malopieds.innertube.models.YouTubeClient.Companion.WEB
 import com.malopieds.innertube.models.YouTubeClient.Companion.WEB_REMIX
@@ -882,7 +882,7 @@ object YouTube {
         playlistId: String? = null,
     ): Result<PlayerResponse> =
         runCatching {
-            val playerResponse = innerTube.player(ANDROID_MUSIC, videoId, playlistId).body<PlayerResponse>()
+            val playerResponse = innerTube.player(IOS, videoId, playlistId).body<PlayerResponse>()
             if (playerResponse.playabilityStatus.status == "OK") {
                 return@runCatching playerResponse
             }

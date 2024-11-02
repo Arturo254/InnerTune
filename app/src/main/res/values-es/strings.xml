@@ -397,4 +397,5 @@
     <string name="open_supported_links">Abrir enlace compatible de forma predeterminada</string>
     <string name="configure_supported_links">Configurar enlaces admitidos</string>
     <string name="intent_supported_links_not_found">No se pudieron encontrar las configuraciones de enlaces compatibles, configúrelas manualmente</string>
+    <string name="enable_similar_content">Habiltar Contenido de IA</string>
 </resources>

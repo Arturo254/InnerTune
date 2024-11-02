@@ -72,6 +72,7 @@ import com.malopieds.innertune.constants.PersistentQueueKey
 import com.malopieds.innertune.constants.PlayerVolumeKey
 import com.malopieds.innertune.constants.RepeatModeKey
 import com.malopieds.innertune.constants.ShowLyricsKey
+import com.malopieds.innertune.constants.SimilarContent
 import com.malopieds.innertune.constants.SkipSilenceKey
 import com.malopieds.innertune.db.MusicDatabase
 import com.malopieds.innertune.db.entities.Event
@@ -532,19 +533,21 @@ class MusicService :
     }
 
     fun getAutomix(playlistId: String) {
-        scope.launch(SilentHandler) {
-            YouTube
-                .next(WatchEndpoint(playlistId = playlistId))
-                .onSuccess {
-                    YouTube
-                        .next(WatchEndpoint(playlistId = it.endpoint.playlistId))
-                        .onSuccess {
-                            automixItems.value =
-                                it.items.map { song ->
-                                    song.toMediaItem()
-                                }
-                        }
-                }
+        if (dataStore[SimilarContent] == true) {
+            scope.launch(SilentHandler) {
+                YouTube
+                    .next(WatchEndpoint(playlistId = playlistId))
+                    .onSuccess {
+                        YouTube
+                            .next(WatchEndpoint(playlistId = it.endpoint.playlistId))
+                            .onSuccess {
+                                automixItems.value =
+                                    it.items.map { song ->
+                                        song.toMediaItem()
+                                    }
+                            }
+                    }
+            }
         }
     }
 

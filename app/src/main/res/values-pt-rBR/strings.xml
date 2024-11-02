@@ -382,4 +382,5 @@
     <string name="open_supported_links">Abrir link suportado por padrão</string>
     <string name="configure_supported_links">Configurar links suportados</string>
     <string name="intent_supported_links_not_found">Não foi possível encontrar as configurações de links suportados, configure-as manualmente</string>
+    <string name="enable_similar_content">Habilitando o conteúdo de IA</string>
 </resources>

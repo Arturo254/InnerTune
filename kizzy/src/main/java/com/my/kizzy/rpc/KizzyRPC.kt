@@ -25,9 +25,7 @@ import io.ktor.client.request.header
 import io.ktor.client.statement.bodyAsText
 import org.json.JSONObject
 
-/**
- * Modified by Zion Huang
- */
+
 open class KizzyRPC(token: String) {
     private val kizzyRepository = KizzyRepository()
     private val discordWebSocket = DiscordWebSocket(token)
@@ -55,6 +53,7 @@ open class KizzyRPC(token: String) {
         streamUrl: String? = null,
         applicationId: String? = null,
         status: String? = "online",
+        since: Long? = null,
     ) {
         if (!isRpcRunning()) {
             discordWebSocket.connect()
@@ -80,7 +79,7 @@ open class KizzyRPC(token: String) {
                 )
             ),
             afk = true,
-            since = startTime ?: System.currentTimeMillis(),
+            since = since,
             status = status ?: "online"
         )
         discordWebSocket.sendActivity(presence)

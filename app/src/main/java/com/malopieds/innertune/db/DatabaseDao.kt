@@ -38,7 +38,6 @@ import com.malopieds.innertune.db.entities.Song
 import com.malopieds.innertune.db.entities.SongAlbumMap
 import com.malopieds.innertune.db.entities.SongArtistMap
 import com.malopieds.innertune.db.entities.SongEntity
-import com.malopieds.innertune.db.entities.SongWithStats
 import com.malopieds.innertune.extensions.reversed
 import com.malopieds.innertune.extensions.toSQLiteQuery
 import com.malopieds.innertune.models.MediaMetadata
@@ -48,9 +47,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.text.Collator
 import java.time.LocalDateTime
-import java.time.ZoneOffset
 import java.util.Locale
-import javax.annotation.concurrent.Immutable
 
 @Dao
 interface DatabaseDao {
@@ -314,52 +311,11 @@ interface DatabaseDao {
     @Transaction
     @Query(
         """
-             SELECT song.id, song.title, song.thumbnailUrl,
-               (SELECT COUNT(1)
-                FROM event
-                WHERE songId = song.id
-                  AND timestamp > :fromTimeStamp AND timestamp <= :toTimeStamp) AS songCountListened,
-               (SELECT SUM(event.playTime)
-                FROM event
-                WHERE songId = song.id
-                  AND timestamp > :fromTimeStamp AND timestamp <= :toTimeStamp) AS timeListened
+        SELECT song.*
         FROM song
         JOIN (SELECT songId
                      FROM event
                      WHERE timestamp > :fromTimeStamp
-                     AND timestamp <= :toTimeStamp
-                     GROUP BY songId
-                     ORDER BY SUM(playTime) DESC
-                     LIMIT :limit)
-        ON song.id = songId
-        LIMIT :limit
-        OFFSET :offset
-    """,
-    )
-    fun mostPlayedSongsStats(
-        limit: Int = 6,
-        offset: Int = 0,
-        fromTimeStamp: Long,
-        toTimeStamp: Long? = LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli(),
-    ): Flow<List<SongWithStats>>
-
-    @Transaction
-    @Query(
-        """
-        SELECT song.*,
-               (SELECT COUNT(1)
-                FROM event
-                WHERE songId = song.id
-                  AND timestamp > :fromTimeStamp AND timestamp <= :toTimeStamp) AS songCountListened,
-               (SELECT SUM(event.playTime)
-                FROM event
-                WHERE songId = song.id
-                  AND timestamp > :fromTimeStamp AND timestamp <= :toTimeStamp) AS timeListened
-        FROM song
-        JOIN (SELECT songId
-                     FROM event
-                     WHERE timestamp > :fromTimeStamp
-                     AND timestamp <= :toTimeStamp
                      GROUP BY songId
                      ORDER BY SUM(playTime) DESC
                      LIMIT :limit)
@@ -372,7 +328,6 @@ interface DatabaseDao {
         fromTimeStamp: Long,
         limit: Int = 6,
         offset: Int = 0,
-        toTimeStamp: Long? = LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli(),
     ): Flow<List<Song>>
 
     @Transaction
@@ -383,19 +338,13 @@ interface DatabaseDao {
                 FROM song_artist_map
                          JOIN event ON song_artist_map.songId = event.songId
                 WHERE artistId = artist.id
-                  AND timestamp > :fromTimeStamp AND timestamp <= :toTimeStamp) AS songCount,
-               (SELECT SUM(event.playTime)
-                FROM song_artist_map
-                         JOIN event ON song_artist_map.songId = event.songId
-                WHERE artistId = artist.id
-                  AND timestamp > :fromTimeStamp AND timestamp <= :toTimeStamp) AS timeListened
+                  AND timestamp > :fromTimeStamp) AS songCount
         FROM artist
                  JOIN(SELECT artistId, SUM(songTotalPlayTime) AS totalPlayTime
                       FROM song_artist_map
                                JOIN (SELECT songId, SUM(playTime) AS songTotalPlayTime
                                      FROM event
                                      WHERE timestamp > :fromTimeStamp
-                                     AND timestamp <= :toTimeStamp
                                      GROUP BY songId) AS e
                                     ON song_artist_map.songId = e.songId
                       GROUP BY artistId
@@ -409,42 +358,30 @@ interface DatabaseDao {
         fromTimeStamp: Long,
         limit: Int = 6,
         offset: Int = 0,
-        toTimeStamp: Long? = LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli(),
     ): Flow<List<Artist>>
 
     @Transaction
     @Query(
         """
-        SELECT album.*,
-               (SELECT COUNT(1)
-                FROM song_album_map
-                         JOIN event ON song_album_map.songId = event.songId
-                WHERE albumId = album.id
-                  AND timestamp > :fromTimeStamp AND timestamp <= :toTimeStamp) AS songCountListened,
-               (SELECT SUM(event.playTime)
-                FROM song_album_map
-                         JOIN event ON song_album_map.songId = event.songId
-                WHERE albumId = album.id
-                  AND timestamp > :fromTimeStamp AND timestamp <= :toTimeStamp) AS timeListened
+        SELECT album.*
         FROM album
-                WHERE id IN (SELECT song.albumId
-                     FROM event
-                              JOIN
-                          song
-                          ON event.songId = song.id
-                     WHERE event.timestamp > :fromTimeStamp
-                     AND event.timestamp <= :toTimeStamp
-                     GROUP BY song.albumId
-                     HAVING song.albumId IS NOT NULL)
-                ORDER BY timeListened DESC
-                LIMIT :limit OFFSET :offset
+                 JOIN(SELECT albumId
+                      FROM song
+                               JOIN (SELECT songId, SUM(playTime) AS songTotalPlayTime
+                                     FROM event
+                                     WHERE timestamp > :fromTimeStamp
+                                     GROUP BY songId) AS e
+                                    ON song.id = e.songId
+                      WHERE albumId IS NOT NULL
+                      GROUP BY albumId
+                      ORDER BY SUM(songTotalPlayTime) DESC
+                      LIMIT :limit)
+                     ON album.id = albumId
     """,
     )
     fun mostPlayedAlbums(
         fromTimeStamp: Long,
         limit: Int = 6,
-        offset: Int = 0,
-        toTimeStamp: Long? = LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli(),
     ): Flow<List<Album>>
 
     @Transaction
@@ -836,10 +773,6 @@ interface DatabaseDao {
     @Query("SELECT * FROM event ORDER BY rowId DESC")
     fun events(): Flow<List<EventWithSong>>
 
-    @Transaction
-    @Query("SELECT * FROM event ORDER BY rowId ASC LIMIT 1")
-    fun firstEvent(): Flow<EventWithSong>
-
     @Query("DELETE FROM event")
     fun clearListenHistory()
 
@@ -967,17 +900,7 @@ interface DatabaseDao {
         albumPage.songs
             .map(SongItem::toMediaMetadata)
             .onEach(::insert)
-            .onEach {
-                update(
-                    it.toSongEntity().copy(
-                        title = it.title,
-                        duration = it.duration,
-                        thumbnailUrl = it.thumbnailUrl,
-                        albumId = it.album?.id,
-                        albumName = it.album?.title,
-                    ),
-                )
-            }.mapIndexed { index, song ->
+            .mapIndexed { index, song ->
                 SongAlbumMap(
                     songId = song.id,
                     albumId = albumPage.album.browseId,
@@ -1083,17 +1006,7 @@ interface DatabaseDao {
         albumPage.songs
             .map(SongItem::toMediaMetadata)
             .onEach(::insert)
-            .onEach {
-                update(
-                    it.toSongEntity().copy(
-                        title = it.title,
-                        duration = it.duration,
-                        thumbnailUrl = it.thumbnailUrl,
-                        albumId = it.album?.id,
-                        albumName = it.album?.title,
-                    ),
-                )
-            }.mapIndexed { index, song ->
+            .mapIndexed { index, song ->
                 SongAlbumMap(
                     songId = song.id,
                     albumId = albumPage.album.browseId,
@@ -1176,4 +1089,3 @@ interface DatabaseDao {
         raw("PRAGMA wal_checkpoint(FULL)".toSQLiteQuery())
     }
 }
-

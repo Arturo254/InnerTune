@@ -26,8 +26,6 @@ val ProxyEnabledKey = booleanPreferencesKey("proxyEnabled")
 val ProxyUrlKey = stringPreferencesKey("proxyUrl")
 val ProxyTypeKey = stringPreferencesKey("proxyType")
 
-val SimilarContent = booleanPreferencesKey("similarContent") // IA Content
-
 val AudioQualityKey = stringPreferencesKey("audioQuality")
 
 enum class AudioQuality {

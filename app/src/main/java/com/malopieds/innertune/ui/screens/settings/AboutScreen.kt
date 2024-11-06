@@ -305,7 +305,7 @@ fun AboutScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(
-                    onClick = { uriHandler.openUri("https://github.com/Arturo254/InnerTune") }
+                    onClick = { uriHandler.openUri("https://github.com/Arturo254/OpenTune") }
                 ) {
                     Icon(
                         modifier = Modifier.size(20.dp),
@@ -360,7 +360,7 @@ fun AboutScreen(
             icon = R.drawable.license,
             title = stringResource(R.string.license),
             subtitle = stringResource(R.string.license_text),
-            onClick = { uriHandler.openUri("https://raw.githubusercontent.com/Arturo254/InnerTune/master/LICENSE") }
+            onClick = { uriHandler.openUri("https://raw.githubusercontent.com/Arturo254/OpenTune/master/LICENSE") }
         )
 
         Spacer(Modifier.height(20.dp))
@@ -369,7 +369,7 @@ fun AboutScreen(
             icon = R.drawable.codigo,
             title = stringResource(R.string.code),
             subtitle = stringResource(R.string.code_text),
-            onClick = { uriHandler.openUri("https://github.com/Arturo254/InnerTune") }
+            onClick = { uriHandler.openUri("https://github.com/Arturo254/OpenTune") }
         )
 
         Spacer(Modifier.height(20.dp))
@@ -378,7 +378,7 @@ fun AboutScreen(
             icon = R.drawable.bug_report,
             title = stringResource(R.string.bugs),
             subtitle = stringResource(R.string.bugs_text),
-            onClick = { uriHandler.openUri("https://github.com/Arturo254/InnerTune/issues") }
+            onClick = { uriHandler.openUri("https://github.com/Arturo254/OpenTune/issues") }
         )
 
         Spacer(Modifier.height(20.dp))
@@ -562,7 +562,7 @@ fun ContributionCard(uriHandler: UriHandler) {
             .fillMaxWidth()
             .height(140.dp)
             .padding(horizontal = 16.dp)
-            .clickable { uriHandler.openUri("https://github.com/Arturo254/InnerTune/new/master") }
+            .clickable { uriHandler.openUri("https://github.com/Arturo254/OpenTune/new/master") }
             .shadow(elevation = 8.dp, shape = RoundedCornerShape(20.dp)),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f),

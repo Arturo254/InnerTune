@@ -6,7 +6,6 @@ import android.text.format.Formatter
 import android.widget.Toast
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -83,7 +82,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
@@ -98,7 +96,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
 import androidx.compose.ui.window.DialogProperties
@@ -1100,12 +1097,30 @@ fun BottomSheetPlayer(
                 )
             }
             else if (playerBackground == PlayerBackgroundStyle.BLURMOV) {
-                BlurRotationBackground(
-                    imageUrl = mediaMetadata?.thumbnailUrl,
-                    useBlackBackground = useBlackBackground,
-                    blurAnimationDuration = 2000,
-                    rotationDuration = 100000
+                val infiniteTransition = rememberInfiniteTransition(label = "")
 
+
+                val rotation by infiniteTransition.animateFloat(
+                    initialValue = 0f,
+                    targetValue = 360f,
+                    animationSpec = infiniteRepeatable(
+                        animation = tween(
+                            durationMillis = 100000,
+                            easing = FastOutSlowInEasing // Easing suave
+                        ),
+                        repeatMode = RepeatMode.Restart
+                    ), label = ""
+                )
+                AsyncImage(
+                    model = mediaMetadata?.thumbnailUrl,
+                    contentDescription = null,
+                    contentScale = ContentScale.FillBounds,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .blur(200.dp)
+                        .alpha(0.8f)
+                        .background(if (useBlackBackground) Color.Black.copy(alpha = 0.5f) else Color.Transparent)
+                        .rotate(rotation)
 
                 )
             }
@@ -1201,80 +1216,4 @@ fun BottomSheetPlayer(
     }
 }
 
-@Composable
-fun BlurRotationBackground(
-    imageUrl: String?,
-    useBlackBackground: Boolean = false,
-    blurRadius: Dp = 200.dp,
-    rotationDuration: Int = 100000,
-    blurAnimationDuration: Int = 1000,
-) {
-    val infiniteTransition = rememberInfiniteTransition(label = "rotation_transition")
 
-    // Rotación con aceleración y desaceleración suave
-    val rotation by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 360f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(
-                durationMillis = 100000,
-                easing = FastOutSlowInEasing // Easing suave
-            ),
-            repeatMode = RepeatMode.Restart
-        ), label = ""
-    )
-
-
-    // Animación de blur pulsante
-    val blurStrength by infiniteTransition.animateFloat(
-        initialValue = 0.8f,
-        targetValue = 1.2f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(
-                durationMillis = blurAnimationDuration,
-                easing = FastOutSlowInEasing
-            ),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "blur_animation"
-    )
-
-    // Animación de opacidad
-    val alpha by infiniteTransition.animateFloat(
-        initialValue = 0.7f,
-        targetValue = 0.9f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(
-                durationMillis = blurAnimationDuration,
-                easing = FastOutSlowInEasing
-            ),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "alpha_animation"
-    )
-
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        AsyncImage(
-            model = imageUrl,
-            contentDescription = null,
-            contentScale = ContentScale.FillBounds,
-            modifier = Modifier
-                .fillMaxSize()
-                .graphicsLayer {
-                    this.scaleX = 1.2f // Ligero zoom para evitar bordes vacíos al rotar
-                    this.scaleY = 1.2f
-                }
-                .blur(blurRadius * blurStrength)
-                .alpha(alpha)
-                .background(
-                    if (useBlackBackground) {
-                        Color.Black.copy(alpha = 0.5f)
-                    } else {
-                        Color.Transparent
-                    }
-                )
-        )
-    }
-}

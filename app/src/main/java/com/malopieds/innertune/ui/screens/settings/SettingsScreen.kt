@@ -101,7 +101,7 @@ fun VersionCard(uriHandler: UriHandler) {
 
             ),
         shape = RoundedCornerShape(38.dp),
-        onClick = { uriHandler.openUri("https://github.com/Arturo254/InnerTune/releases/latest") }
+        onClick = { uriHandler.openUri("https://github.com/Arturo254/OpenTune/releases/latest") }
     ) {
         Column(
             modifier = Modifier
@@ -156,7 +156,7 @@ fun UpdateCard(uriHandler: UriHandler) {
             ),
             shape = RoundedCornerShape(38.dp),
             onClick = {
-                uriHandler.openUri("https://github.com/Arturo254/InnerTune/releases/latest")
+                uriHandler.openUri("https://github.com/Arturo254/OpenTune/releases/latest")
             }
         ) {
             Column(
@@ -180,7 +180,7 @@ fun UpdateCard(uriHandler: UriHandler) {
 
 suspend fun checkForUpdates(): String? = withContext(Dispatchers.IO) {
     try {
-        val url = URL("https://api.github.com/repos/Arturo254/InnerTune/releases/latest")
+        val url = URL("https://api.github.com/repos/Arturo254/OpenTune/releases/latest")
         val connection = url.openConnection()
         connection.connect()
         val json = connection.getInputStream().bufferedReader().use { it.readText() }
@@ -557,6 +557,6 @@ suspend fun fetchLatestChanges(owner: String, repo: String): List<String> =
 
 @Composable
 fun ChangelogScreen() {
-    AutoChangelogCard(repoOwner = "Arturo254", repoName = "InnerTune")
+    AutoChangelogCard(repoOwner = "Arturo254", repoName = "OpenTune")
 }
 

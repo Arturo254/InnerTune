@@ -239,7 +239,7 @@ interface DatabaseDao {
 
     @Transaction
     @Query(
-        """
+"""
                 SELECT
                     song.*
                 FROM

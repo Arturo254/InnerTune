@@ -48,6 +48,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -305,9 +307,7 @@ fun Queue(
         }
 
         LaunchedEffect(mutableQueueWindows) {
-            if (currentWindowIndex != -1) {
-                reorderableState.listState.scrollToItem(currentWindowIndex)
-            }
+            reorderableState.listState.scrollToItem(currentWindowIndex)
         }
 
         Box(
@@ -829,11 +829,19 @@ fun ItemWithGlowingIcon() {
         ), label = ""
     )
 
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        shape = RoundedCornerShape(28.dp),  // Esquinas muy redondeadas
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(start = 16.dp)
+            modifier = Modifier
+                .padding(16.dp)  // Padding interno de la Card
+                .fillMaxWidth()
         ) {
-            Spacer(modifier = Modifier.width(8.dp))
             Box {
                 // Glow effect
                 Icon(
@@ -844,11 +852,10 @@ fun ItemWithGlowingIcon() {
                         .size(30.dp)
                         .scale(scale)
                         .alpha(alpha)
-
                 )
             }
 
-            Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(16.dp))
 
             Text(
                 text = stringResource(R.string.similar_content),
@@ -858,7 +865,6 @@ fun ItemWithGlowingIcon() {
                 fontFamily = FontFamily.SansSerif,
                 color = MaterialTheme.colorScheme.onSurface
             )
-            Spacer(modifier = Modifier.width(16.dp))
         }
     }
-
+}

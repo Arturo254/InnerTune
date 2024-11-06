@@ -939,7 +939,7 @@ fun NotificationPermissionPreference() {
         title = { Text("Activar notificaciones") },
         icon = {
             Icon(
-                painter = painterResource(id = if (permissionGranted) R.drawable.notification_on else R.drawable.notifications_off),
+                painter = painterResource(id = if (permissionGranted) R.drawable.notification_on else R.drawable.notification_off),
                 contentDescription = null
             )
         },
@@ -1027,7 +1027,7 @@ fun SettingsIconWithUpdateBadge(
 
 suspend fun checkForUpdates(): String? = withContext(Dispatchers.IO) {
     try {
-        val url = URL("https://api.github.com/repos/Arturo254/InnerTune/releases/latest")
+        val url = URL("https://api.github.com/repos/Arturo254/OpenTune/releases/latest")
         val connection = url.openConnection()
         connection.connect()
         val json = connection.getInputStream().bufferedReader().use { it.readText() }

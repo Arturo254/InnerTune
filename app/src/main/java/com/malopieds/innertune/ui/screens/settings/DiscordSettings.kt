@@ -2,7 +2,6 @@ package com.malopieds.innertune.ui.screens.settings
 
 import android.content.Intent
 import android.net.Uri
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,17 +19,15 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -46,12 +43,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.malopieds.innertune.LocalPlayerAwareWindowInsets
@@ -64,7 +58,6 @@ import com.malopieds.innertune.constants.DiscordUsernameKey
 import com.malopieds.innertune.constants.EnableDiscordRPCKey
 import com.malopieds.innertune.db.entities.Song
 import com.malopieds.innertune.ui.component.IconButton
-import com.malopieds.innertune.ui.component.PreferenceEntry
 import com.malopieds.innertune.ui.component.PreferenceGroupTitle
 import com.malopieds.innertune.ui.component.SwitchPreference
 import com.malopieds.innertune.ui.utils.backToMain
@@ -81,19 +74,15 @@ fun DiscordSettings(
 ) {
     val playerConnection = LocalPlayerConnection.current ?: return
     val song by playerConnection.currentSong.collectAsState(null)
-
     val coroutineScope = rememberCoroutineScope()
 
     var discordToken by rememberPreference(DiscordTokenKey, "")
     var discordUsername by rememberPreference(DiscordUsernameKey, "")
     var discordName by rememberPreference(DiscordNameKey, "")
-    var infoDismissed by rememberPreference(DiscordInfoDismissedKey, false)
 
     LaunchedEffect(discordToken) {
         val token = discordToken
-        if (token.isEmpty()) {
-            return@LaunchedEffect
-        }
+        if (token.isEmpty()) return@LaunchedEffect
         coroutineScope.launch(Dispatchers.IO) {
             KizzyRPC.getUserInfo(token).onSuccess {
                 discordUsername = it.username
@@ -103,11 +92,7 @@ fun DiscordSettings(
     }
 
     val (discordRPC, onDiscordRPCChange) = rememberPreference(key = EnableDiscordRPCKey, defaultValue = true)
-
-    val isLoggedIn =
-        remember(discordToken) {
-            discordToken != ""
-        }
+    val isLoggedIn = remember(discordToken) { discordToken != "" }
 
     Column(
         Modifier
@@ -116,108 +101,123 @@ fun DiscordSettings(
     ) {
         Spacer(Modifier.windowInsetsPadding(LocalPlayerAwareWindowInsets.current.only(WindowInsetsSides.Top)))
 
-        AnimatedVisibility(
-            visible = !infoDismissed,
+        // Account Section
+        ElevatedCard(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            shape = RoundedCornerShape(16.dp),
         ) {
-            ElevatedCard(
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = 6.dp
-                ),
-                modifier = Modifier
-//                .clip(RoundedCornerShape(28.dp))
-                    .fillMaxWidth()
-                    .align(Alignment.CenterHorizontally)
-                    .padding(horizontal = 16.dp),
-
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-                ),
-                shape = RoundedCornerShape(18.dp),
-
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Spacer(Modifier.height(3.dp))
-                    Text(
-                        text = stringResource(R.string.discord_information) ,
-                        style = MaterialTheme.typography.bodyLarge.copy(
-                            fontSize = 17.sp,
-                            fontFamily = FontFamily.Monospace
-                        ),
-                        color = MaterialTheme.colorScheme.secondary,
+                PreferenceGroupTitle(
+                    title = stringResource(R.string.account),
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.discord),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(48.dp)
+                            .padding(8.dp),
+                        tint = MaterialTheme.colorScheme.primary
                     )
 
-                TextButton(
-                    onClick = {
-                        infoDismissed = true
-                    },
-                    modifier =
-                        Modifier
-                            .align(Alignment.End)
-                            .padding(16.dp),
-                ) {
-                    Text(stringResource(R.string.dismiss))
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = if (isLoggedIn) discordName else stringResource(R.string.not_logged_in),
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier.alpha(if (isLoggedIn) 1f else 0.5f),
+                        )
+                        if (discordUsername.isNotEmpty()) {
+                            Text(
+                                text = "@$discordUsername",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+
+                    if (isLoggedIn) {
+                        OutlinedButton(
+                            onClick = {
+                                discordName = ""
+                                discordToken = ""
+                                discordUsername = ""
+                            },
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+                            Text(stringResource(R.string.logout))
+                        }
+                    } else {
+                        OutlinedButton(
+                            onClick = { navController.navigate("settings/discord/login") },
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+                            Text(stringResource(R.string.login))
+                        }
+                    }
                 }
             }
         }
 
-        PreferenceGroupTitle(
-            title = stringResource(R.string.account),
-        )
-
-        PreferenceEntry(
-            title = {
-                Text(
-                    text = if (isLoggedIn) discordName else stringResource(R.string.not_logged_in),
-                    modifier = Modifier.alpha(if (isLoggedIn) 1f else 0.5f),
+        // Options Section
+        ElevatedCard(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            shape = RoundedCornerShape(16.dp),
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                PreferenceGroupTitle(
+                    title = stringResource(R.string.options),
+                    modifier = Modifier.padding(bottom = 8.dp)
                 )
-            },
-            description =
-                if (discordUsername.isNotEmpty()) {
-                    "@$discordUsername"
-                } else {
-                    null
-                },
-            icon = { Icon(painterResource(R.drawable.discord), null) },
-            trailingContent = {
-                if (isLoggedIn) {
-                    OutlinedButton(onClick = {
-                        discordName = ""
-                        discordToken = ""
-                        discordUsername = ""
-                    }) {
-                        Text(stringResource(R.string.logout))
-                    }
-                } else {
-                    OutlinedButton(onClick = {
-                        navController.navigate("settings/discord/login")
-                    }) {
-                        Text(stringResource(R.string.login))
-                    }
-                }
-            },
-        )
 
-        PreferenceGroupTitle(
-            title = stringResource(R.string.options),
-        )
+                SwitchPreference(
+                    title = {
+                        Text(
+                            stringResource(R.string.enable_discord_rpc),
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    },
+                    checked = discordRPC,
+                    onCheckedChange = onDiscordRPCChange,
+                    isEnabled = isLoggedIn,
+                )
+            }
+        }
 
-        SwitchPreference(
-            title = { Text(stringResource(R.string.enable_discord_rpc)) },
-            checked = discordRPC,
-            onCheckedChange = onDiscordRPCChange,
-            isEnabled = isLoggedIn,
-        )
-
-        PreferenceGroupTitle(
-            title = stringResource(R.string.preview),
-        )
-
-        RichPresence(song)
+        // Preview Section
+        Column(
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+        ) {
+            PreferenceGroupTitle(
+                title = stringResource(R.string.preview),
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+            RichPresence(song)
+        }
     }
 
     TopAppBar(
-        title = { Text(stringResource(R.string.discord_integration)) },
-        modifier = Modifier
-            .clip(RoundedCornerShape(16.dp)),
+        title = {
+            Text(
+                stringResource(R.string.discord_integration),
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.Bold
+                )
+            )
+        },
+        modifier = Modifier.clip(RoundedCornerShape(16.dp)),
         navigationIcon = {
             IconButton(
                 onClick = navController::navigateUp,
@@ -230,6 +230,10 @@ fun DiscordSettings(
             }
         },
         scrollBehavior = scrollBehavior,
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+            titleContentColor = MaterialTheme.colorScheme.onSurface,
+        )
     )
 }
 
@@ -237,14 +241,12 @@ fun DiscordSettings(
 fun RichPresence(song: Song?) {
     val context = LocalContext.current
 
-    Surface(
-        color = MaterialTheme.colorScheme.surfaceContainer,
-        shape = MaterialTheme.shapes.medium,
-        shadowElevation = 6.dp,
-        modifier =
-            Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
+    ElevatedCard(
+        modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.large,
+        colors = CardDefaults.elevatedCardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainer,
+        )
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
@@ -252,16 +254,17 @@ fun RichPresence(song: Song?) {
         ) {
             Text(
                 text = "Listening to OpenTune",
-                style = MaterialTheme.typography.labelLarge,
-                textAlign = TextAlign.Start,
-                fontWeight = FontWeight.ExtraBold,
-                modifier = Modifier.fillMaxWidth(),
+                style = MaterialTheme.typography.titleMedium.copy(
+                    fontWeight = FontWeight.ExtraBold
+                ),
+                modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(Modifier.height(16.dp))
 
             Row(
                 verticalAlignment = Alignment.Top,
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Box(
                     Modifier.size(108.dp),
@@ -269,59 +272,65 @@ fun RichPresence(song: Song?) {
                     AsyncImage(
                         model = song?.song?.thumbnailUrl,
                         contentDescription = null,
-                        modifier =
-                            Modifier
-                                .size(96.dp)
-                                .clip(RoundedCornerShape(12.dp))
-                                .align(Alignment.TopStart)
-                                .run {
-                                    if (song == null) {
-                                        border(2.dp, MaterialTheme.colorScheme.onSurface, RoundedCornerShape(12.dp))
-                                    } else {
-                                        this
-                                    }
-                                },
+                        modifier = Modifier
+                            .size(96.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                            .align(Alignment.TopStart)
+                            .run {
+                                if (song == null) {
+                                    border(
+                                        2.dp,
+                                        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
+                                        RoundedCornerShape(12.dp)
+                                    )
+                                } else {
+                                    this
+                                }
+                            },
                     )
 
                     song?.artists?.firstOrNull()?.thumbnailUrl?.let {
                         Box(
-                            modifier =
-                                Modifier
-                                    .border(2.dp, MaterialTheme.colorScheme.surfaceContainer, CircleShape)
-                                    .padding(2.dp)
-                                    .align(Alignment.BottomEnd),
+                            modifier = Modifier
+                                .border(
+                                    2.dp,
+                                    MaterialTheme.colorScheme.surface,
+                                    CircleShape
+                                )
+                                .padding(2.dp)
+                                .align(Alignment.BottomEnd),
                         ) {
                             AsyncImage(
                                 model = it,
                                 contentDescription = null,
-                                modifier =
-                                    Modifier
-                                        .size(32.dp)
-                                        .clip(CircleShape),
+                                modifier = Modifier
+                                    .size(32.dp)
+                                    .clip(CircleShape),
                             )
                         }
                     }
                 }
 
                 Column(
-                    modifier =
-                        Modifier
-                            .weight(1f)
-                            .padding(horizontal = 6.dp),
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(horizontal = 12.dp),
                 ) {
                     Text(
                         text = song?.song?.title ?: "Song Title",
-                        color = MaterialTheme.colorScheme.onSurface,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.ExtraBold,
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            fontWeight = FontWeight.ExtraBold
+                        ),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
 
+                    Spacer(Modifier.height(4.dp))
+
                     Text(
                         text = song?.artists?.joinToString { it.name } ?: "Artist",
-                        color = MaterialTheme.colorScheme.secondary,
-                        fontSize = 16.sp,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
@@ -329,8 +338,8 @@ fun RichPresence(song: Song?) {
                     song?.album?.title?.let {
                         Text(
                             text = it,
-                            color = MaterialTheme.colorScheme.secondary,
-                            fontSize = 16.sp,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                         )
@@ -347,18 +356,28 @@ fun RichPresence(song: Song?) {
                     context.startActivity(intent)
                 },
                 modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp)
             ) {
-                Text("Listen on YouTube Music")
+                Text(
+                    "Listen on YouTube Music",
+                    style = MaterialTheme.typography.labelLarge
+                )
             }
+
+            Spacer(modifier = Modifier.height(8.dp))
 
             OutlinedButton(
                 onClick = {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Arturo254/InnerTune"))
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Arturo254/OpenTune"))
                     context.startActivity(intent)
                 },
                 modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp)
             ) {
-                Text("Visit OpenTune")
+                Text(
+                    "Visit OpenTune",
+                    style = MaterialTheme.typography.labelLarge
+                )
             }
         }
     }

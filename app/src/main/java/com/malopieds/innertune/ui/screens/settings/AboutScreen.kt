@@ -38,6 +38,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
@@ -439,21 +440,31 @@ fun AboutScreen(
     }
 
     TopAppBar(
-        title = { Text(stringResource(R.string.about)) },
-        modifier = Modifier
-            .clip(RoundedCornerShape(16.dp)),
+        title = {
+            Text(
+                stringResource(R.string.about),
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.Bold
+                )
+            )
+        },
+        modifier = Modifier.clip(RoundedCornerShape(16.dp)),
         navigationIcon = {
             IconButton(
                 onClick = navController::navigateUp,
-                onLongClick = navController::backToMain
+                onLongClick = navController::backToMain,
             ) {
                 Icon(
                     painterResource(R.drawable.arrow_back),
-                    contentDescription = null
+                    contentDescription = null,
                 )
             }
         },
-        scrollBehavior = scrollBehavior
+        scrollBehavior = scrollBehavior,
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+            titleContentColor = MaterialTheme.colorScheme.onSurface,
+        )
     )
 }
 
